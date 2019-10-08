@@ -247,12 +247,12 @@ public:
 };
 
 USTRUCT()
-struct FDemoRoom
+struct FDemoRoomInfo
 {
 	GENERATED_BODY()
 
 public:
-	FDemoRoom()
+	FDemoRoomInfo()
 		: RoomName()
 		, RoomType(EDemoRoom::Standard)
 		, OverrideSize(0)

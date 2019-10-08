@@ -220,6 +220,7 @@ FTransform ADemoDisplay::Add1stLineDescription(const FTransform& InTransform)
 	TRTemp->SetText(Description);
 	TRTemp->SetXScale(BeUsedTextScale);
 	TRTemp->SetYScale(BeUsedTextScale);
+	//////////////////////////////////////////////////////////
 
 	/*		MakeTransform return value for 		 */
 	FVector Loc2PlLoc1 = Loc1PlLoc + Loc2ndLine;
@@ -227,6 +228,7 @@ FTransform ADemoDisplay::Add1stLineDescription(const FTransform& InTransform)
 		Loc2PlLoc1,
 		NewRot,
 		ScaledInTransform.GetScale3D());
+	//////////////////////////////////////////////////////////
 }
 
 void ADemoDisplay::Add2ndLineDescription(const FTransform& InTransform)
