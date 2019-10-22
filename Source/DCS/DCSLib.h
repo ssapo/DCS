@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
-#include "DCSLibrary.generated.h"
+#include "DCSLib.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DCS_API UDCSLibrary : public UBlueprintFunctionLibrary
+class DCS_API UDCSLib : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 	

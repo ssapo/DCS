@@ -7,6 +7,8 @@
 #include "Structs.h"
 #include "DemoRoom.generated.h"
 
+class UStaticMeshComponent;
+
 UCLASS(Blueprintable)
 class DCS_API ADemoRoom : public AActor
 {
@@ -28,7 +30,43 @@ private:
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
-	UStaticMesh* LoopMesh;
+		UStaticMesh* SM_LoopMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+		UStaticMesh* SM_DemoRoomU;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+		UStaticMesh* SM_DemoRoomU_Hole;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+		UStaticMesh* SM_DemoRoomU2;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+		UStaticMesh* SM_DemoRoomL;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+		UStaticMesh* SM_DemoRoomClamp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+		UStaticMesh* SM_DemoRoomClamp2;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+		UStaticMesh* SM_DemoRoomTrim;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+		UStaticMesh* SM_DemoRoomTrim2;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+		UStaticMesh* SM_DemoRoomBackWall;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+		UStaticMesh* SM_DemoRoomBackWall2;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+		UMaterialInterface* M_DemoRoomTiles_Inst;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+		UMaterial* LoopMesh;
 
 	TArray<FDemoRoomInfo> PerRoomProperties;
 	TArray<EDemoRoom> RoomTypes;

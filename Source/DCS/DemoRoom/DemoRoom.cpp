@@ -2,6 +2,9 @@
 
 #include "DemoRoom.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Components/StaticMeshComponent.h"
+#include "Engine/StaticMesh.h"
+#include "Materials/MaterialInstanceDynamic.h"
 
 void ADemoRoom::OnConstruction(const FTransform& Transform)
 {
@@ -25,7 +28,7 @@ void ADemoRoom::Initialize()
 		if (PerRoomProperties.IsValidIndex(MainLoopIndex))
 		{
 			auto RoomProperty = PerRoomProperties[MainLoopIndex];
-			
+
 			int RoomSize = RoomProperty.OverrideSize;
 			bool IsBiggerThan0 = RoomSize > 0;
 
@@ -67,40 +70,164 @@ void ADemoRoom::Initialize()
 
 void ADemoRoom::AddLoopSections(FVector InScale, float InOffset, int32 InRoomSize, int32 InIndex)
 {
+	int32 TempSize = FMath::Clamp(InRoomSize, 0, 50);
+
 	// Start loop depending on room size
-
-	// Add and transform loop mesh
-	bool bCondition = true;
-	if (bCondition)
+	for (int32 I = 0; I < TempSize; ++I)
 	{
-		// Set loop mesh
-	}
-	else
-	{
-		// Set last loop mesh
+		FVector TempVector = (TrimWidth + SectionWidth * I);
+		TempVector.X = (InOffset + TempVector.X);
 
+		FTransform InTransform = UKismetMathLibrary::MakeTransform(TempVector, FRotator::ZeroRotator, InScale);
+		UStaticMeshComponent* MeshComp = NewObject<UStaticMeshComponent>(this);
+
+		int32 CurrIndex = (I + InRoomSize * InIndex);
+		// Add and transform loop mesh
+		bool bCondition = RoomTypes.Num() > CurrIndex;
+		if (bCondition)
+		{
+			EDemoRoom CurrType = RoomTypes[CurrIndex];
+			UStaticMesh* TempMesh = nullptr;
+
+			switch (CurrType)
+			{
+			case EDemoRoom::RoofWithHole:
+				TempMesh = SM_DemoRoomU_Hole;
+				break;
+			case EDemoRoom::RoofOpen:
+				TempMesh = SM_DemoRoomL;
+				break;
+			default:
+				TempMesh = SM_DemoRoomU;
+				break;
+			}
+
+			if (bDoubleHeight)
+			{
+				TempMesh = SM_DemoRoomU2;
+			}
+
+			if (bOpenRoof)
+			{
+				TempMesh = SM_DemoRoomL;
+			}
+
+			MeshComp->SetStaticMesh(TempMesh);
+		}
+		else
+		{
+			UStaticMesh* TempMesh = SM_DemoRoomU;
+			if (bDoubleHeight)
+			{
+				TempMesh = SM_DemoRoomU2;
+
+			}
+
+			if (bOpenRoof)
+			{
+				TempMesh = SM_DemoRoomL;
+			}
+
+			MeshComp->SetStaticMesh(TempMesh);
+		}
+
+		// Set Color
+		if (bSwitchColor)
+		{
+			if (auto MI = MeshComp->CreateDynamicMaterialInstance(0, M_DemoRoomTiles_Inst))
+			{
+				MI->SetVectorParameterValue(TEXT("Color"), FLinearColor(0.03f, 0.03f, 0.03f, 1));
+				MI->SetScalarParameterValue(TEXT("RoughNess"), 0.5f);
+			}
+		}
 	}
-	// Set Color
+
+
 }
 
 void ADemoRoom::AddBackWall(float InOffset, int32 InRoomSize)
 {
-	// Add Wall mesh
 
-	// Different wall if double height room
+	if (UStaticMeshComponent * MeshComponent = NewObject<UStaticMeshComponent>(this))
+	{
+		// Add Wall mesh
+		FVector InLoc = TrimWidth;
+		InLoc.X /= InOffset;
+
+		FVector InScale = (SectionWidth * InRoomSize) / FVector(1750.0f, 1.0f, 1.0f);
+		InScale.Y = 0;
+		InScale.Z = 0;
+
+		FTransform TempTransform = UKismetMathLibrary::MakeTransform(InLoc, FRotator::ZeroRotator, InScale);
+		MeshComponent->SetRelativeTransform(TempTransform);
+
+		// Different wall if double height room
+		if (bDoubleHeight)
+		{
+			MeshComponent->SetStaticMesh(SM_DemoRoomBackWall);
+		}
+		else
+		{
+			MeshComponent->SetStaticMesh(SM_DemoRoomBackWall2);
+		}
+	}
 }
 
 void ADemoRoom::AddClamp(float InOffset, int32 InRoomSize, int32 InIndex)
 {
-	// Add and transform Clamp mesh
+	UStaticMesh* TempMesh = nullptr;
+	if (bDoubleHeight)
+	{
+		TempMesh = SM_DemoRoomClamp2;
+	}
+	else
+	{
+		TempMesh = SM_DemoRoomClamp;
+	}
 
-	// Last mesh and transformation
+	if (UStaticMeshComponent * MeshComponent = NewObject<UStaticMeshComponent>())
+	{
+		FVector InLoc = FVector(InOffset, 0, 0);
+		FVector InScale = FVector::OneVector;
+		FTransform TempTransform = UKismetMathLibrary::MakeTransform(InLoc, FRotator::ZeroRotator,
+			InScale);
+
+		MeshComponent->SetRelativeTransform(TempTransform);
+		MeshComponent->SetStaticMesh(TempMesh);
+	}
+
+	if (bOpenBack == false)
+	{
+		int32 ClampedNum = FMath::Clamp(NumberofRooms - 1, 0, 30);
+		if (ClampedNum == InIndex)
+		{
+			if (UStaticMeshComponent * MeshComponent = NewObject<UStaticMeshComponent>())
+			{
+				FVector InLoc = (TrimWidth + SectionWidth * InIndex);
+				InLoc.X += InOffset;
+
+				FVector InScale = FVector::OneVector;
+				FTransform TempTransform = UKismetMathLibrary::MakeTransform(InLoc, FRotator::ZeroRotator,
+					InScale);
+
+				MeshComponent->SetRelativeTransform(TempTransform);
+				MeshComponent->SetStaticMesh(TempMesh);
+			}
+		}
+	}
 }
 
 void ADemoRoom::AddTrim(FVector InScale, float InOffset, int32 InRoomSize, int32 InIndex)
 {
-	// Add mesh
-
+	UStaticMesh* TempMesh = nullptr;
+	if (bDoubleHeight)
+	{
+		TempMesh = SM_DemoRoomTrim2;
+	}
+	else
+	{
+		TempMesh = SM_DemoRoomTrim;
+	}
 	// Add and set transformation for last mesh
 }
 
