@@ -258,7 +258,12 @@ public:
 		, OverrideSize(0)
 	{}
 
-	FText RoomName;
-	EDemoRoom RoomType;
-	int32 OverrideSize;
+	UPROPERTY(EditAnywhere)
+		FText RoomName;
+
+	UPROPERTY(EditAnywhere)
+		EDemoRoom RoomType;
+
+	UPROPERTY(EditAnywhere)
+		int32 OverrideSize;
 };

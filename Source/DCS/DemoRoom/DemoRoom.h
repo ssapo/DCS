@@ -30,9 +30,6 @@ private:
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
-		UStaticMesh* SM_LoopMesh;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
 		UStaticMesh* SM_DemoRoomU;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
@@ -65,12 +62,55 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
 		UMaterialInterface* M_DemoRoomTiles_Inst;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
-		UMaterial* LoopMesh;
+	UPROPERTY(EditAnywhere, Category = "RoomProperties", meta = (AllowPrivateAccess = true))
+		TArray<FDemoRoomInfo> PerRoomProperties;
 
-	TArray<FDemoRoomInfo> PerRoomProperties;
+	UPROPERTY(EditAnywhere, Category = "RoomProperties", meta = (AllowPrivateAccess = true))
+		TArray<FText> RoomNames;
+
+	UPROPERTY(EditAnywhere, Category = "RoomProperties", meta = (AllowPrivateAccess = true))
+		float LightRaidus;
+
+	UPROPERTY(EditAnywhere, Category = "RoomProperties", meta = (AllowPrivateAccess = true))
+		int32 NumberofRooms;
+
+	UPROPERTY(EditAnywhere, Category = "RoomProperties", meta = (AllowPrivateAccess = true))
+		int32 TotalSegments;
+	
+	UPROPERTY(EditAnywhere, Category = "RoomProperties", meta = (AllowPrivateAccess = true))
+		int32 BaseRoomSize;
+
+	UPROPERTY(EditAnywhere, Category = "RoomProperties", meta = (AllowPrivateAccess = true))
+		int32 ThisRoomSize;
+
+	UPROPERTY(EditAnywhere, Category = "RoomProperties", meta = (AllowPrivateAccess = true))
+		bool bLights;
+	
+	UPROPERTY(EditAnywhere, Category = "RoomProperties", meta = (AllowPrivateAccess = true))
+		bool bMirrorRoom;
+
+	UPROPERTY(EditAnywhere, Category = "RoomProperties", meta = (AllowPrivateAccess = true))
+		bool bCastShadows;
+
+	UPROPERTY(EditAnywhere, Category = "RoomProperties", meta = (AllowPrivateAccess = true))
+		bool bDoubleHeight;
+
+	UPROPERTY(EditAnywhere, Category = "RoomProperties", meta = (AllowPrivateAccess = true))
+		bool bOpenRoof;
+
+	UPROPERTY(EditAnywhere, Category = "RoomProperties", meta = (AllowPrivateAccess = true))
+		bool bSwitchColor;
+
+	UPROPERTY(EditAnywhere, Category = "RoomProperties", meta = (AllowPrivateAccess = true))
+		bool bGlassWalls;
+
+	UPROPERTY(EditAnywhere, Category = "RoomProperties", meta = (AllowPrivateAccess = true))
+		bool bFrontDoor;
+
+	UPROPERTY(EditAnywhere, Category = "RoomProperties", meta = (AllowPrivateAccess = true))
+		bool bOpenBack;
+
 	TArray<EDemoRoom> RoomTypes;
-	TArray<FText> RoomNames;
 	TArray<int32> RoomSizes;
 	TArray<float> OffsetList;
 
@@ -80,22 +120,7 @@ private:
 
 	float Offset;
 	float ThisOffset;
-	float LightRaidus;
 	float Brightness;
 
-	int32 BaseRoomSize;
-	int32 NumberofRooms;
-	int32 TotalSegments;
-	int32 ThisRoomSize;
 	int32 MainLoopIndex;
-
-	bool bCastShadows;
-	bool bMirrorRoom;
-	bool bLights;
-	bool bDoubleHeight;
-	bool bOpenRoof;
-	bool bSwitchColor;
-	bool bGlassWalls;
-	bool bFrontDoor;
-	bool bOpenBack;
 };

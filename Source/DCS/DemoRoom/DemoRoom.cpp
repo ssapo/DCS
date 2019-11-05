@@ -8,6 +8,8 @@
 
 void ADemoRoom::OnConstruction(const FTransform& Transform)
 {
+	Super::OnConstruction(Transform);
+
 	Initialize();
 }
 
@@ -141,13 +143,10 @@ void ADemoRoom::AddLoopSections(FVector InScale, float InOffset, int32 InRoomSiz
 			}
 		}
 	}
-
-
 }
 
 void ADemoRoom::AddBackWall(float InOffset, int32 InRoomSize)
 {
-
 	if (UStaticMeshComponent * MeshComponent = NewObject<UStaticMeshComponent>(this))
 	{
 		// Add Wall mesh
@@ -175,14 +174,14 @@ void ADemoRoom::AddBackWall(float InOffset, int32 InRoomSize)
 
 void ADemoRoom::AddClamp(float InOffset, int32 InRoomSize, int32 InIndex)
 {
-	UStaticMesh* TempMesh = nullptr;
+	UStaticMesh* InMesh = nullptr;
 	if (bDoubleHeight)
 	{
-		TempMesh = SM_DemoRoomClamp2;
+		InMesh = SM_DemoRoomClamp2;
 	}
 	else
 	{
-		TempMesh = SM_DemoRoomClamp;
+		InMesh = SM_DemoRoomClamp;
 	}
 
 	if (UStaticMeshComponent * MeshComponent = NewObject<UStaticMeshComponent>())
@@ -193,7 +192,7 @@ void ADemoRoom::AddClamp(float InOffset, int32 InRoomSize, int32 InIndex)
 			InScale);
 
 		MeshComponent->SetRelativeTransform(TempTransform);
-		MeshComponent->SetStaticMesh(TempMesh);
+		MeshComponent->SetStaticMesh(InMesh);
 	}
 
 	if (bOpenBack == false)
@@ -207,11 +206,11 @@ void ADemoRoom::AddClamp(float InOffset, int32 InRoomSize, int32 InIndex)
 				InLoc.X += InOffset;
 
 				FVector InScale = FVector::OneVector;
-				FTransform TempTransform = UKismetMathLibrary::MakeTransform(InLoc, FRotator::ZeroRotator,
+				FTransform InTransform = UKismetMathLibrary::MakeTransform(InLoc, FRotator::ZeroRotator,
 					InScale);
 
-				MeshComponent->SetRelativeTransform(TempTransform);
-				MeshComponent->SetStaticMesh(TempMesh);
+				MeshComponent->SetRelativeTransform(InTransform);
+				MeshComponent->SetStaticMesh(InMesh);
 			}
 		}
 	}
@@ -219,16 +218,44 @@ void ADemoRoom::AddClamp(float InOffset, int32 InRoomSize, int32 InIndex)
 
 void ADemoRoom::AddTrim(FVector InScale, float InOffset, int32 InRoomSize, int32 InIndex)
 {
-	UStaticMesh* TempMesh = nullptr;
+	UStaticMesh* InMesh = nullptr;
 	if (bDoubleHeight)
 	{
-		TempMesh = SM_DemoRoomTrim2;
+		InMesh = SM_DemoRoomTrim2;
 	}
 	else
 	{
-		TempMesh = SM_DemoRoomTrim;
+		InMesh = SM_DemoRoomTrim;
 	}
+
+	FVector InLocation(InOffset, 0, 0);
+	FTransform InTransform = UKismetMathLibrary::MakeTransform(InLocation, FRotator::ZeroRotator, InScale);
+	if (UStaticMeshComponent * MeshComponent = NewObject<UStaticMeshComponent>())
+	{
+		MeshComponent->SetRelativeTransform(InTransform);
+		MeshComponent->SetStaticMesh(InMesh);
+	}
+
 	// Add and set transformation for last mesh
+	if (bOpenBack)
+	{
+		return;
+	}
+
+	int32 Number = FMath::Clamp(NumberofRooms - 1, 0, 31);
+	if (InIndex != Number)
+	{
+		return;
+	}
+
+	FVector InLocation2(TrimWidth + (SectionWidth * InRoomSize));
+	InLocation2.X += InOffset;
+	FTransform InTransform2 = UKismetMathLibrary::MakeTransform(InLocation2, FRotator::ZeroRotator, InScale);
+	if (UStaticMeshComponent * MeshComponent = NewObject<UStaticMeshComponent>())
+	{
+		MeshComponent->SetRelativeTransform(InTransform2);
+		MeshComponent->SetStaticMesh(InMesh);
+	}
 }
 
 void ADemoRoom::AddWall(FVector InScale, float InOffset, int32 InRoomSize, int32 InIndex)
