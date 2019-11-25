@@ -224,9 +224,14 @@ public:
 		, ModifiersValue(0)
 	{}
 
-	EStat Type;
-	float BaseValue;
-	float ModifiersValue;
+	UPROPERTY(EditAnywhere)
+		EStat Type;
+
+	UPROPERTY(EditAnywhere)
+		float BaseValue;
+
+	UPROPERTY(EditAnywhere)
+		float ModifiersValue;
 };
 
 USTRUCT()
@@ -241,9 +246,14 @@ public:
 		, Amount(0)
 	{}
 
-	FGuid Id;
-	TSubclassOf<UItemBase> ItemClass;
-	int32 Amount;
+	UPROPERTY(EditAnywhere)
+		FGuid Id;
+
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<UItemBase> ItemClass;
+
+	UPROPERTY(EditAnywhere)
+		int32 Amount;
 };
 
 USTRUCT()

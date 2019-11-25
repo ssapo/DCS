@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Widgets/DCSWidget.h"
-#include "AIStartBarsWidget.generated.h"
+#include "Items/ObjectItems/ItemBase.h"
+#include "ItemArmor.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DCS_API UAIStartBarsWidget : public UDCSWidget
+class DCS_API UItemArmor : public UItemBase
 {
 	GENERATED_BODY()
 	

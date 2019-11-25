@@ -275,11 +275,26 @@ void ADemoRoom::AddWall(FVector InScale, float InOffset, int32 InRoomSize, int32
 
 void ADemoRoom::AddLights(float InOffset, int32 InRoomSize, int32 InIndex)
 {
-	// Add lights if true
+	if (bLights == false)
+	{
+		return;
+	}
 
-	// Start Loop and Offset Transformation
+	FVector TempVector = SectionWidth;
+	float TempX = TempVector.X * InRoomSize;
+	float CalculatedX = TempX / 2000.0;
+	int32 Loop = FMath::Clamp((FMath::FloorToInt(CalculatedX)), 1, 50);
+	for (int I = 1; I < Loop; ++I)
+	{
+		float MultiedValue = 2000.0 * I;
+	
+		float Fraction = FMath::Frac(TempX);
+		float SelectedValue = InRoomSize <= 1 ? Fraction : -Fraction;
+		SelectedValue *= TempX;
 
-	// Set Light Parameters
+		float CalculatedValue = InOffset + (MultiedValue - SelectedValue) - ((CalculatedX / TempX / 2) - 300);
+	}
+
 }
 
 void ADemoRoom::AddOpenTrim(FVector InScale, float InOffset, int32 InRoomSize, int32 InIndex)

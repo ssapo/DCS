@@ -3,11 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Kismet/BlueprintFunctionLibrary.h"
-#include "DCSLib.generated.h"
+#include "Widgets/DCSWidget.h"
+#include "AIStatBarsWidget.generated.h"
 
+/**
+ * 
+ */
 UCLASS()
-class DCS_API UDCSLib : public UBlueprintFunctionLibrary
+class DCS_API UAIStatBarsWidget : public UDCSWidget
 {
 	GENERATED_BODY()
 	
