@@ -5,8 +5,10 @@
 #include "CoreMinimal.h"
 #include "Structs.h"
 #include "Components/ActorComponent.h"
+#include "DelegateCombinations.h"
 #include "ExtendedStatComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnValueChanged, float, InValue, float, MaxValue);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class DCS_API UExtendedStatComponent : public UActorComponent
@@ -18,6 +20,10 @@ public:
 
 	EStat GetStatType() const { return StatType; }
 	float GetCurrentValue() const { return CurrentValue; }
+	float GetMaxValue() const { return TopValue; }
+
+public:
+	FOnValueChanged OnValueChanged;
 
 private:
 	EStat StatType;

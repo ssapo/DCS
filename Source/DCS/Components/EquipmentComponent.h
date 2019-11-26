@@ -24,6 +24,13 @@ public:
 	FORCEINLINE TArray<FEquiopmentSlots> GetEquipmentSlots() const { return EquipmentSlots; }
 	FORCEINLINE bool IsInCombat() const { return bIsInCombat; }
 	FORCEINLINE EItem GetSelectedMainHandType() const { return SelectedMainHandType; }
+	
+	const FStoredItem* GetActiveItem(EItem InType, int32 Index) const;
+	bool IsSlotHidden(EItem InType, int32 Index);
+
+private:
+	int32 GetEquipmentSlotsIndex(EItem InType) const;
+	bool IsSlotIndexValid(EItem InType, int32 Index) const;
 
 private:
 	TWeakObjectPtr<UInventoryComponent> InventoryComponent;

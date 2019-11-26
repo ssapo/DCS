@@ -2,4 +2,11 @@
 
 
 #include "AIStatBarsWidget.h"
+#include "StatBarWidget.h"
 
+void UAIStatBarsWidget::NativeConstruct()
+{
+	Super::NativeConstruct();
+
+	Stamina->SetVisibility(ESlateVisibility::Collapsed);
+}

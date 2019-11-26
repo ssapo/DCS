@@ -19,6 +19,9 @@ class DCS_API UItemBase : public UObject
 	GENERATED_BODY()
 	
 public:
+	const FItem& GetItemRef() const;
+
+public:
 	FOnUseItem OnUseItem;
 
 private:
