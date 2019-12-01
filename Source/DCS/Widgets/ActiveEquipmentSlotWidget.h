@@ -34,11 +34,9 @@ protected:
 	void SetIsHidden(bool IsHidden);
 
 private:
-	UPROPERTY(Transient)
-		TWeakObjectPtr<UInventoryComponent> CachedInventoryComponent;
+	TWeakObjectPtr<UInventoryComponent> WP_InventoryComponent;
 
-	UPROPERTY(Transient)
-		TWeakObjectPtr<UEquipmentComponent> CachedEquipmentComponent;
+	TWeakObjectPtr<UEquipmentComponent> WP_EquipmentComponent;
 
 	UPROPERTY(meta = (BindWidget))
 		UImage* ItemImage;

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
 #include "Enumerations.h"
+#include "WeakObjectPtrTemplates.h"
 #include "CombatAnimInstance.generated.h"
 
 class ACombatCharacter;
@@ -27,8 +28,8 @@ public:
 	void UpdateAimOffsetAlpha();
 
 private:
-	TWeakObjectPtr<UEquipmentComponent> EquipmentComponent;
-	TWeakObjectPtr<ACombatCharacter> CharacterReference;
+	TWeakObjectPtr<UEquipmentComponent> WP_EquipmentComponent;
+	TWeakObjectPtr<ACombatCharacter> WP_Character;
 
 	EWeapon WeaponType;
 	ECombat CombatType;

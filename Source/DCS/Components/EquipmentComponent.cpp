@@ -41,7 +41,7 @@ bool UEquipmentComponent::IsSlotIndexValid(EItem InType, int32 Index) const
 	return false;
 }
 
-bool UEquipmentComponent::IsSlotHidden(EItem InType, int32 Index)
+bool UEquipmentComponent::IsSlotHidden(EItem InType, int32 Index) const
 {
 	if (IsSlotIndexValid(InType, Index))
 	{
@@ -49,6 +49,16 @@ bool UEquipmentComponent::IsSlotHidden(EItem InType, int32 Index)
 	}
 
 	return false;
+}
+
+bool UEquipmentComponent::IsEquippedItem(const FGuid& InItemID) const
+{
+	return EquippedItems.Find(InItemID) >= 0;
+}
+
+bool UEquipmentComponent::IsActiveItem(const FGuid& InItemID) const
+{
+	return ActiveItems.Find(InItemID) >= 0;
 }
 
 const FStoredItem* UEquipmentComponent::GetActiveItem(EItem InType, int32 Index) const

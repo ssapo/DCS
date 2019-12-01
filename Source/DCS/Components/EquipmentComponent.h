@@ -1,11 +1,12 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Structs.h"
 #include "EquipmentComponent.generated.h"
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnItemInSlotChanged);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnActiveItemChanged);
 
 class UInventoryComponent;
 class AGameMode;
@@ -26,11 +27,16 @@ public:
 	FORCEINLINE EItem GetSelectedMainHandType() const { return SelectedMainHandType; }
 	
 	const FStoredItem* GetActiveItem(EItem InType, int32 Index) const;
-	bool IsSlotHidden(EItem InType, int32 Index);
-
+	bool IsSlotHidden(EItem InType, int32 Index) const;
+	bool IsEquippedItem(const FGuid& InItemID) const;
+	bool IsActiveItem(const FGuid& InItemID) const;
 private:
 	int32 GetEquipmentSlotsIndex(EItem InType) const;
 	bool IsSlotIndexValid(EItem InType, int32 Index) const;
+
+public:
+	FOnItemInSlotChanged OnItemInSlotChanged;
+	FOnActiveItemChanged OnActiveItemChanged;
 
 private:
 	TWeakObjectPtr<UInventoryComponent> InventoryComponent;

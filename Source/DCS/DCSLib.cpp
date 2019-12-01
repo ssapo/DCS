@@ -22,4 +22,3 @@ FVector2D UDCSLib::GetViewportSize(UObject* WowldContextObject)
 {
 	return UWidgetLayoutLibrary::GetViewportSize(WowldContextObject);
 }
-

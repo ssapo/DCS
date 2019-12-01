@@ -85,6 +85,8 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vector", meta = (AllowPrivateAccess = true))
 		FVector MeshScale;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vector", meta = (AllowPrivateAccess = true))
+		bool bIsFixScale;
+
 	TWeakObjectPtr<USceneComponent> Scene1;
-	bool bIsFixScale;
 };

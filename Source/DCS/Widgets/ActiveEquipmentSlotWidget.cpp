@@ -28,19 +28,24 @@ void UActiveEquipmentSlotWidget::NativeConstruct()
 	Super::NativeConstruct();
 
 	auto Pawn = GetOwningPlayerPawn();
-	auto InvenComponent = UDCSLib::GetComponent<UInventoryComponent>(Pawn);
-	auto EquipComponent = UDCSLib::GetComponent<UEquipmentComponent>(Pawn);
-
-	CachedInventoryComponent = InvenComponent;
-	CachedEquipmentComponent = EquipComponent;
-	if (CachedEquipmentComponent.IsValid())
+	if (auto Raw = UDCSLib::GetComponent<UInventoryComponent>(Pawn))
 	{
-		if (auto ActiveItem = CachedEquipmentComponent->GetActiveItem(ItemType, 0))
+		WP_InventoryComponent = Raw;
+	}
+
+	if (auto Raw = UDCSLib::GetComponent<UEquipmentComponent>(Pawn))
+	{
+		WP_EquipmentComponent = Raw;
+	}
+
+	if (WP_EquipmentComponent.IsValid())
+	{
+		if (auto ActiveItem = WP_EquipmentComponent->GetActiveItem(ItemType, 0))
 		{
 			UpdateWidget(*ActiveItem);
 		}
 
-		SetIsHidden(CachedEquipmentComponent->IsSlotHidden(ItemType, 0));
+		SetIsHidden(WP_EquipmentComponent->IsSlotHidden(ItemType, 0));
 	}
 }
 
