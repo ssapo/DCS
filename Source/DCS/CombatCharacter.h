@@ -23,6 +23,7 @@ class UCollisionHandlerComponent;
 class UEffectsComponent;
 class UStatsManagerComponent;
 class UDynamicTargetingComponent;
+class UInputComponent;
 
 UCLASS()
 class DCS_API ACombatCharacter : public ACharacter
@@ -33,7 +34,7 @@ public:
 	ACombatCharacter();
 
 	virtual void Tick(float DeltaTime) override;
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
 protected:
 	virtual void BeginPlay() override;
@@ -42,10 +43,11 @@ private:
 	void CtorComponents();
 	void CtorInitialize();
 
+	void ShowKeyBindings();
+	void HideKeyBindings();
 public:
 	void UpdateAimAlpha();
 	void CreateKeyBindings();
-
 private:
 	TWeakObjectPtr<USpringArmComponent> CameraBoom;
 	TWeakObjectPtr<UCameraComponent> FollowCamera;

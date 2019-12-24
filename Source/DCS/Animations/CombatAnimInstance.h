@@ -22,10 +22,13 @@ class DCS_API UCombatAnimInstance : public UAnimInstance
 public:
 	virtual void NativeBeginPlay() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
-
+	
+private:
 	void UpdateLookAtValues();
 	void UpdateLeanAmount();
 	void UpdateAimOffsetAlpha();
+
+	void StoreCharacterInfo(const ACombatCharacter& InCharacterRef);
 
 private:
 	TWeakObjectPtr<UEquipmentComponent> WP_EquipmentComponent;
@@ -53,4 +56,5 @@ private:
 	bool IsInCombat;
 	bool IsLookingForward;
 	bool IsShieldEquipped;
+	void StoreCharacterInfo();
 };

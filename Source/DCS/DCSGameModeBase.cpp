@@ -6,6 +6,7 @@
 #include "Components/EquipmentComponent.h"
 #include "Components/InventoryComponent.h"
 #include <Components/ActorComponent.h>
+#include "Array.h"
 
 ADCSGameModeBase::ADCSGameModeBase()
 {

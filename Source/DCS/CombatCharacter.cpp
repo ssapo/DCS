@@ -3,6 +3,7 @@
 
 #include "CombatCharacter.h"
 #include "Kismet/GameplayStatics.h"
+
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/AudioComponent.h"
@@ -23,6 +24,9 @@
 #include "Components/CollisionHandlerComponent.h"
 #include "Components/InputBufferComponent.h"
 #include "Components/DynamicTargetingComponent.h"
+
+#include "UserWidget.h"
+#include "Widgets/KeybindingsWidget.h"
 
 ACombatCharacter::ACombatCharacter()
 {
@@ -121,16 +125,29 @@ void ACombatCharacter::CtorInitialize()
 	CameraBoom->CameraLagSpeed = InitialCameraLagSpeed;
 }
 
+void ACombatCharacter::ShowKeyBindings()
+{
+	UE_LOG(LogTemp, Log, TEXT("ShowKeyBindings"));
+}
+
+void ACombatCharacter::HideKeyBindings()
+{
+	UE_LOG(LogTemp, Log, TEXT("HideKeyBindings"));
+}
+
 void ACombatCharacter::UpdateAimAlpha()
 {
-
 }
 
 void ACombatCharacter::CreateKeyBindings()
 {
-	auto Player = UGameplayStatics::GetPlayerController(this, 0);
+	auto Player = GetController<APlayerController>();
 	ensure(Player != nullptr);
 
+	if (auto NewWidget = CreateWidget<UKeybindingsWidget>(Player))
+	{
+		NewWidget->AddToViewport();
+	}
 }
 
 void ACombatCharacter::Tick(float DeltaTime)
@@ -143,5 +160,8 @@ void ACombatCharacter::Tick(float DeltaTime)
 void ACombatCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	PlayerInputComponent->BindAction("K", IE_Pressed, this, &ACombatCharacter::ShowKeyBindings);
+	PlayerInputComponent->BindAction("K", IE_Released, this, &ACombatCharacter::HideKeyBindings);
 }
 

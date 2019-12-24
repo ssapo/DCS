@@ -19,6 +19,9 @@ void ADemoDisplay::Initialize()
 {
 	FixLegacyScale();
 
+
+	NewObject<ADemoDisplay>();
+
 	switch (DisplayType)
 	{
 	case EDemoDisplay::Round:

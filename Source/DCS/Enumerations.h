@@ -250,7 +250,7 @@ enum class EDemoRoom : int8
 };
 
 UENUM()
-enum class EDemoDisplay : int8
+enum class EDemoDisplay : int16
 {
 	Round					UMETA(DisplayName = "Round"),
 	SquareL					UMETA(DisplayName = "SquareL"),
