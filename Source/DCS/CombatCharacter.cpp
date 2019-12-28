@@ -27,6 +27,7 @@
 
 #include "UserWidget.h"
 #include "Widgets/KeybindingsWidget.h"
+#include "Define.h"
 
 ACombatCharacter::ACombatCharacter()
 {
@@ -161,7 +162,7 @@ void ACombatCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	PlayerInputComponent->BindAction("K", IE_Pressed, this, &ACombatCharacter::ShowKeyBindings);
-	PlayerInputComponent->BindAction("K", IE_Released, this, &ACombatCharacter::HideKeyBindings);
+	PlayerInputComponent->BindAction(EVENT_KEYBIND, IE_Pressed, this, &ACombatCharacter::ShowKeyBindings);
+	PlayerInputComponent->BindAction(EVENT_KEYBIND, IE_Released, this, &ACombatCharacter::HideKeyBindings);
 }
 
