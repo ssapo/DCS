@@ -22,11 +22,17 @@ class UEffectsComponent;
 class UStatsManagerComponent;
 class UDynamicTargetingComponent;
 class UInputComponent;
+class UKeybindingsWidget;
+class UInGameWidget;
 
 UCLASS()
 class DCS_API ACombatCharacter : public ACharacter
 {
 	GENERATED_BODY()
+
+private:
+	constexpr static int32 ZOrder_InGame = 0;
+	constexpr static int32 ZOrder_KeyBindings = 1;
 
 public:
 	ACombatCharacter();
@@ -40,12 +46,15 @@ protected:
 private:
 	void CtorComponents();
 	void CtorInitialize();
+	void CreateHUD();
+	void UpdateAimAlpha();
+
+	void CreateKeyBindings();
+	void CreateInGameWidget();
 
 	void ShowKeyBindings();
 	void HideKeyBindings();
-public:
-	void UpdateAimAlpha();
-	void CreateKeyBindings();
+
 private:
 	TWeakObjectPtr<USpringArmComponent> CameraBoom;
 	TWeakObjectPtr<UCameraComponent> FollowCamera;
@@ -67,6 +76,8 @@ private:
 	TWeakObjectPtr<UArrowComponent> TargetingArrow;
 	TWeakObjectPtr<UDynamicTargetingComponent> DynamicTargeting;
 
+	TWeakObjectPtr<UInGameWidget> WP_InGameWidget;
+	TWeakObjectPtr<UKeybindingsWidget> WP_KeyBindingsWidget;
 	TWeakObjectPtr<AActor> BackstabbedActor;
 	TWeakObjectPtr<AActor> InteractionActor;
 

@@ -1,12 +1,6 @@
 #include "KeybindingsWidget.h"
 #include "Border.h"
 
-void UKeybindingsWidget::NativeConstruct()
-{
-	Super::NativeConstruct();
-
-}
-
 void UKeybindingsWidget::ShowKeyBindings()
 {
 	Keybindings->SetVisibility(ESlateVisibility::HitTestInvisible);
@@ -14,5 +8,5 @@ void UKeybindingsWidget::ShowKeyBindings()
 
 void UKeybindingsWidget::HideKeyBindings()
 {
-	Keybindings->SetVisibility(ESlateVisibility::Hidden);
+	Keybindings->SetVisibility(ESlateVisibility::Collapsed);
 }

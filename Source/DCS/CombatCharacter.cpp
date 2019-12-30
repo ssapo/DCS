@@ -27,6 +27,7 @@
 
 #include "UserWidget.h"
 #include "Widgets/KeybindingsWidget.h"
+#include "Widgets/InGameWidget.h"
 #include "Define.h"
 
 ACombatCharacter::ACombatCharacter()
@@ -38,9 +39,26 @@ ACombatCharacter::ACombatCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 }
 
+void ACombatCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	UpdateAimAlpha();
+}
+
+void ACombatCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	PlayerInputComponent->BindAction(EVENT_KEYBIND, IE_Pressed, this, &ACombatCharacter::ShowKeyBindings);
+	PlayerInputComponent->BindAction(EVENT_KEYBIND, IE_Released, this, &ACombatCharacter::HideKeyBindings);
+}
+
 void ACombatCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	CreateHUD();
 }
 
 void ACombatCharacter::CtorComponents()
@@ -126,43 +144,54 @@ void ACombatCharacter::CtorInitialize()
 	CameraBoom->CameraLagSpeed = InitialCameraLagSpeed;
 }
 
-void ACombatCharacter::ShowKeyBindings()
+void ACombatCharacter::CreateHUD()
 {
-	UE_LOG(LogTemp, Log, TEXT("ShowKeyBindings"));
-}
+	CreateInGameWidget();
 
-void ACombatCharacter::HideKeyBindings()
-{
-	UE_LOG(LogTemp, Log, TEXT("HideKeyBindings"));
+	CreateKeyBindings();
 }
 
 void ACombatCharacter::UpdateAimAlpha()
 {
+
 }
 
 void ACombatCharacter::CreateKeyBindings()
 {
-	auto Player = GetController<APlayerController>();
-	ensure(Player != nullptr);
-
-	if (auto NewWidget = CreateWidget<UKeybindingsWidget>(Player))
+	auto OwningPlayer = GetController<APlayerController>();
+	ensure(OwningPlayer != nullptr);
+	
+	if (auto NewWidget = CreateWidget<UKeybindingsWidget>(OwningPlayer))
 	{
-		NewWidget->AddToViewport();
+		WP_KeyBindingsWidget = NewWidget;
+		NewWidget->AddToViewport(ZOrder_KeyBindings);
 	}
 }
 
-void ACombatCharacter::Tick(float DeltaTime)
+void ACombatCharacter::CreateInGameWidget()
 {
-	Super::Tick(DeltaTime);
+	auto OwningPlayer = GetController<APlayerController>();
+	ensure(OwningPlayer != nullptr);
 
-	UpdateAimAlpha();
+	if (auto NewWidget = CreateWidget<UInGameWidget>(OwningPlayer))
+	{
+		WP_InGameWidget = NewWidget;
+		NewWidget->AddToViewport(ZOrder_InGame);
+	}
 }
 
-void ACombatCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void ACombatCharacter::ShowKeyBindings()
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-	PlayerInputComponent->BindAction(EVENT_KEYBIND, IE_Pressed, this, &ACombatCharacter::ShowKeyBindings);
-	PlayerInputComponent->BindAction(EVENT_KEYBIND, IE_Released, this, &ACombatCharacter::HideKeyBindings);
+	if (WP_KeyBindingsWidget.IsValid())
+	{
+		WP_KeyBindingsWidget->ShowKeyBindings();
+	}
 }
 
+void ACombatCharacter::HideKeyBindings()
+{
+	if (WP_KeyBindingsWidget.IsValid())
+	{
+		WP_KeyBindingsWidget->HideKeyBindings();
+	}
+}

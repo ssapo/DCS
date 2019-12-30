@@ -7,6 +7,8 @@
 #include "Components/InventoryComponent.h"
 #include <Components/ActorComponent.h>
 #include "Array.h"
+#include "Widgets/KeybindingsWidget.h"
+#include "UserWidget.h"
 
 ADCSGameModeBase::ADCSGameModeBase()
 {
