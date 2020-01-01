@@ -9,10 +9,12 @@
 #include "Array.h"
 #include "Widgets/KeybindingsWidget.h"
 #include "UserWidget.h"
+#include "DCSGameHUD.h"
 
 ADCSGameModeBase::ADCSGameModeBase()
 {
 	DefaultPawnClass = ACombatCharacter::StaticClass();
+	HUDClass = ADCSGameHUD::StaticClass();
 }
 
 void ADCSGameModeBase::BeginPlay()
