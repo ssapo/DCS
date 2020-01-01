@@ -8,6 +8,5 @@ UCLASS()
 class DCS_API ADCSGameHUD : public AHUD
 {
 	GENERATED_BODY()
-	
 public:
 };

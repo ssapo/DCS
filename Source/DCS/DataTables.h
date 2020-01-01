@@ -2,6 +2,8 @@
 #include "Engine/DataTable.h"
 #include "DataTables.generated.h"
 
+class UDCSWidget;
+
 UENUM()
 enum class EWidgetID
 {
