@@ -26,9 +26,11 @@
 #include "Components/DynamicTargetingComponent.h"
 
 #include "UserWidget.h"
+#include "Define.h"
+#include "WidgetSystem.h"
+#include "DataTables.h"
 #include "Widgets/KeybindingsWidget.h"
 #include "Widgets/InGameWidget.h"
-#include "Define.h"
 
 ACombatCharacter::ACombatCharacter()
 {
@@ -158,25 +160,18 @@ void ACombatCharacter::UpdateAimAlpha()
 
 void ACombatCharacter::CreateKeyBindings()
 {
-	auto OwningPlayer = GetController<APlayerController>();
-	ensure(OwningPlayer != nullptr);
 	
-	if (auto NewWidget = CreateWidget<UKeybindingsWidget>(OwningPlayer))
+	if (auto NewWidget = Cast<UKeybindingsWidget>(ShowWidget(EWidgetID::KeyBindings)))
 	{
 		WP_KeyBindingsWidget = NewWidget;
-		NewWidget->AddToViewport(ZOrder_KeyBindings);
 	}
 }
 
 void ACombatCharacter::CreateInGameWidget()
 {
-	auto OwningPlayer = GetController<APlayerController>();
-	ensure(OwningPlayer != nullptr);
-
-	if (auto NewWidget = CreateWidget<UInGameWidget>(OwningPlayer))
+	if (auto NewWidget = Cast<UInGameWidget>(ShowWidget(EWidgetID::InGame)))
 	{
 		WP_InGameWidget = NewWidget;
-		NewWidget->AddToViewport(ZOrder_InGame);
 	}
 }
 
@@ -194,4 +189,9 @@ void ACombatCharacter::HideKeyBindings()
 	{
 		WP_KeyBindingsWidget->HideKeyBindings();
 	}
+}
+
+FORCEINLINE UDCSWidget* ACombatCharacter::ShowWidget(EWidgetID InType) const
+{
+	return UWidgetSystem::Get()->ShowWidget(InType);
 }

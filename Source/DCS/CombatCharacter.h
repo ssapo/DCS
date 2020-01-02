@@ -24,6 +24,8 @@ class UDynamicTargetingComponent;
 class UInputComponent;
 class UKeybindingsWidget;
 class UInGameWidget;
+class UDCSWidget;
+enum class EWidgetID;
 
 UCLASS()
 class DCS_API ACombatCharacter : public ACharacter
@@ -54,6 +56,8 @@ private:
 
 	void ShowKeyBindings();
 	void HideKeyBindings();
+
+	FORCEINLINE UDCSWidget* ShowWidget(EWidgetID InType) const;
 
 private:
 	TWeakObjectPtr<USpringArmComponent> CameraBoom;
@@ -110,3 +114,4 @@ private:
 	bool bIsCrossHairVisible;
 	bool bIsInSlowMotion;
 };
+
