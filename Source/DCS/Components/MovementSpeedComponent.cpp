@@ -32,3 +32,8 @@ void UMovementSpeedComponent::TickComponent(float DeltaTime, ELevelTick TickType
 	// ...
 }
 
+void UMovementSpeedComponent::ToggleState()
+{
+	// TODO: fill function
+}
+

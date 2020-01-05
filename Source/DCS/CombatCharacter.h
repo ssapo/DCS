@@ -78,13 +78,23 @@ private:
 	void CreateHUD();
 	void CreateKeyBindings();
 	void CreateInGameWidget(); 
-
 	void InitializeComponents();
 
 	void UpdateAimAlpha();
-	void ShowKeyBindings();
-	void HideKeyBindings();
 	void SetTimerChecker();
+
+	void OnRollKeyPressed();
+	void OnJumpKeyPressed();
+	void OnToggleKeyPressed();
+	void OnSprintKeyPressed();
+	void OnSprintKeyReleased();
+
+	void OnHorizontalLook(float InAxisValue);
+	void OnVerticalLook(float InAxisValue);
+
+	void OnShowKeyBindings();
+	void OnHideKeyBindings();
+	void SetSprint(bool bActivate);
 
 	FORCEINLINE UDCSWidget* ShowWidget(EWidgetID InType) const;
 

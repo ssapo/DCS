@@ -23,7 +23,7 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-		
 public:
 	void Initialize(const UArrowComponent& Arrow);
+	void FindTargetWithAxisInput(float InAxisValue);
 };

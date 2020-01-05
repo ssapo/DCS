@@ -30,6 +30,11 @@ void UDynamicTargetingComponent::TickComponent(float DeltaTime, ELevelTick TickT
 
 void UDynamicTargetingComponent::Initialize(const UArrowComponent& Arrow)
 {
+	// TODO: fill function
+}
 
+void UDynamicTargetingComponent::FindTargetWithAxisInput(float InAxisValue)
+{
+	// TODO: fill function
 }
 

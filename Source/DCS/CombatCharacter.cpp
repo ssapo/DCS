@@ -35,6 +35,7 @@
 #include "TimerManager.h"
 #include "Components/CapsuleComponent.h"
 #include "DCSLib.h"
+#include "DCS.h"
 
 ACombatCharacter::ACombatCharacter()
 {
@@ -43,8 +44,6 @@ ACombatCharacter::ACombatCharacter()
 	CtorInitialize();
 
 	PrimaryActorTick.bCanEverTick = true;
-
-	
 }
 
 void ACombatCharacter::CtorComponents()
@@ -162,6 +161,7 @@ void ACombatCharacter::SetTimerChecker()
 {
 	FTimerManager& TimerMangaer = GetWorld()->GetTimerManager();
 
+	// TODO: fill function
 	auto CheckForInteractable = [this]() {
 		FVector Start = GetActorLocation();
 		FVector End = GetActorForwardVector() * 100.0f + Start;
@@ -195,6 +195,69 @@ void ACombatCharacter::SetTimerChecker()
 	TimerMangaer.SetTimer(CheckTimer, CheckForInteractable, 0.1f, true);
 }
 
+void ACombatCharacter::OnRollKeyPressed()
+{
+	DLOG_S(Log);
+
+	if (WP_InputBuffer.IsValid())
+	{
+		WP_InputBuffer->UpdateKey(EInputBufferKey::Roll);
+	}
+}
+
+void ACombatCharacter::OnJumpKeyPressed()
+{
+	DLOG_S(Log);
+
+	if (WP_InputBuffer.IsValid())
+	{
+		WP_InputBuffer->UpdateKey(EInputBufferKey::Jump);
+	}
+
+}
+
+void ACombatCharacter::OnToggleKeyPressed()
+{
+	DLOG_S(Log);
+
+	if (WP_MovementSpeed.IsValid())
+	{
+		WP_MovementSpeed->ToggleState();
+	}
+}
+
+void ACombatCharacter::OnSprintKeyPressed()
+{
+	DLOG_S(Log);
+
+	SetSprint(true);
+}
+
+void ACombatCharacter::OnSprintKeyReleased()
+{
+	DLOG_S(Log);
+
+	SetSprint(false);
+}
+
+void ACombatCharacter::OnHorizontalLook(float InAxisValue)
+{
+	DLOG_S(Log);
+
+	AddControllerYawInput(HorizontalLockRate * InAxisValue * UDCSLib::GetDTS(this));
+	if (WP_DynamicTargeting.IsValid())
+	{
+		WP_DynamicTargeting->FindTargetWithAxisInput(InAxisValue);
+	}
+}
+
+void ACombatCharacter::OnVerticalLook(float InAxisValue)
+{
+	DLOG_S(Log);
+
+	AddControllerPitchInput(VerticalLookRate * InAxisValue * UDCSLib::GetDTS(this));
+}
+
 void ACombatCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
@@ -214,8 +277,8 @@ void ACombatCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	PlayerInputComponent->BindAction(EVENT_KEYBIND, IE_Pressed, this, &ACombatCharacter::ShowKeyBindings);
-	PlayerInputComponent->BindAction(EVENT_KEYBIND, IE_Released, this, &ACombatCharacter::HideKeyBindings);
+	PlayerInputComponent->BindAction(EVENT_KEYBIND, IE_Pressed, this, &ACombatCharacter::OnShowKeyBindings);
+	PlayerInputComponent->BindAction(EVENT_KEYBIND, IE_Released, this, &ACombatCharacter::OnHideKeyBindings);
 }
 
 // start interfaces
@@ -307,9 +370,10 @@ void ACombatCharacter::CreateInGameWidget()
 
 void ACombatCharacter::UpdateAimAlpha()
 {
+	// TODO: fill function
 }
 
-void ACombatCharacter::ShowKeyBindings()
+void ACombatCharacter::OnShowKeyBindings()
 {
 	if (WP_KeyBindingsWidget.IsValid())
 	{
@@ -317,7 +381,7 @@ void ACombatCharacter::ShowKeyBindings()
 	}
 }
 
-void ACombatCharacter::HideKeyBindings()
+void ACombatCharacter::OnHideKeyBindings()
 {
 	if (WP_KeyBindingsWidget.IsValid())
 	{
@@ -325,7 +389,13 @@ void ACombatCharacter::HideKeyBindings()
 	}
 }
 
+void ACombatCharacter::SetSprint(bool bActivate)
+{
+	// TODO: fill function
+}
+
 FORCEINLINE UDCSWidget* ACombatCharacter::ShowWidget(EWidgetID InType) const
 {
 	return UWidgetSystem::Get()->ShowWidget(InType);
 }
+

@@ -3,8 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/ActorComponent.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/GameplayStatics.h"
 #include "WidgetBlueprintLibrary.h"
+#include "WidgetLayoutLibrary.h"
+#include "CanvasPanelSlot.h"
 #include "UserWidget.h"
 #include "DCSLib.generated.h"
 
@@ -34,17 +39,19 @@ public:
 	template <typename T = UUserWidget>
 	static FORCEINLINE TArray<T*> GetWidgets(UObject* WCO);
 
-	static bool IsValidClass(UClass* InClass);
+	static FORCEINLINE bool IsValidClass(UClass* InClass);
 
-	static UCanvasPanelSlot* SlotAsCanvasSlot(UWidget* InWidget);
+	static FORCEINLINE UCanvasPanelSlot* SlotAsCanvasSlot(UWidget* InWidget);
 
-	static FVector2D GetViewportSize(UObject* WCO);
+	static FORCEINLINE FVector2D GetViewportSize(UObject* WCO);
 
-	static bool CapsuleTraceForObjects(UObject* WCO, const FVector Start, const FVector End,
+	static FORCEINLINE bool CapsuleTraceForObjects(UObject* WCO, const FVector Start, const FVector End,
 		float Radius, float HalfHeight, const TArray<TEnumAsByte<EObjectTypeQuery>>& ObjectTypes, 
 		bool bTraceComplex, const TArray<AActor*>& Ignores, EDrawDebugTrace::Type DrawDebugType, 
 		OUT FHitResult& OutHit, bool bIgnoreSelf, float DrawTime = 5.0f,
 		FLinearColor TraceColor = FLinearColor::Red, FLinearColor TraceHitColor = FLinearColor::Green);
+
+	FORCEINLINE static float GetDTS(const UObject* WCO);
 };
 
 template <typename T /*= UActorComponent*/>
@@ -101,4 +108,32 @@ FORCEINLINE TArray<T*> UDCSLib::GetWidgets(UObject* WCO)
 	}
 
 	return ReturnWidgets;
+}
+
+FORCEINLINE bool UDCSLib::IsValidClass(UClass* InClass)
+{
+	return UKismetSystemLibrary::IsValidClass(InClass);
+}
+
+
+FORCEINLINE UCanvasPanelSlot* UDCSLib::SlotAsCanvasSlot(UWidget* InWidget)
+{
+	return UWidgetLayoutLibrary::SlotAsCanvasSlot(InWidget);
+}
+
+FORCEINLINE FVector2D UDCSLib::GetViewportSize(UObject* WCO)
+{
+	return UWidgetLayoutLibrary::GetViewportSize(WCO);
+}
+
+FORCEINLINE bool UDCSLib::CapsuleTraceForObjects(UObject* WCO, const FVector Start, const FVector End, float Radius, float HalfHeight, const TArray<TEnumAsByte<EObjectTypeQuery>>& ObjectTypes, bool bTraceComplex, const TArray<AActor*>& Ignores, EDrawDebugTrace::Type DrawDebugType, OUT FHitResult& OutHit, bool bIgnoreSelf, float DrawTime /*= 5.0f*/, FLinearColor TraceColor /*= FLinearColor::Red*/, FLinearColor TraceHitColor /*= FLinearColor::Green*/)
+{
+	return  UKismetSystemLibrary::CapsuleTraceSingleForObjects(
+		WCO, Start, End, Radius, HalfHeight, ObjectTypes, bTraceComplex, Ignores,
+		DrawDebugType, OutHit, bIgnoreSelf, TraceColor, TraceHitColor, DrawTime);
+}
+
+FORCEINLINE float UDCSLib::GetDTS(const UObject* WCO)
+{
+	return UGameplayStatics::GetWorldDeltaSeconds(WCO);
 }

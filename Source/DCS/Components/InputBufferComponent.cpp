@@ -1,6 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "InputBufferComponent.h"
 
 // Sets default values for this component's properties
@@ -30,5 +27,10 @@ void UInputBufferComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
+}
+
+void UInputBufferComponent::UpdateKey(EInputBufferKey InputKey)
+{
+	// TODO: fill function
 }
 
