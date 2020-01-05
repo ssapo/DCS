@@ -9,4 +9,6 @@ class DCS_API UInGameWidget : public UDCSWidget
 {
 	GENERATED_BODY()
 	
+public:
+	void UpdateWidget();
 };

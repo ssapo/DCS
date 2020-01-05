@@ -18,6 +18,10 @@ void UEquipmentComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	Super::EndPlay(EndPlayReason);
 }
 
+void UEquipmentComponent::Initialize()
+{
+}
+
 int32 UEquipmentComponent::GetEquipmentSlotsIndex(EItem InType) const
 {
 	int32 SlotsNum = EquipmentSlots.Num();

@@ -24,5 +24,5 @@ class DCS_API IItemHasMontage
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	virtual UAnimMontage* GetAnimMontage() const abstract;
+	virtual UAnimMontage* GetUseMontage() const abstract;
 };

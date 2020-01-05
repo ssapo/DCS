@@ -32,3 +32,7 @@ void UStatsManagerComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	// ...
 }
 
+void UStatsManagerComponent::Initialize()
+{
+}
+

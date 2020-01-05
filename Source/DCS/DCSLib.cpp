@@ -18,7 +18,14 @@ UCanvasPanelSlot* UDCSLib::SlotAsCanvasSlot(UWidget* InWidget)
 	return UWidgetLayoutLibrary::SlotAsCanvasSlot(InWidget);
 }
 
-FVector2D UDCSLib::GetViewportSize(UObject* WowldContextObject)
+FVector2D UDCSLib::GetViewportSize(UObject* WCO)
 {
-	return UWidgetLayoutLibrary::GetViewportSize(WowldContextObject);
+	return UWidgetLayoutLibrary::GetViewportSize(WCO);
+}
+
+bool UDCSLib::CapsuleTraceForObjects(UObject* WCO, const FVector Start, const FVector End, float Radius, float HalfHeight, const TArray<TEnumAsByte<EObjectTypeQuery>>& ObjectTypes, bool bTraceComplex, const TArray<AActor*>& Ignores, EDrawDebugTrace::Type DrawDebugType, OUT FHitResult& OutHit, bool bIgnoreSelf, float DrawTime /*= 5.0f*/, FLinearColor TraceColor /*= FLinearColor::Red*/, FLinearColor TraceHitColor /*= FLinearColor::Green*/)
+{
+	return  UKismetSystemLibrary::CapsuleTraceSingleForObjects(
+		WCO, Start, End, Radius, HalfHeight, ObjectTypes, bTraceComplex, Ignores,
+		DrawDebugType, OutHit, bIgnoreSelf, TraceColor, TraceHitColor, DrawTime);
 }

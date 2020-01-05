@@ -14,6 +14,7 @@ class UCanvasPanelSlot;
 class UWidget;
 class UImage;
 class UUserWidget;
+namespace EDrawDebugTrace { enum Type; }
 
 UCLASS()
 class DCS_API UDCSLib : public UBlueprintFunctionLibrary
@@ -22,37 +23,43 @@ class DCS_API UDCSLib : public UBlueprintFunctionLibrary
 	
 public:
 	template <typename T = UActorComponent>
-	static T* GetComponent(APawn * InClass);
+	static FORCEINLINE T* GetComponent(APawn* Owner);
 	
-	template <typename T = UUserWidget>
-	static T* GetComponent(UUserWidget* WowldContextObject);
+	template <typename T = UActorComponent>
+	static FORCEINLINE T * GetComponent(const APawn& Owner);
 
-	template <typename T =  UUserWidget>
-	static TArray<T*> GetWidgets(UObject * WowldContextObject);
+	template <typename T = UActorComponent>
+	static FORCEINLINE T* GetComponent(UUserWidget* WCO);
+
+	template <typename T = UUserWidget>
+	static FORCEINLINE TArray<T*> GetWidgets(UObject* WCO);
 
 	static bool IsValidClass(UClass* InClass);
 
 	static UCanvasPanelSlot* SlotAsCanvasSlot(UWidget* InWidget);
 
-	static FVector2D GetViewportSize(UObject* WowldContextObject);
+	static FVector2D GetViewportSize(UObject* WCO);
 
-private:
-	static TArray<UUserWidget*> GetWidgets_Impl(UObject* WowldContextObject);
+	static bool CapsuleTraceForObjects(UObject* WCO, const FVector Start, const FVector End,
+		float Radius, float HalfHeight, const TArray<TEnumAsByte<EObjectTypeQuery>>& ObjectTypes, 
+		bool bTraceComplex, const TArray<AActor*>& Ignores, EDrawDebugTrace::Type DrawDebugType, 
+		OUT FHitResult& OutHit, bool bIgnoreSelf, float DrawTime = 5.0f,
+		FLinearColor TraceColor = FLinearColor::Red, FLinearColor TraceHitColor = FLinearColor::Green);
 };
 
-template <typename T>
-T* UDCSLib::GetComponent(APawn* InPawn)
+template <typename T /*= UActorComponent*/>
+FORCEINLINE T* UDCSLib::GetComponent(APawn* Owner)
 {
-	if (InPawn)
+	if (Owner)
 	{
-		return Cast<T>(InPawn->GetComponentByClass(T::StaticClass()));
+		return Cast<T>(Owner->GetComponentByClass(T::StaticClass()));
 	}
 
 	return nullptr;
 }
 
-template <typename T>
-T* UDCSLib::GetComponent(UUserWidget* InUserWidget)
+template <typename T /*= UActorComponent*/>
+FORCEINLINE T* UDCSLib::GetComponent(UUserWidget* InUserWidget)
 {
 	if (InUserWidget)
 	{
@@ -62,19 +69,25 @@ T* UDCSLib::GetComponent(UUserWidget* InUserWidget)
 	return nullptr;
 }
 
+template <typename T /*= UActorComponent*/>
+FORCEINLINE T* UDCSLib::GetComponent(const APawn& Owner)
+{
+	return Cast<T>(Owner.GetComponentByClass(T::StaticClass()));
+}
+
 template <typename T>
-TArray<T*> UDCSLib::GetWidgets(UObject* WowldContextObject)
+FORCEINLINE TArray<T*> UDCSLib::GetWidgets(UObject* WCO)
 {
 	TArray<T*> ReturnWidgets;
 
-	if (WowldContextObject == nullptr)
+	if (WCO == nullptr)
 	{
-		ensureMsgf(WowldContextObject, TEXT("Context should not be null."));
+		ensureMsgf(WCO, TEXT("Context should not be null."));
 		return ReturnWidgets;
 	}
 
 	TArray<UUserWidget*> FoundWidgets;
-	UWidgetBlueprintLibrary::GetAllWidgetsOfClass(WowldContextObject, FoundWidgets, T::StaticClass());
+	UWidgetBlueprintLibrary::GetAllWidgetsOfClass(WCO, FoundWidgets, T::StaticClass());
 	
 	if (FoundWidgets.Num() > 0)
 	{

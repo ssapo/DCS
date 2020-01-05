@@ -1,6 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "DynamicTargetingComponent.h"
 
 // Sets default values for this component's properties
@@ -23,12 +20,16 @@ void UDynamicTargetingComponent::BeginPlay()
 	
 }
 
-
 // Called every frame
 void UDynamicTargetingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
+}
+
+void UDynamicTargetingComponent::Initialize(const UArrowComponent& Arrow)
+{
+
 }
 

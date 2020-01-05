@@ -23,36 +23,24 @@ void UInventoryItemWidget::NativeConstruct()
 
 	SetFocusedImage(false);
 
-	if (WP_EquipmentComponent.IsValid())
-	{
-		WP_EquipmentComponent->OnItemInSlotChanged.AddDynamic(this,
-			&UInventoryItemWidget::OnItemInSlotChanged);
-		WP_EquipmentComponent->OnActiveItemChanged.AddDynamic(this,
-			&UInventoryItemWidget::OnActiveItemChanged);
-	}
+	check(WP_EquipmentComponent.IsValid());
+	WP_EquipmentComponent->OnInSlotChanged().AddUObject(this, &UInventoryItemWidget::OnInItemSlotChanged);
+	WP_EquipmentComponent->OnActiveItemChanged().AddUObject(this, &UInventoryItemWidget::OnActiveItemChanged);
 
-	if (SlotButton)
-	{
-		SlotButton->OnClicked.AddDynamic(this, &UInventoryItemWidget::OnClickedSlotButton);
-		SlotButton->OnHovered.AddDynamic(this, &UInventoryItemWidget::OnHoveredSlotButton);
-	}
+	SlotButton->OnClicked.AddDynamic(this, &UInventoryItemWidget::OnClickedSlotButton);
+	SlotButton->OnHovered.AddDynamic(this, &UInventoryItemWidget::OnHoveredSlotButton);
 }
 
 void UInventoryItemWidget::NativeDestruct()
 {
 	Super::NativeDestruct();
 
-	if (WP_EquipmentComponent.IsValid())
-	{
-		WP_EquipmentComponent->OnItemInSlotChanged.RemoveAll(this);
-		WP_EquipmentComponent->OnActiveItemChanged.RemoveAll(this);
-	}
+	check(WP_EquipmentComponent.IsValid());
+	WP_EquipmentComponent->OnInSlotChanged().RemoveAll(this);
+	WP_EquipmentComponent->OnActiveItemChanged().RemoveAll(this);
 
-	if (SlotButton)
-	{
-		SlotButton->OnClicked.RemoveAll(this);
-		SlotButton->OnHovered.RemoveAll(this);
-	}
+	SlotButton->OnClicked.RemoveAll(this);
+	SlotButton->OnHovered.RemoveAll(this);
 }
 
 void UInventoryItemWidget::SetFocusedImage(bool InValue)
@@ -88,12 +76,12 @@ void UInventoryItemWidget::UpdateIsEquippedImage()
 	}
 }
 
-void UInventoryItemWidget::OnItemInSlotChanged()
+void UInventoryItemWidget::OnInItemSlotChanged(const FStoredItem& OldItem, const FStoredItem& NewItem, EItem InType, int32 InSlotIndex, int32 InActiveIndex)
 {
 
 }
 
-void UInventoryItemWidget::OnActiveItemChanged()
+void UInventoryItemWidget::OnActiveItemChanged(const FStoredItem& OldItem, const FStoredItem& NewItem, EItem InType, int32 InSlotIndex, int32 InActiveIndex)
 {
 
 }

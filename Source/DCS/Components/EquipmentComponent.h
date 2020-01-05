@@ -3,10 +3,8 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Structs.h"
+#include "DelegateCombinations.h"
 #include "EquipmentComponent.generated.h"
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnItemInSlotChanged);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnActiveItemChanged);
 
 class UInventoryComponent;
 class AGameMode;
@@ -22,6 +20,8 @@ public:
 	virtual void InitializeComponent() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
+	void Initialize();
+
 	FORCEINLINE TArray<FEquiopmentSlots> GetEquipmentSlots() const { return EquipmentSlots; }
 	FORCEINLINE bool IsInCombat() const { return bIsInCombat; }
 	FORCEINLINE EItem GetSelectedMainHandType() const { return SelectedMainHandType; }
@@ -34,9 +34,34 @@ private:
 	int32 GetEquipmentSlotsIndex(EItem InType) const;
 	bool IsSlotIndexValid(EItem InType, int32 Index) const;
 
+	// start Declare Events.
 public:
-	FOnItemInSlotChanged OnItemInSlotChanged;
-	FOnActiveItemChanged OnActiveItemChanged;
+	DECLARE_EVENT_FiveParams(UEquipmentComponent, FOnItemInSlotChanged, const FStoredItem&, const FStoredItem&, EItem, int32, int32);
+	FOnItemInSlotChanged& OnInSlotChanged() { return ItemInSlotChangedEvent; }
+	
+	DECLARE_EVENT_FiveParams(UEquipmentComponent, FOnActiveItemChanged, const FStoredItem&, const FStoredItem&, EItem, int32, int32);
+	FOnActiveItemChanged& OnActiveItemChanged() { return ActiveItemChangedEvent; }
+
+	DECLARE_EVENT_OneParam(UEquipmentComponent, FOnCombatChanged, bool);
+	FOnCombatChanged& OnCombatChanged() { return CombatChangedEnvet; }
+
+	DECLARE_EVENT_OneParam(UEquipmentComponent, FOnWeaponTypeChanged, EWeapon);
+	FOnWeaponTypeChanged& OnWeaponTypeChanged() { return WeaponTypeChangedEvent; }
+
+	DECLARE_EVENT_OneParam(UEquipmentComponent, FOnMainHandTypeChanged, EItem);
+	FOnMainHandTypeChanged& OnMainHandTypeChanged() { return MainHandTypeChangedEvent; }
+
+	DECLARE_EVENT_OneParam(UEquipmentComponent, FOnCombatTypeChanged, ECombat);
+	FOnCombatTypeChanged& OnCombatTypeChanged() { return CombatTypeChangedEvent; }
+
+private:
+	FOnWeaponTypeChanged WeaponTypeChangedEvent;
+	FOnMainHandTypeChanged MainHandTypeChangedEvent;
+	FOnItemInSlotChanged ItemInSlotChangedEvent;
+	FOnActiveItemChanged ActiveItemChangedEvent;
+	FOnCombatChanged CombatChangedEnvet;
+	FOnCombatTypeChanged CombatTypeChangedEvent;
+	// end Declare Events.
 
 private:
 	TWeakObjectPtr<UInventoryComponent> InventoryComponent;

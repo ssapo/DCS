@@ -31,11 +31,8 @@ protected:
 	void UpdateIsEquippedImage();
 
 private:
-	UFUNCTION()
-		void OnItemInSlotChanged();
-
-	UFUNCTION()
-		void OnActiveItemChanged();
+	void OnInItemSlotChanged(const FStoredItem& OldItem, const FStoredItem& NewItem, EItem InType, int32 InSlotIndex, int32 InActiveIndex);
+	void OnActiveItemChanged(const FStoredItem& OldItem, const FStoredItem& NewItem, EItem InType, int32 InSlotIndex, int32 InActiveIndex);
 
 	UFUNCTION()
 		void OnClickedSlotButton();

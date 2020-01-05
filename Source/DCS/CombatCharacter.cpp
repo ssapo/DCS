@@ -31,6 +31,10 @@
 #include "DataTables.h"
 #include "Widgets/KeybindingsWidget.h"
 #include "Widgets/InGameWidget.h"
+#include "Engine/World.h"
+#include "TimerManager.h"
+#include "Components/CapsuleComponent.h"
+#include "DCSLib.h"
 
 ACombatCharacter::ACombatCharacter()
 {
@@ -39,6 +43,151 @@ ACombatCharacter::ACombatCharacter()
 	CtorInitialize();
 
 	PrimaryActorTick.bCanEverTick = true;
+}
+
+void ACombatCharacter::CtorComponents()
+{
+	USkeletalMeshComponent* MeshComponent = GetMesh();
+	ensure(MeshComponent != nullptr);
+
+	WP_CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
+	ensure(WP_CameraBoom.IsValid() == true);
+	WP_CameraBoom->SetupAttachment(RootComponent);
+
+	WP_TargetingArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("TargetingArrow"));
+	ensure(WP_TargetingArrow.IsValid() == true);
+	WP_TargetingArrow->SetupAttachment(RootComponent);
+
+	WP_FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
+	ensure(WP_FollowCamera.IsValid() == true);
+	WP_FollowCamera->SetupAttachment(WP_CameraBoom.Get());
+
+	WP_EffectsAudio = CreateDefaultSubobject<UAudioComponent>(TEXT("EffectsAudio"));
+	ensure(WP_EffectsAudio.IsValid() == true);
+	WP_EffectsAudio->SetupAttachment(MeshComponent);
+
+	WP_ArrowSpawnLocation = CreateDefaultSubobject<USceneComponent>(TEXT("ArrowSpawnLocation"));
+	ensure(WP_ArrowSpawnLocation.IsValid() == true);
+	WP_ArrowSpawnLocation->SetupAttachment(MeshComponent);
+
+	WP_StateManager = CreateDefaultSubobject<UStateManagerComponent>(TEXT("StateManager"));
+	ensure(WP_StateManager.IsValid() == true);
+
+	WP_InputBuffer = CreateDefaultSubobject<UInputBufferComponent>(TEXT("InputBuffer"));
+	ensure(WP_InputBuffer.IsValid() == true);
+
+	WP_MeleeCollisionHandler = CreateDefaultSubobject<UCollisionHandlerComponent>(TEXT("MeleeCollisionHandler"));
+	ensure(WP_MeleeCollisionHandler.IsValid() == true);
+
+	WP_ExtendedHealth = CreateDefaultSubobject<UExtendedStatComponent>(TEXT("ExtendedHealth"));
+	ensure(WP_ExtendedHealth.IsValid() == true);
+
+	WP_ExtendedStamina = CreateDefaultSubobject<UExtendedStatComponent>(TEXT("ExtendedStamina"));
+	ensure(WP_ExtendedStamina.IsValid() == true);
+
+	WP_MontagesManager = CreateDefaultSubobject<UMontageManagerComponent>(TEXT("MontagesManager"));
+	ensure(WP_MontagesManager.IsValid() == true);
+
+	WP_Effects = CreateDefaultSubobject<UEffectsComponent>(TEXT("Effects"));
+	ensure(WP_Effects.IsValid() == true);
+
+	WP_MovementSpeed = CreateDefaultSubobject<UMovementSpeedComponent>(TEXT("MovementSpeed"));
+	ensure(WP_MovementSpeed.IsValid() == true);
+
+	WP_StatsManager = CreateDefaultSubobject<UStatsManagerComponent>(TEXT("StatsManager"));
+	ensure(WP_StatsManager.IsValid() == true);
+
+	WP_Dissolve = CreateDefaultSubobject<UDissolveComponent>(TEXT("Dissolve"));
+	ensure(WP_Dissolve.IsValid() == true);
+
+	WP_Inventory = CreateDefaultSubobject<UInventoryComponent>(TEXT("Inventory"));
+	ensure(WP_Inventory.IsValid() == true);
+
+	WP_Equipment = CreateDefaultSubobject<UEquipmentComponent>(TEXT("Equipment"));
+	ensure(WP_Equipment.IsValid() == true);
+
+	WP_Rotating = CreateDefaultSubobject<URotatingComponent>(TEXT("Rotating"));
+	ensure(WP_Rotating.IsValid() == true);
+}
+
+void ACombatCharacter::CtorInitialize()
+{
+	MeleeAttackType = EMeleeAttack::None;
+	ReceivedHitDirection = EDirection::None;
+
+	HorizontalLockRate = 45.0f;
+	VerticalLookRate = 45.0f;
+	RollStaminaCost = 25.0f;
+	SprintStaminaCost = 0.5f;
+
+	SlowMotionTimeDuration = 0.4f;
+	SlowMotionStaminaCost = 1.0f;
+	ZoomCameraArmLength = 150.0f;
+
+	WP_CameraBoom->TargetArmLength = InitialCameraArmLength;
+	WP_CameraBoom->CameraLagSpeed = InitialCameraLagSpeed;
+}
+
+void ACombatCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	InitializeComponents();
+
+	CreateHUD();
+
+	SetTimerChecker();
+}
+
+void ACombatCharacter::InitializeComponents()
+{
+	WP_DynamicTargeting->Initialize(*WP_TargetingArrow);
+	WP_StatsManager->Initialize();
+	WP_Equipment->Initialize();
+}
+
+void ACombatCharacter::CreateHUD()
+{
+	CreateInGameWidget();
+
+	CreateKeyBindings();
+}
+
+void ACombatCharacter::SetTimerChecker()
+{
+	FTimerManager& TimerMangaer = GetWorld()->GetTimerManager();
+
+	auto CheckForInteractable = [this]() {
+		FVector Start = GetActorLocation();
+		FVector End = GetActorForwardVector() * 100.0f + Start;
+
+		float HalfHeight = GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
+
+		const TArray<TEnumAsByte<EObjectTypeQuery>> Types{ EObjectTypeQuery::ObjectTypeQuery1 };
+		const TArray<AActor*> Ignores;
+		EDrawDebugTrace::Type Debug = EDrawDebugTrace::None;
+
+		FHitResult Result;
+		if (UDCSLib::CapsuleTraceForObjects(this, Start, End, 20.0f, HalfHeight, Types, false, Ignores, Debug, Result, true))
+		{
+			auto WPActor = Result.Actor;
+			if (WPActor.IsValid() && WP_InteractionActor != WPActor)
+			{
+				WP_InteractionActor = WPActor;
+
+				//WP_InGameWidget->WBinter
+
+				WP_InGameWidget->UpdateWidget();
+			}
+		}
+		else
+		{
+			WP_InGameWidget->UpdateWidget();
+		}
+		
+	};
+
+	TimerMangaer.SetTimer(CheckTimer, CheckForInteractable, 0.1f, true);
 }
 
 void ACombatCharacter::Tick(float DeltaTime)
@@ -56,107 +205,75 @@ void ACombatCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAction(EVENT_KEYBIND, IE_Released, this, &ACombatCharacter::HideKeyBindings);
 }
 
-void ACombatCharacter::BeginPlay()
+// start interfaces
+void ACombatCharacter::Interact(AActor* Actor)
 {
-	Super::BeginPlay();
-
-	CreateHUD();
+	// TODO: fill function
 }
 
-void ACombatCharacter::CtorComponents()
+void ACombatCharacter::OpenedUI()
 {
-	USkeletalMeshComponent* MeshComponent = GetMesh();
-	ensure(MeshComponent != nullptr);
-
-	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
-	ensure(CameraBoom.IsValid() == true);
-	CameraBoom->SetupAttachment(RootComponent);
-
-	TargetingArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("TargetingArrow"));
-	ensure(TargetingArrow.IsValid() == true);
-	TargetingArrow->SetupAttachment(RootComponent);
-
-	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
-	ensure(FollowCamera.IsValid() == true);
-	FollowCamera->SetupAttachment(CameraBoom.Get());
-
-	EffectsAudio = CreateDefaultSubobject<UAudioComponent>(TEXT("EffectsAudio"));
-	ensure(EffectsAudio.IsValid() == true);
-	EffectsAudio->SetupAttachment(MeshComponent);
-
-	ArrowSpawnLocation = CreateDefaultSubobject<USceneComponent>(TEXT("ArrowSpawnLocation"));
-	ensure(ArrowSpawnLocation.IsValid() == true);
-	ArrowSpawnLocation->SetupAttachment(MeshComponent);
-
-	StateManager = CreateDefaultSubobject<UStateManagerComponent>(TEXT("StateManager"));
-	ensure(StateManager.IsValid() == true);
-
-	InputBuffer = CreateDefaultSubobject<UInputBufferComponent>(TEXT("InputBuffer"));
-	ensure(InputBuffer.IsValid() == true);
-
-	MeleeCollisionHandler = CreateDefaultSubobject<UCollisionHandlerComponent>(TEXT("MeleeCollisionHandler"));
-	ensure(MeleeCollisionHandler.IsValid() == true);
-
-	ExtendedHealth = CreateDefaultSubobject<UExtendedStatComponent>(TEXT("ExtendedHealth"));
-	ensure(ExtendedHealth.IsValid() == true);
-
-	ExtendedStamina = CreateDefaultSubobject<UExtendedStatComponent>(TEXT("ExtendedStamina"));
-	ensure(ExtendedStamina.IsValid() == true);
-
-	MontagesManager = CreateDefaultSubobject<UMontageManagerComponent>(TEXT("MontagesManager"));
-	ensure(MontagesManager.IsValid() == true);
-
-	Effects = CreateDefaultSubobject<UEffectsComponent>(TEXT("Effects"));
-	ensure(Effects.IsValid() == true);
-
-	MovementSpeed = CreateDefaultSubobject<UMovementSpeedComponent>(TEXT("MovementSpeed"));
-	ensure(MovementSpeed.IsValid() == true);
-
-	StatsManager = CreateDefaultSubobject<UStatsManagerComponent>(TEXT("StatsManager"));
-	ensure(StatsManager.IsValid() == true);
-
-	Dissolve = CreateDefaultSubobject<UDissolveComponent>(TEXT("Dissolve"));
-	ensure(Dissolve.IsValid() == true);
-
-	Inventory = CreateDefaultSubobject<UInventoryComponent>(TEXT("Inventory"));
-	ensure(Inventory.IsValid() == true);
-
-	Equipment = CreateDefaultSubobject<UEquipmentComponent>(TEXT("Equipment"));
-	ensure(Equipment.IsValid() == true);
-
-	Rotating = CreateDefaultSubobject<URotatingComponent>(TEXT("Rotating"));
-	ensure(Rotating.IsValid() == true);
+	// TODO: fill function
 }
 
-void ACombatCharacter::CtorInitialize()
+void ACombatCharacter::ClosedUI()
 {
-	MeleeAttackType = EMeleeAttack::None;
-	ReceivedHitDirection = EDirection::None;
-
-	HorizontalLockRate = 45.0f;
-	VerticalLookRate = 45.0f;
-	RollStaminaCost = 25.0f;
-	SprintStaminaCost = 0.5f;
-
-	SlowMotionTimeDuration = 0.4f;
-	SlowMotionStaminaCost = 1.0f;
-	ZoomCameraArmLength = 150.0f;
-
-	CameraBoom->TargetArmLength = InitialCameraArmLength;
-	CameraBoom->CameraLagSpeed = InitialCameraLagSpeed;
+	// TODO: fill function
 }
 
-void ACombatCharacter::CreateHUD()
+EAttackResult ACombatCharacter::TakeDamage(const FHitData& HitData)
 {
-	CreateInGameWidget();
-
-	CreateKeyBindings();
+	// TODO: fill function
+	return EAttackResult::None;
 }
 
-void ACombatCharacter::UpdateAimAlpha()
+FName ACombatCharacter::GetInteractionMessage() const
 {
-
+	// TODO: fill function
+	return FName();
 }
+
+FName ACombatCharacter::GetHeadSocket() const
+{
+	// TODO: fill function
+	return FName();
+}
+
+FName ACombatCharacter::GetBowStringSocketName() const
+{
+	// TODO: fill function
+	return FName();
+}
+
+FRotator ACombatCharacter::GetDesiredRotation() const
+{
+	// TODO: fill function
+	return FRotator();
+}
+
+float ACombatCharacter::GetAimAlpha() const
+{
+	// TODO: fill function
+	return 0.0f;
+}
+
+bool ACombatCharacter::IsAlive() const
+{
+	// TODO: fill function
+	return true;
+}
+
+bool ACombatCharacter::CanEffectBeApplied(EEffect InType, AActor* Actor) const
+{
+	// TODO: fill function
+	return true;
+}
+
+bool ACombatCharacter::DoesHoldBowString()
+{
+	return true;
+}
+// end interfaces
 
 void ACombatCharacter::CreateKeyBindings()
 {
@@ -173,6 +290,10 @@ void ACombatCharacter::CreateInGameWidget()
 	{
 		WP_InGameWidget = NewWidget;
 	}
+}
+
+void ACombatCharacter::UpdateAimAlpha()
+{
 }
 
 void ACombatCharacter::ShowKeyBindings()

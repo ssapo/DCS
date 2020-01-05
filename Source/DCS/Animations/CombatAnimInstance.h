@@ -1,19 +1,15 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Structs.h"
 #include "Animation/AnimInstance.h"
-#include "Enumerations.h"
 #include "WeakObjectPtrTemplates.h"
 #include "CombatAnimInstance.generated.h"
 
 class ACombatCharacter;
 class UEquipmentComponent;
+struct FStoredItem;
 
-/**
- * 
- */
 UCLASS()
 class DCS_API UCombatAnimInstance : public UAnimInstance
 {
@@ -22,11 +18,15 @@ class DCS_API UCombatAnimInstance : public UAnimInstance
 public:
 	virtual void NativeBeginPlay() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
-	
+	virtual void BeginDestroy() override;
+
 private:
+	void OnActiveItemChanged(const FStoredItem& Old, const FStoredItem& New, EItem InType, int32 SlotIndex, int32 ActiveIndex);
+
 	void UpdateLookAtValues();
 	void UpdateLeanAmount();
 	void UpdateAimOffsetAlpha();
+	void UpdateHandItemsInfo();
 
 	void StoreCharacterInfo(const ACombatCharacter& InCharacterRef);
 

@@ -2,10 +2,43 @@
 
 
 #include "CombatAnimInstance.h"
+#include "CombatCharacter.h"
+#include "DCSLib.h"
+#include "Components/EquipmentComponent.h"
 
 void UCombatAnimInstance::NativeBeginPlay()
 {
 	Super::NativeBeginPlay();
+
+	WP_Character = Cast<ACombatCharacter>(TryGetPawnOwner());
+	check(WP_Character.IsValid());
+
+	UEquipmentComponent* EquipComp = UDCSLib::GetComponent<UEquipmentComponent>(*WP_Character);
+	check(EquipComp != nullptr);
+
+	EquipComp->OnCombatChanged().AddWeakLambda(this,
+		[=](bool IsCombat) { IsInCombat = IsCombat; });
+	EquipComp->OnCombatTypeChanged().AddWeakLambda(this,
+		[=](ECombat InType) { CombatType = InType; });
+	EquipComp->OnMainHandTypeChanged().AddWeakLambda(this,
+		[=](EItem InType) { UpdateHandItemsInfo(); });
+	EquipComp->OnWeaponTypeChanged().AddWeakLambda(this,
+		[=](EWeapon InType) { WeaponType = InType; });
+
+	EquipComp->OnActiveItemChanged().AddUObject(this, &UCombatAnimInstance::OnActiveItemChanged);
+}
+
+void UCombatAnimInstance::BeginDestroy()
+{
+	check(WP_Character.IsValid());
+	UEquipmentComponent* EquipComp = UDCSLib::GetComponent<UEquipmentComponent>(*WP_Character);
+	check(EquipComp != nullptr);
+
+	EquipComp->OnCombatChanged().RemoveAll(this);
+	EquipComp->OnCombatTypeChanged().RemoveAll(this);
+	EquipComp->OnMainHandTypeChanged().RemoveAll(this);
+	EquipComp->OnWeaponTypeChanged().RemoveAll(this);
+	EquipComp->OnActiveItemChanged().RemoveAll(this);
 }
 
 void UCombatAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
@@ -24,6 +57,11 @@ void UCombatAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	UpdateAimOffsetAlpha();
 }
 
+void UCombatAnimInstance::OnActiveItemChanged(const FStoredItem& Old, const FStoredItem& New, EItem InType, int32 SlotIndex, int32 ActiveIndex)
+{
+	
+}
+
 void UCombatAnimInstance::UpdateLookAtValues()
 {
 
@@ -35,6 +73,11 @@ void UCombatAnimInstance::UpdateLeanAmount()
 }
 
 void UCombatAnimInstance::UpdateAimOffsetAlpha()
+{
+
+}
+
+void UCombatAnimInstance::UpdateHandItemsInfo()
 {
 
 }

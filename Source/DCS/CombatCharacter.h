@@ -3,6 +3,12 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Structs.h"
+#include "Interfaces/IsInteractable.h"
+#include "Interfaces/CanBeAttacked.h"
+#include "Interfaces/CanGetEffects.h"
+#include "Interfaces/CanDesiredRotating.h"
+#include "Interfaces/IsArcher.h"
+#include "Interfaces/CanOpenUI.h"
 #include "CombatCharacter.generated.h"
 
 class USpringArmComponent;
@@ -25,65 +31,87 @@ class UInputComponent;
 class UKeybindingsWidget;
 class UInGameWidget;
 class UDCSWidget;
+class UAudioComponent;
 enum class EWidgetID;
 
 UCLASS()
 class DCS_API ACombatCharacter : public ACharacter
+	, public IIsInteractable
+	, public ICanBeAttacked
+	, public ICanGetEffects
+	, public ICanDesiredRotating
+	, public IIsArcher
+	, public ICanOpenUI
 {
 	GENERATED_BODY()
-
-private:
-	constexpr static int32 ZOrder_InGame = 0;
-	constexpr static int32 ZOrder_KeyBindings = 1;
 
 public:
 	ACombatCharacter();
 
+protected:
+	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
-protected:
-	virtual void BeginPlay() override;
+	// start interfaces
+	void Interact(AActor* Actor) override;
+	void OpenedUI() override;
+	void ClosedUI() override;
+
+	EAttackResult TakeDamage(const FHitData& HitData) override;
+	FName GetInteractionMessage() const override;
+	FName GetHeadSocket() const override;
+	FName GetBowStringSocketName() const override;
+	
+	FRotator GetDesiredRotation() const override;
+	float GetAimAlpha() const override;
+
+	bool IsAlive() const override;
+	bool CanEffectBeApplied(EEffect InType, AActor* Actor) const override;
+	bool DoesHoldBowString() override;
+	// end interfaces
 
 private:
 	void CtorComponents();
-	void CtorInitialize();
+	void CtorInitialize(); 
 	void CreateHUD();
-	void UpdateAimAlpha();
-
 	void CreateKeyBindings();
-	void CreateInGameWidget();
+	void CreateInGameWidget(); 
 
+	void InitializeComponents();
+
+	void UpdateAimAlpha();
 	void ShowKeyBindings();
 	void HideKeyBindings();
+	void SetTimerChecker();
 
 	FORCEINLINE UDCSWidget* ShowWidget(EWidgetID InType) const;
 
 private:
-	TWeakObjectPtr<USpringArmComponent> CameraBoom;
-	TWeakObjectPtr<UCameraComponent> FollowCamera;
-	TWeakObjectPtr<UAudioComponent> EffectsAudio;
-	TWeakObjectPtr<UEffectsComponent> Effects;
-	TWeakObjectPtr<URotatingComponent> Rotating;
-	TWeakObjectPtr<UEquipmentComponent> Equipment;
-	TWeakObjectPtr<UInventoryComponent> Inventory;
-	TWeakObjectPtr<UDissolveComponent> Dissolve;
-	TWeakObjectPtr<UMovementSpeedComponent> MovementSpeed;
-	TWeakObjectPtr<UStatsManagerComponent> StatsManager;
-	TWeakObjectPtr<UMontageManagerComponent> MontagesManager;
-	TWeakObjectPtr<UStateManagerComponent> StateManager;
-	TWeakObjectPtr<UInputBufferComponent> InputBuffer;
-	TWeakObjectPtr<USceneComponent> ArrowSpawnLocation;
-	TWeakObjectPtr<UExtendedStatComponent> ExtendedStamina;
-	TWeakObjectPtr<UExtendedStatComponent> ExtendedHealth;
-	TWeakObjectPtr<UCollisionHandlerComponent> MeleeCollisionHandler;
-	TWeakObjectPtr<UArrowComponent> TargetingArrow;
-	TWeakObjectPtr<UDynamicTargetingComponent> DynamicTargeting;
+	TWeakObjectPtr<USpringArmComponent> WP_CameraBoom;
+	TWeakObjectPtr<UCameraComponent> WP_FollowCamera;
+	TWeakObjectPtr<UAudioComponent> WP_EffectsAudio;
+	TWeakObjectPtr<UEffectsComponent> WP_Effects;
+	TWeakObjectPtr<URotatingComponent> WP_Rotating;
+	TWeakObjectPtr<UEquipmentComponent> WP_Equipment;
+	TWeakObjectPtr<UInventoryComponent> WP_Inventory;
+	TWeakObjectPtr<UDissolveComponent> WP_Dissolve;
+	TWeakObjectPtr<UMovementSpeedComponent> WP_MovementSpeed;
+	TWeakObjectPtr<UStatsManagerComponent> WP_StatsManager;
+	TWeakObjectPtr<UMontageManagerComponent> WP_MontagesManager;
+	TWeakObjectPtr<UStateManagerComponent> WP_StateManager;
+	TWeakObjectPtr<UInputBufferComponent> WP_InputBuffer;
+	TWeakObjectPtr<USceneComponent> WP_ArrowSpawnLocation;
+	TWeakObjectPtr<UExtendedStatComponent> WP_ExtendedStamina;
+	TWeakObjectPtr<UExtendedStatComponent> WP_ExtendedHealth;
+	TWeakObjectPtr<UCollisionHandlerComponent> WP_MeleeCollisionHandler;
+	TWeakObjectPtr<UArrowComponent> WP_TargetingArrow;
+	TWeakObjectPtr<UDynamicTargetingComponent> WP_DynamicTargeting;
 
 	TWeakObjectPtr<UInGameWidget> WP_InGameWidget;
 	TWeakObjectPtr<UKeybindingsWidget> WP_KeyBindingsWidget;
-	TWeakObjectPtr<AActor> BackstabbedActor;
-	TWeakObjectPtr<AActor> InteractionActor;
+	TWeakObjectPtr<AActor> WP_BackstabbedActor;
+	TWeakObjectPtr<AActor> WP_InteractionActor;
 
 	TArray<FName> LeftHandCollisionSockets;
 	TArray<FName> RightHandCollisionSockets;
@@ -113,5 +141,7 @@ private:
 	bool bAutoZoom;
 	bool bIsCrossHairVisible;
 	bool bIsInSlowMotion;
+
+	FTimerHandle CheckTimer;
 };
 
