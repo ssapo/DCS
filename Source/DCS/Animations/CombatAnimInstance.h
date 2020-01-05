@@ -18,10 +18,12 @@ class DCS_API UCombatAnimInstance : public UAnimInstance
 public:
 	virtual void NativeBeginPlay() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
-	virtual void BeginDestroy() override;
-
+	
 private:
 	void OnActiveItemChanged(const FStoredItem& Old, const FStoredItem& New, EItem InType, int32 SlotIndex, int32 ActiveIndex);
+
+	void BindDelegate();
+	void UnBindDelegate();
 
 	void UpdateLookAtValues();
 	void UpdateLeanAmount();

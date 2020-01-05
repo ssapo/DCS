@@ -43,6 +43,8 @@ ACombatCharacter::ACombatCharacter()
 	CtorInitialize();
 
 	PrimaryActorTick.bCanEverTick = true;
+
+	
 }
 
 void ACombatCharacter::CtorComponents()
@@ -137,6 +139,9 @@ void ACombatCharacter::BeginPlay()
 	CreateHUD();
 
 	SetTimerChecker();
+
+	PostBeginPlayEvent.Broadcast();
+	PostBeginPlayEvent.Clear();
 }
 
 void ACombatCharacter::InitializeComponents()
@@ -188,6 +193,14 @@ void ACombatCharacter::SetTimerChecker()
 	};
 
 	TimerMangaer.SetTimer(CheckTimer, CheckForInteractable, 0.1f, true);
+}
+
+void ACombatCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	PostEndPlayEvent.Broadcast();
+	PostEndPlayEvent.Clear();
 }
 
 void ACombatCharacter::Tick(float DeltaTime)

@@ -50,6 +50,7 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
@@ -86,6 +87,19 @@ private:
 	void SetTimerChecker();
 
 	FORCEINLINE UDCSWidget* ShowWidget(EWidgetID InType) const;
+
+	// start Declare Events.
+public:
+	DECLARE_EVENT(UEquipmentComponent, FOnPostBeginPlay);
+	FOnPostBeginPlay& OnPostBeginPlay() { return PostBeginPlayEvent; }
+
+	DECLARE_EVENT(UEquipmentComponent, FOnPostEndPlay);
+	FOnPostEndPlay& OnPostEndPlay() { return PostEndPlayEvent; }
+
+private:
+	FOnPostBeginPlay PostBeginPlayEvent;
+	FOnPostEndPlay PostEndPlayEvent;
+	// end Declare Events.
 
 private:
 	TWeakObjectPtr<USpringArmComponent> WP_CameraBoom;

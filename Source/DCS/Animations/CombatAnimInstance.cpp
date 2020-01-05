@@ -6,13 +6,23 @@
 #include "DCSLib.h"
 #include "Components/EquipmentComponent.h"
 
+
 void UCombatAnimInstance::NativeBeginPlay()
 {
 	Super::NativeBeginPlay();
-
+	
 	WP_Character = Cast<ACombatCharacter>(TryGetPawnOwner());
 	check(WP_Character.IsValid());
 
+	WP_Character->OnPostBeginPlay().AddUObject(this, &UCombatAnimInstance::BindDelegate);
+	WP_Character->OnPostEndPlay().AddUObject(this, &UCombatAnimInstance::UnBindDelegate);
+
+	//BindDelegate();
+}
+
+void UCombatAnimInstance::BindDelegate()
+{
+	check(WP_Character.IsValid());
 	UEquipmentComponent* EquipComp = UDCSLib::GetComponent<UEquipmentComponent>(*WP_Character);
 	check(EquipComp != nullptr);
 
@@ -28,7 +38,7 @@ void UCombatAnimInstance::NativeBeginPlay()
 	EquipComp->OnActiveItemChanged().AddUObject(this, &UCombatAnimInstance::OnActiveItemChanged);
 }
 
-void UCombatAnimInstance::BeginDestroy()
+void UCombatAnimInstance::UnBindDelegate()
 {
 	check(WP_Character.IsValid());
 	UEquipmentComponent* EquipComp = UDCSLib::GetComponent<UEquipmentComponent>(*WP_Character);
