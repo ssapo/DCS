@@ -11,6 +11,7 @@
 #include "WidgetLayoutLibrary.h"
 #include "CanvasPanelSlot.h"
 #include "UserWidget.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "DCSLib.generated.h"
 
 class APawn;
@@ -51,7 +52,11 @@ public:
 		OUT FHitResult& OutHit, bool bIgnoreSelf, float DrawTime = 5.0f,
 		FLinearColor TraceColor = FLinearColor::Red, FLinearColor TraceHitColor = FLinearColor::Green);
 
-	FORCEINLINE static float GetDTS(const UObject* WCO);
+	static FORCEINLINE float GetDTS(const UObject* WCO);
+
+	static FORCEINLINE FVector GetForwardVector(FRotator InRot);
+
+	static FORCEINLINE FVector GetRightVector(FRotator InRot);
 };
 
 template <typename T /*= UActorComponent*/>
@@ -136,4 +141,14 @@ FORCEINLINE bool UDCSLib::CapsuleTraceForObjects(UObject* WCO, const FVector Sta
 FORCEINLINE float UDCSLib::GetDTS(const UObject* WCO)
 {
 	return UGameplayStatics::GetWorldDeltaSeconds(WCO);
+}
+
+FORCEINLINE FVector UDCSLib::GetForwardVector(FRotator InRot)
+{
+	return UKismetMathLibrary::GetForwardVector(InRot);
+}
+
+FORCEINLINE FVector UDCSLib::GetRightVector(FRotator InRot)
+{
+	return UKismetMathLibrary::GetRightVector(InRot);
 }

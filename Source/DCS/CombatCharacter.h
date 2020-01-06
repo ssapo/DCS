@@ -88,7 +88,9 @@ private:
 	void OnToggleKeyPressed();
 	void OnSprintKeyPressed();
 	void OnSprintKeyReleased();
-
+	
+	void OnMoveForward(float InAxisValue);
+	void OnMoveRight(float InAxisValue);
 	void OnHorizontalLook(float InAxisValue);
 	void OnVerticalLook(float InAxisValue);
 

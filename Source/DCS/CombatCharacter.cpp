@@ -240,6 +240,28 @@ void ACombatCharacter::OnSprintKeyReleased()
 	SetSprint(false);
 }
 
+void ACombatCharacter::OnMoveForward(float InAxisValue)
+{
+	DLOG_S(Log);
+
+	if (IsAlive())
+	{
+		FRotator Rot = FRotator(0.0f, 0.0f, GetControlRotation().Yaw);
+		AddMovementInput(UDCSLib::GetForwardVector(Rot), InAxisValue);
+	}
+}
+
+void ACombatCharacter::OnMoveRight(float InAxisValue)
+{
+	DLOG_S(Log);
+
+	if (IsAlive())
+	{
+		FRotator Rot = FRotator(0.0f, 0.0f, GetControlRotation().Yaw);
+		AddMovementInput(UDCSLib::GetRightVector(Rot), InAxisValue);
+	}
+}
+
 void ACombatCharacter::OnHorizontalLook(float InAxisValue)
 {
 	DLOG_S(Log);
@@ -275,10 +297,17 @@ void ACombatCharacter::Tick(float DeltaTime)
 
 void ACombatCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
+	check(PlayerInputComponent != nullptr);
+
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	PlayerInputComponent->BindAction(EVENT_KEYBIND, IE_Pressed, this, &ACombatCharacter::OnShowKeyBindings);
 	PlayerInputComponent->BindAction(EVENT_KEYBIND, IE_Released, this, &ACombatCharacter::OnHideKeyBindings);
+
+	PlayerInputComponent->BindAxis(EVENT_MOVEFORWARD, this,
+		&ACombatCharacter::OnMoveForward);
+	PlayerInputComponent->BindAxis(EVENT_MOVERIGHT, this,
+		&ACombatCharacter::OnMoveRight);
 }
 
 // start interfaces
