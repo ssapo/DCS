@@ -9,7 +9,8 @@
 
 UCombatAnimInstance::UCombatAnimInstance()
 {
-	CombatType = ECombat::Unarmed;
+	CombatType = ECombat::None;
+	WeaponType = EWeapon::None;
 
 	LocomotionRateScale = 1.0f;
 	BlockAlpha = 0.0f;
