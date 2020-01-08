@@ -19,6 +19,16 @@ public:
 	virtual void NativeBeginPlay() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 	
+protected:
+	UFUNCTION(BlueprintPure, BlueprintThreadSafe)
+		ECombat GetCombatType_BC() const { return CombatType; }
+
+	UFUNCTION(BlueprintPure, BlueprintThreadSafe)
+		float GetLeanAmount_BC() const { return LeanAmount; }
+
+	UFUNCTION(BlueprintPure, BlueprintThreadSafe)
+		float GetLeanOffset_BC() const { return LeanOffset; }
+
 private:
 	void OnActiveItemChanged(const FStoredItem& Old, const FStoredItem& New, EItem InType, int32 SlotIndex, int32 ActiveIndex);
 
@@ -51,6 +61,8 @@ private:
 	float MouseDeltaX;
 	float BlockAlpha;
 	float AimAlpha;
+	float LeanAmount;
+	float LeanOffset;
 
 	bool bIsInAir;
 	bool bIsInSlowMotion;
