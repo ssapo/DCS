@@ -39,8 +39,8 @@ enum class EItem : int8
 	Count					UMETA(Hidden)
 };
 
-UENUM()
-enum class EWeapon : int8
+UENUM(BlueprintType)
+enum class EWeapon : uint8
 {
 	None					UMETA(DisplayName = "None"),
 	Sword					UMETA(DisplayName = "Sword"),
@@ -125,10 +125,9 @@ enum class ECollisionPart : int8
 	Count					UMETA(Hidden)
 };
 
-UENUM()
-enum class ECombat : int8
+UENUM(BlueprintType)
+enum class ECombat : uint8
 {
-	None					UMETA(DisplayName = "None"),
 	Unarmed					UMETA(DisplayName = "Unarmed"),
 	Melee					UMETA(DisplayName = "Melee"),
 	Range					UMETA(DisplayName = "Range"),

@@ -7,6 +7,22 @@
 #include "Components/EquipmentComponent.h"
 
 
+UCombatAnimInstance::UCombatAnimInstance()
+{
+	CombatType = ECombat::Unarmed;
+
+	LocomotionRateScale = 1.0f;
+	BlockAlpha = 0.0f;
+	AimAlpha = 1.0f;
+	Speed = 0.0f;
+
+	LeanAmount = 0.0f;
+	LeanOffset = 10.0f;
+
+	IsInCombat = false;
+	IsShieldEquipped = false;
+}
+
 void UCombatAnimInstance::NativeBeginPlay()
 {
 	Super::NativeBeginPlay();
@@ -16,8 +32,7 @@ void UCombatAnimInstance::NativeBeginPlay()
 
 	WP_Character->OnPostBeginPlay().AddUObject(this, &UCombatAnimInstance::BindDelegate);
 	WP_Character->OnPostEndPlay().AddUObject(this, &UCombatAnimInstance::UnBindDelegate);
-
-	//BindDelegate();
+	
 }
 
 void UCombatAnimInstance::BindDelegate()
