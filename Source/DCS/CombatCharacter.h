@@ -85,6 +85,7 @@ private:
 
 	void OnRollKeyPressed();
 	void OnJumpKeyPressed();
+	void OnJumpKeyReleased();
 	void OnToggleKeyPressed();
 	void OnSprintKeyPressed();
 	void OnSprintKeyReleased();
@@ -114,25 +115,62 @@ private:
 	// end Declare Events.
 
 private:
-	TWeakObjectPtr<USpringArmComponent> WP_CameraBoom;
-	TWeakObjectPtr<UCameraComponent> WP_FollowCamera;
-	TWeakObjectPtr<UAudioComponent> WP_EffectsAudio;
-	TWeakObjectPtr<UEffectsComponent> WP_Effects;
-	TWeakObjectPtr<URotatingComponent> WP_Rotating;
-	TWeakObjectPtr<UEquipmentComponent> WP_Equipment;
-	TWeakObjectPtr<UInventoryComponent> WP_Inventory;
-	TWeakObjectPtr<UDissolveComponent> WP_Dissolve;
-	TWeakObjectPtr<UMovementSpeedComponent> WP_MovementSpeed;
-	TWeakObjectPtr<UStatsManagerComponent> WP_StatsManager;
-	TWeakObjectPtr<UMontageManagerComponent> WP_MontagesManager;
-	TWeakObjectPtr<UStateManagerComponent> WP_StateManager;
-	TWeakObjectPtr<UInputBufferComponent> WP_InputBuffer;
-	TWeakObjectPtr<USceneComponent> WP_ArrowSpawnLocation;
-	TWeakObjectPtr<UExtendedStatComponent> WP_ExtendedStamina;
-	TWeakObjectPtr<UExtendedStatComponent> WP_ExtendedHealth;
-	TWeakObjectPtr<UCollisionHandlerComponent> WP_MeleeCollisionHandler;
-	TWeakObjectPtr<UArrowComponent> WP_TargetingArrow;
-	TWeakObjectPtr<UDynamicTargetingComponent> WP_DynamicTargeting;
+	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
+		USpringArmComponent* CCameraBoom;
+
+	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
+		UCameraComponent* CFollowCamera;
+
+	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
+		UAudioComponent* CEffectsAudio;
+
+	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
+		UEffectsComponent* CEffects;
+
+	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
+		URotatingComponent* CRotating;
+
+	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
+		UEquipmentComponent* CEquipment;
+
+	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
+		UInventoryComponent* CInventory;
+
+	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
+		UDissolveComponent* CDissolve;
+
+	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
+		UMovementSpeedComponent* CMovementSpeed;
+
+	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
+		UStatsManagerComponent* CStatsManager;
+
+	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
+		UMontageManagerComponent* CMontagesManager;
+
+	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
+		UStateManagerComponent* CStateManager;
+
+	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
+		UInputBufferComponent* CInputBuffer;
+
+	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
+		USceneComponent* CArrowSpawnLocation;
+
+	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
+		UExtendedStatComponent* CExtendedStamina;
+
+	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
+		UExtendedStatComponent* CExtendedHealth;
+
+	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
+		UCollisionHandlerComponent* CMeleeCollisionHandler;
+
+	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
+		UArrowComponent* CTargetingArrow;
+
+	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
+		UDynamicTargetingComponent* CDynamicTargeting;
 
 	TWeakObjectPtr<UInGameWidget> WP_InGameWidget;
 	TWeakObjectPtr<UKeybindingsWidget> WP_KeyBindingsWidget;

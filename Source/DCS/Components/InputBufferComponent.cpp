@@ -34,3 +34,8 @@ void UInputBufferComponent::UpdateKey(EInputBufferKey InputKey)
 	// TODO: fill function
 }
 
+void UInputBufferComponent::StopJumping()
+{
+	// TODO: fill function
+}
+

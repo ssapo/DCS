@@ -25,4 +25,5 @@ public:
 
 public:
 	void UpdateKey(EInputBufferKey InputKey);
+	void StopJumping();
 };

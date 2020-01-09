@@ -14,9 +14,8 @@ UCLASS()
 class DCS_API ADCSGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
-public:
-	ADCSGameModeBase();
 
+public:
 	void LoadGame();
 	void SaveGame();
 

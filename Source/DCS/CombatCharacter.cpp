@@ -51,64 +51,64 @@ void ACombatCharacter::CtorComponents()
 	USkeletalMeshComponent* MeshComponent = GetMesh();
 	ensure(MeshComponent != nullptr);
 
-	WP_CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
-	ensure(WP_CameraBoom.IsValid() == true);
-	WP_CameraBoom->SetupAttachment(RootComponent);
+	CCameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
+	ensure(CCameraBoom != nullptr);
+	CCameraBoom->SetupAttachment(RootComponent);
 
-	WP_TargetingArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("TargetingArrow"));
-	ensure(WP_TargetingArrow.IsValid() == true);
-	WP_TargetingArrow->SetupAttachment(RootComponent);
+	CTargetingArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("TargetingArrow"));
+	ensure(CTargetingArrow != nullptr);
+	CTargetingArrow->SetupAttachment(RootComponent);
 
-	WP_FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
-	ensure(WP_FollowCamera.IsValid() == true);
-	WP_FollowCamera->SetupAttachment(WP_CameraBoom.Get());
+	CFollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
+	ensure(CFollowCamera != nullptr);
+	CFollowCamera->SetupAttachment(CCameraBoom);
 
-	WP_EffectsAudio = CreateDefaultSubobject<UAudioComponent>(TEXT("EffectsAudio"));
-	ensure(WP_EffectsAudio.IsValid() == true);
-	WP_EffectsAudio->SetupAttachment(MeshComponent);
+	CEffectsAudio = CreateDefaultSubobject<UAudioComponent>(TEXT("EffectsAudio"));
+	ensure(CEffectsAudio != nullptr);
+	CEffectsAudio->SetupAttachment(MeshComponent);
 
-	WP_ArrowSpawnLocation = CreateDefaultSubobject<USceneComponent>(TEXT("ArrowSpawnLocation"));
-	ensure(WP_ArrowSpawnLocation.IsValid() == true);
-	WP_ArrowSpawnLocation->SetupAttachment(MeshComponent);
+	CArrowSpawnLocation = CreateDefaultSubobject<USceneComponent>(TEXT("ArrowSpawnLocation"));
+	ensure(CArrowSpawnLocation != nullptr);
+	CArrowSpawnLocation->SetupAttachment(MeshComponent);
 
-	WP_StateManager = CreateDefaultSubobject<UStateManagerComponent>(TEXT("StateManager"));
-	ensure(WP_StateManager.IsValid() == true);
+	CStateManager = CreateDefaultSubobject<UStateManagerComponent>(TEXT("StateManager"));
+	ensure(CStateManager != nullptr);
 
-	WP_InputBuffer = CreateDefaultSubobject<UInputBufferComponent>(TEXT("InputBuffer"));
-	ensure(WP_InputBuffer.IsValid() == true);
+	CInputBuffer = CreateDefaultSubobject<UInputBufferComponent>(TEXT("InputBuffer"));
+	ensure(CInputBuffer != nullptr);
 
-	WP_MeleeCollisionHandler = CreateDefaultSubobject<UCollisionHandlerComponent>(TEXT("MeleeCollisionHandler"));
-	ensure(WP_MeleeCollisionHandler.IsValid() == true);
+	CMeleeCollisionHandler = CreateDefaultSubobject<UCollisionHandlerComponent>(TEXT("MeleeCollisionHandler"));
+	ensure(CMeleeCollisionHandler != nullptr);
 
-	WP_ExtendedHealth = CreateDefaultSubobject<UExtendedStatComponent>(TEXT("ExtendedHealth"));
-	ensure(WP_ExtendedHealth.IsValid() == true);
+	CExtendedHealth = CreateDefaultSubobject<UExtendedStatComponent>(TEXT("ExtendedHealth"));
+	ensure(CExtendedHealth != nullptr);
 
-	WP_ExtendedStamina = CreateDefaultSubobject<UExtendedStatComponent>(TEXT("ExtendedStamina"));
-	ensure(WP_ExtendedStamina.IsValid() == true);
+	CExtendedStamina = CreateDefaultSubobject<UExtendedStatComponent>(TEXT("ExtendedStamina"));
+	ensure(CExtendedStamina != nullptr);
 
-	WP_MontagesManager = CreateDefaultSubobject<UMontageManagerComponent>(TEXT("MontagesManager"));
-	ensure(WP_MontagesManager.IsValid() == true);
+	CMontagesManager = CreateDefaultSubobject<UMontageManagerComponent>(TEXT("MontagesManager"));
+	ensure(CMontagesManager != nullptr);
 
-	WP_Effects = CreateDefaultSubobject<UEffectsComponent>(TEXT("Effects"));
-	ensure(WP_Effects.IsValid() == true);
+	CEffects = CreateDefaultSubobject<UEffectsComponent>(TEXT("Effects"));
+	ensure(CEffects != nullptr);
 
-	WP_MovementSpeed = CreateDefaultSubobject<UMovementSpeedComponent>(TEXT("MovementSpeed"));
-	ensure(WP_MovementSpeed.IsValid() == true);
+	CMovementSpeed = CreateDefaultSubobject<UMovementSpeedComponent>(TEXT("MovementSpeed"));
+	ensure(CMovementSpeed != nullptr);
 
-	WP_StatsManager = CreateDefaultSubobject<UStatsManagerComponent>(TEXT("StatsManager"));
-	ensure(WP_StatsManager.IsValid() == true);
+	CStatsManager = CreateDefaultSubobject<UStatsManagerComponent>(TEXT("StatsManager"));
+	ensure(CStatsManager != nullptr);
 
-	WP_Dissolve = CreateDefaultSubobject<UDissolveComponent>(TEXT("Dissolve"));
-	ensure(WP_Dissolve.IsValid() == true);
+	CDissolve = CreateDefaultSubobject<UDissolveComponent>(TEXT("Dissolve"));
+	ensure(CDissolve != nullptr);
 
-	WP_Inventory = CreateDefaultSubobject<UInventoryComponent>(TEXT("Inventory"));
-	ensure(WP_Inventory.IsValid() == true);
+	CInventory = CreateDefaultSubobject<UInventoryComponent>(TEXT("Inventory"));
+	ensure(CInventory != nullptr);
 
-	WP_Equipment = CreateDefaultSubobject<UEquipmentComponent>(TEXT("Equipment"));
-	ensure(WP_Equipment.IsValid() == true);
+	CEquipment = CreateDefaultSubobject<UEquipmentComponent>(TEXT("Equipment"));
+	ensure(CEquipment != nullptr);
 
-	WP_Rotating = CreateDefaultSubobject<URotatingComponent>(TEXT("Rotating"));
-	ensure(WP_Rotating.IsValid() == true);
+	CRotating = CreateDefaultSubobject<URotatingComponent>(TEXT("Rotating"));
+	ensure(CRotating != nullptr);
 }
 
 void ACombatCharacter::CtorInitialize()
@@ -121,12 +121,14 @@ void ACombatCharacter::CtorInitialize()
 	RollStaminaCost = 25.0f;
 	SprintStaminaCost = 0.5f;
 
+	AimAlpha = 0.0f;
+
 	SlowMotionTimeDuration = 0.4f;
 	SlowMotionStaminaCost = 1.0f;
 	ZoomCameraArmLength = 150.0f;
 
-	WP_CameraBoom->TargetArmLength = InitialCameraArmLength;
-	WP_CameraBoom->CameraLagSpeed = InitialCameraLagSpeed;
+	CCameraBoom->TargetArmLength = InitialCameraArmLength;
+	CCameraBoom->CameraLagSpeed = InitialCameraLagSpeed;
 }
 
 void ACombatCharacter::BeginPlay()
@@ -145,9 +147,9 @@ void ACombatCharacter::BeginPlay()
 
 void ACombatCharacter::InitializeComponents()
 {
-	WP_DynamicTargeting->Initialize(*WP_TargetingArrow);
-	WP_StatsManager->Initialize();
-	WP_Equipment->Initialize();
+	CDynamicTargeting->Initialize(*CTargetingArrow);
+	CStatsManager->Initialize();
+	CEquipment->Initialize();
 }
 
 void ACombatCharacter::CreateHUD()
@@ -197,33 +199,24 @@ void ACombatCharacter::SetTimerChecker()
 
 void ACombatCharacter::OnRollKeyPressed()
 {
-	DLOG_S(Log);
-
-	if (WP_InputBuffer.IsValid())
-	{
-		WP_InputBuffer->UpdateKey(EInputBufferKey::Roll);
-	}
+	CInputBuffer->UpdateKey(EInputBufferKey::Roll);
 }
 
 void ACombatCharacter::OnJumpKeyPressed()
 {
-	DLOG_S(Log);
+	CInputBuffer->UpdateKey(EInputBufferKey::Jump);
+}
 
-	if (WP_InputBuffer.IsValid())
-	{
-		WP_InputBuffer->UpdateKey(EInputBufferKey::Jump);
-	}
-
+void ACombatCharacter::OnJumpKeyReleased()
+{
+	CInputBuffer->StopJumping();
 }
 
 void ACombatCharacter::OnToggleKeyPressed()
 {
 	DLOG_S(Log);
 
-	if (WP_MovementSpeed.IsValid())
-	{
-		WP_MovementSpeed->ToggleState();
-	}
+	CMovementSpeed->ToggleState();
 }
 
 void ACombatCharacter::OnSprintKeyPressed()
@@ -242,8 +235,6 @@ void ACombatCharacter::OnSprintKeyReleased()
 
 void ACombatCharacter::OnMoveForward(float InAxisValue)
 {
-	DLOG_S(Log);
-
 	if (IsAlive())
 	{
 		FRotator Rot = FRotator(0.0f, 0.0f, GetControlRotation().Yaw);
@@ -253,8 +244,6 @@ void ACombatCharacter::OnMoveForward(float InAxisValue)
 
 void ACombatCharacter::OnMoveRight(float InAxisValue)
 {
-	DLOG_S(Log);
-
 	if (IsAlive())
 	{
 		FRotator Rot = FRotator(0.0f, 0.0f, GetControlRotation().Yaw);
@@ -267,10 +256,7 @@ void ACombatCharacter::OnHorizontalLook(float InAxisValue)
 	DLOG_S(Log);
 
 	AddControllerYawInput(HorizontalLockRate * InAxisValue * UDCSLib::GetDTS(this));
-	if (WP_DynamicTargeting.IsValid())
-	{
-		WP_DynamicTargeting->FindTargetWithAxisInput(InAxisValue);
-	}
+	CDynamicTargeting->FindTargetWithAxisInput(InAxisValue);
 }
 
 void ACombatCharacter::OnVerticalLook(float InAxisValue)
@@ -301,13 +287,22 @@ void ACombatCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	PlayerInputComponent->BindAction(EVENT_KEYBIND, IE_Pressed, this, &ACombatCharacter::OnShowKeyBindings);
-	PlayerInputComponent->BindAction(EVENT_KEYBIND, IE_Released, this, &ACombatCharacter::OnHideKeyBindings);
+	PlayerInputComponent->BindAction(EVENT_KEYBIND, IE_Pressed, this, 
+		&ACombatCharacter::OnShowKeyBindings);
+	PlayerInputComponent->BindAction(EVENT_KEYBIND, IE_Released, this, 
+		&ACombatCharacter::OnHideKeyBindings);
 
 	PlayerInputComponent->BindAxis(EVENT_MOVEFORWARD, this,
 		&ACombatCharacter::OnMoveForward);
 	PlayerInputComponent->BindAxis(EVENT_MOVERIGHT, this,
 		&ACombatCharacter::OnMoveRight);
+
+	PlayerInputComponent->BindAction(EVENT_JUMP, IE_Pressed, this, 
+		&ACombatCharacter::OnJumpKeyPressed);
+	PlayerInputComponent->BindAction(EVENT_JUMP, IE_Released, this,
+		&ACombatCharacter::OnJumpKeyReleased);
+	PlayerInputComponent->BindAction(EVENT_ROLL, IE_Pressed, this,
+		&ACombatCharacter::OnRollKeyPressed);
 }
 
 // start interfaces
