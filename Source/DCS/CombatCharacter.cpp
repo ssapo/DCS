@@ -109,6 +109,9 @@ void ACombatCharacter::CtorComponents()
 
 	CRotating = CreateDefaultSubobject<URotatingComponent>(TEXT("Rotating"));
 	ensure(CRotating != nullptr);
+
+	CDynamicTargeting = CreateDefaultSubobject<UDynamicTargetingComponent>(TEXT("DynamicTargeting"));
+	ensure(CDynamicTargeting != nullptr);
 }
 
 void ACombatCharacter::CtorInitialize()
