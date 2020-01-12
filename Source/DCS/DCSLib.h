@@ -12,6 +12,8 @@
 #include "CanvasPanelSlot.h"
 #include "UserWidget.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "GameFramework/PlayerController.h"
+#include "GameFramework/Pawn.h"
 #include "DCSLib.generated.h"
 
 class APawn;
@@ -20,6 +22,7 @@ class UCanvasPanelSlot;
 class UWidget;
 class UImage;
 class UUserWidget;
+class APlayerController;
 namespace EDrawDebugTrace { enum Type; }
 
 UCLASS()
@@ -33,6 +36,12 @@ public:
 	
 	template <typename T = UActorComponent>
 	static FORCEINLINE T * GetComponent(const APawn& Owner);
+
+	template <typename T = UActorComponent>
+	static FORCEINLINE T * GetComponent(AActor* Owner);
+
+	template <typename T = UActorComponent>
+	static FORCEINLINE T * GetComponent(const AActor& Owner);
 
 	template <typename T = UActorComponent>
 	static FORCEINLINE T* GetComponent(UUserWidget* WCO);
@@ -57,10 +66,23 @@ public:
 	static FORCEINLINE FVector GetForwardVector(FRotator InRot);
 
 	static FORCEINLINE FVector GetRightVector(FRotator InRot);
+
+	static FORCEINLINE APlayerController* GetPlayerController(UObject* WCO, int32 Index = 0);
 };
 
 template <typename T /*= UActorComponent*/>
 FORCEINLINE T* UDCSLib::GetComponent(APawn* Owner)
+{
+	if (Owner)
+	{
+		return Cast<T>(Owner->GetComponentByClass(T::StaticClass()));
+	}
+
+	return nullptr;
+}
+
+template <typename T /*= UActorComponent*/>
+FORCEINLINE T* UDCSLib::GetComponent(AActor* Owner)
 {
 	if (Owner)
 	{
@@ -83,6 +105,12 @@ FORCEINLINE T* UDCSLib::GetComponent(UUserWidget* InUserWidget)
 
 template <typename T /*= UActorComponent*/>
 FORCEINLINE T* UDCSLib::GetComponent(const APawn& Owner)
+{
+	return Cast<T>(Owner.GetComponentByClass(T::StaticClass()));
+}
+
+template <typename T /*= UActorComponent*/>
+FORCEINLINE T* UDCSLib::GetComponent(const AActor& Owner)
 {
 	return Cast<T>(Owner.GetComponentByClass(T::StaticClass()));
 }
@@ -151,4 +179,9 @@ FORCEINLINE FVector UDCSLib::GetForwardVector(FRotator InRot)
 FORCEINLINE FVector UDCSLib::GetRightVector(FRotator InRot)
 {
 	return UKismetMathLibrary::GetRightVector(InRot);
+}
+
+FORCEINLINE APlayerController* UDCSLib::GetPlayerController(UObject* WCO, int32 Index)
+{
+	return UGameplayStatics::GetPlayerController(WCO, Index);
 }

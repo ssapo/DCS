@@ -5,7 +5,8 @@
 #include "CombatCharacter.h"
 #include "DCSLib.h"
 #include "Components/EquipmentComponent.h"
-
+#include "GameFramework/PawnMovementComponent.h"
+#include "GameFramework/PlayerController.h"
 
 UCombatAnimInstance::UCombatAnimInstance()
 {
@@ -19,6 +20,9 @@ UCombatAnimInstance::UCombatAnimInstance()
 
 	LeanAmount = 0.0f;
 	LeanOffset = 10.0f;
+
+	MouseDeltaX = 0.0f;
+	MouseDeltaY = 0.0f;
 
 	IsInCombat = false;
 	IsShieldEquipped = false;
@@ -71,10 +75,12 @@ void UCombatAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
 
-	if (WP_Character.IsValid())
+	if (WP_Character.IsValid() == false)
 	{
-		StoreCharacterInfo(*WP_Character);
+		return;
 	}
+
+	StoreCharacterInfo();
 
 	UpdateLeanAmount();
 
@@ -85,30 +91,57 @@ void UCombatAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 void UCombatAnimInstance::OnActiveItemChanged(const FStoredItem& Old, const FStoredItem& New, EItem InType, int32 SlotIndex, int32 ActiveIndex)
 {
-	
+	// TODO: Fill Function
 }
 
 void UCombatAnimInstance::UpdateLookAtValues()
 {
-
+	// TODO: Fill Function
 }
 
 void UCombatAnimInstance::UpdateLeanAmount()
 {
-
+	// TODO: Fill Function
 }
 
 void UCombatAnimInstance::UpdateAimOffsetAlpha()
 {
-
+	// TODO: Fill Function
 }
 
 void UCombatAnimInstance::UpdateHandItemsInfo()
 {
-
+	// TODO: Fill Function
 }
 
-void UCombatAnimInstance::StoreCharacterInfo(const ACombatCharacter& InCharacterRef)
+void UCombatAnimInstance::StoreCharacterInfo()
 {
-	
+	bIsInAir = WP_Character->GetMovementComponent()->IsFalling();
+
+	FVector Velocity = WP_Character->GetVelocity();
+	FRotator Rotation = WP_Character->GetActorRotation();
+
+	Speed = Velocity.Size();
+	Direction = CalculateDirection(Velocity, Rotation);
+
+	float JogSpeed = WP_Character->GetJogSpeed();
+	float Select = 0.0f;
+	if (Speed <= JogSpeed)
+	{
+		Select = 1.0f;
+	}
+	else
+	{
+		Select = Speed / JogSpeed;
+	}
+	LocomotionRateScale = Select;
+
+	bIsInSlowMotion = WP_Character->IsInSlowMotion();
+	BlockAlpha = WP_Character->GetBlockAlpha();
+	AimAlpha = WP_Character->GetAimAlpha();
+
+	if (APlayerController* PC = UDCSLib::GetPlayerController(this))
+	{
+		PC->GetInputMouseDelta(MouseDeltaX, MouseDeltaY);
+	}
 }

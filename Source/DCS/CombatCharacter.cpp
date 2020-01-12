@@ -37,6 +37,8 @@
 #include "DCSLib.h"
 #include "DCS.h"
 
+
+// start public:
 ACombatCharacter::ACombatCharacter()
 {
 	CtorComponents();
@@ -46,6 +48,29 @@ ACombatCharacter::ACombatCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 }
 
+FORCEINLINE float ACombatCharacter::GetJogSpeed() const
+{
+	return CMovementSpeed->GetJogSpeed();
+}
+
+FORCEINLINE bool ACombatCharacter::IsInSlowMotion() const
+{
+	return bIsInSlowMotion;
+}
+
+FORCEINLINE float ACombatCharacter::GetBlockAlpha() const
+{
+	return BlockAlpha;
+}
+
+FORCEINLINE float ACombatCharacter::GetAimAlpha() const
+{
+	return AimAlpha;
+}
+
+// end public:
+
+// start private:
 void ACombatCharacter::CtorComponents()
 {
 	USkeletalMeshComponent* MeshComponent = GetMesh();
@@ -352,12 +377,6 @@ FRotator ACombatCharacter::GetDesiredRotation() const
 {
 	// TODO: fill function
 	return FRotator();
-}
-
-float ACombatCharacter::GetAimAlpha() const
-{
-	// TODO: fill function
-	return 0.0f;
 }
 
 bool ACombatCharacter::IsAlive() const

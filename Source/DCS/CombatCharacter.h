@@ -48,6 +48,11 @@ class DCS_API ACombatCharacter : public ACharacter
 public:
 	ACombatCharacter();
 
+	FORCEINLINE float GetJogSpeed() const;
+	FORCEINLINE bool IsInSlowMotion() const;
+	FORCEINLINE float GetBlockAlpha() const;
+	FORCEINLINE float GetAimAlpha() const override;
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
@@ -65,7 +70,6 @@ protected:
 	FName GetBowStringSocketName() const override;
 	
 	FRotator GetDesiredRotation() const override;
-	float GetAimAlpha() const override;
 
 	bool IsAlive() const override;
 	bool CanEffectBeApplied(EEffect InType, AActor* Actor) const override;

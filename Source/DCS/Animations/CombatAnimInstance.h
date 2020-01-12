@@ -62,7 +62,7 @@ private:
 	void UpdateAimOffsetAlpha();
 	void UpdateHandItemsInfo();
 
-	void StoreCharacterInfo(const ACombatCharacter& InCharacterRef);
+	void StoreCharacterInfo();
 
 private:
 	TWeakObjectPtr<UEquipmentComponent> WP_EquipmentComponent;
@@ -81,6 +81,7 @@ private:
 	float AimOffsetAlpha;
 	float AxisTurnValue;
 	float MouseDeltaX;
+	float MouseDeltaY;
 	float BlockAlpha;
 	float AimAlpha;
 	float LeanAmount;
@@ -92,5 +93,4 @@ private:
 	bool IsInCombat;
 	bool IsLookingForward;
 	bool IsShieldEquipped;
-	void StoreCharacterInfo();
 };
