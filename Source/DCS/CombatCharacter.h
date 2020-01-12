@@ -97,7 +97,8 @@ private:
 	void OnToggleKeyPressed();
 	void OnSprintKeyPressed();
 	void OnSprintKeyReleased();
-	
+	void OnInputBufferConsumed(EInputBufferKey InKey);
+
 	void OnMoveForward(float InAxisValue);
 	void OnMoveRight(float InAxisValue);
 	void OnHorizontalLook(float InAxisValue);
@@ -111,6 +112,7 @@ private:
 	void StopAming();
 	void StopZooming();
 	void HideCrossHair();
+	void ToggleCombat();
 
 	FORCEINLINE UDCSWidget* ShowWidget(EWidgetID InType) const;
 
