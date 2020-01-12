@@ -1,37 +1,47 @@
 #include "InputBufferComponent.h"
 
-// Sets default values for this component's properties
 UInputBufferComponent::UInputBufferComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
 }
 
-
-// Called when the game starts
 void UInputBufferComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// ...
-	
 }
 
-
-// Called every frame
 void UInputBufferComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+}
 
-	// ...
+void UInputBufferComponent::ConsumeInputBuffer()
+{
+	InputBufferConsumedEvent.Broadcast(StoredKey);
+
+	StoredKey = EInputBufferKey::None;
+}
+
+FORCEINLINE void UInputBufferComponent::OpenInputBuffer()
+{
+	bIsOpen = true;
+	InputBufferOpenedEvent.Broadcast();
+}
+
+FORCEINLINE void UInputBufferComponent::CloseInputBuffer()
+{
+	bIsOpen = false;
+	InputBufferClosedEvent.Broadcast();
 }
 
 void UInputBufferComponent::UpdateKey(EInputBufferKey InputKey)
 {
-	// TODO: fill function
+	StoredKey = InputKey;
+
+	if (bIsOpen == false)
+	{
+		ConsumeInputBuffer();
+	}
 }
 
 void UInputBufferComponent::StopJumping()

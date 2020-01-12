@@ -3,32 +3,54 @@
 
 #include "StateManagerComponent.h"
 
-// Sets default values for this component's properties
+// start public:
 UStateManagerComponent::UStateManagerComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
 
-	// ...
 }
 
+FORCEINLINE bool UStateManagerComponent::GetActivityValue(EActivity InType) const
+{
+	if (Activities.Contains(InType))
+	{
+		return Activities[InType];
+	}
+	else
+	{
+		return false;
+	}
+}
 
-// Called when the game starts
+FORCEINLINE void UStateManagerComponent::SetState(EState InState)
+{
+	CurrentState = InState;
+}
+
+FORCEINLINE EState UStateManagerComponent::GetState() const
+{
+	return CurrentState;
+}
+
+FORCEINLINE void UStateManagerComponent::SetActivity()
+{
+	// TODO: fill function
+}
+
+FORCEINLINE void UStateManagerComponent::ResetState()
+{
+	// TODO: fill function
+}
+
+// end public:
+
+// start protected:
 void UStateManagerComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// ...
-	
 }
 
-
-// Called every frame
 void UStateManagerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
+	// TODO: fill function
 }
-
+// end protected:

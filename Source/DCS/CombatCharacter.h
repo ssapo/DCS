@@ -52,6 +52,9 @@ public:
 	FORCEINLINE bool IsInSlowMotion() const;
 	FORCEINLINE float GetBlockAlpha() const;
 	FORCEINLINE float GetAimAlpha() const override;
+	FORCEINLINE bool IsActivityPure(EActivity InType) const;
+	FORCEINLINE bool IsIdleAndNotFalling() const;
+	FORCEINLINE bool IsStateEqualPure(EState InType) const;
 
 protected:
 	virtual void BeginPlay() override;
@@ -90,6 +93,7 @@ private:
 	void OnRollKeyPressed();
 	void OnJumpKeyPressed();
 	void OnJumpKeyReleased();
+	void OnToggleCombatKeyPressed();
 	void OnToggleKeyPressed();
 	void OnSprintKeyPressed();
 	void OnSprintKeyReleased();
@@ -102,6 +106,11 @@ private:
 	void OnShowKeyBindings();
 	void OnHideKeyBindings();
 	void SetSprint(bool bActivate);
+	void ResetAimingMode();
+	void StopLookingForward();
+	void StopAming();
+	void StopZooming();
+	void HideCrossHair();
 
 	FORCEINLINE UDCSWidget* ShowWidget(EWidgetID InType) const;
 

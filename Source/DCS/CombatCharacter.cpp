@@ -5,7 +5,8 @@
 #include "Kismet/GameplayStatics.h"
 
 #include "GameFramework/SpringArmComponent.h"
-#include "Camera/CameraComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "Components/AudioComponent.h"
 #include "Components/EffectsComponent.h"
 #include "Components/RotatingComponent.h"
@@ -24,6 +25,7 @@
 #include "Components/CollisionHandlerComponent.h"
 #include "Components/InputBufferComponent.h"
 #include "Components/DynamicTargetingComponent.h"
+#include "Camera/CameraComponent.h"
 
 #include "UserWidget.h"
 #include "Define.h"
@@ -33,10 +35,8 @@
 #include "Widgets/InGameWidget.h"
 #include "Engine/World.h"
 #include "TimerManager.h"
-#include "Components/CapsuleComponent.h"
 #include "DCSLib.h"
 #include "DCS.h"
-
 
 // start public:
 ACombatCharacter::ACombatCharacter()
@@ -66,6 +66,21 @@ FORCEINLINE float ACombatCharacter::GetBlockAlpha() const
 FORCEINLINE float ACombatCharacter::GetAimAlpha() const
 {
 	return AimAlpha;
+}
+
+FORCEINLINE bool ACombatCharacter::IsActivityPure(EActivity InType) const
+{
+	return CStateManager->GetActivityValue(InType);
+}
+
+FORCEINLINE bool ACombatCharacter::IsIdleAndNotFalling() const
+{
+	return GetCharacterMovement()->IsFalling() && IsStateEqualPure(EState::Idle);
+}
+
+FORCEINLINE bool ACombatCharacter::IsStateEqualPure(EState InType) const
+{
+	return CStateManager->GetState() == InType;
 }
 
 // end public:
@@ -169,8 +184,22 @@ void ACombatCharacter::BeginPlay()
 
 	SetTimerChecker();
 
+	check(CInputBuffer);
+	CInputBuffer->OnInputBufferConsumed().AddEvent(this, ACombatCharacter::OnInputBufferConsumed);
+
 	PostBeginPlayEvent.Broadcast();
 	PostBeginPlayEvent.Clear();
+}
+
+void ACombatCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	check(CInputBuffer);
+	CInputBuffer->OnInputBufferConsumed().AddEvent();
+
+	PostEndPlayEvent.Broadcast();
+	PostEndPlayEvent.Clear();
 }
 
 void ACombatCharacter::InitializeComponents()
@@ -240,25 +269,74 @@ void ACombatCharacter::OnJumpKeyReleased()
 	CInputBuffer->StopJumping();
 }
 
+void ACombatCharacter::OnToggleCombatKeyPressed()
+{
+	if (IsIdleAndNotFalling() && IsActivityPure(EActivity::IsAimingPressed))
+	{
+		ResetAimingMode();
+	}
+	else
+	{
+		DLOG_S(Log);
+		CInputBuffer->UpdateKey(EInputBufferKey::ToggleCombat);
+	}
+}
+
 void ACombatCharacter::OnToggleKeyPressed()
 {
-	DLOG_S(Log);
-
 	CMovementSpeed->ToggleState();
 }
 
 void ACombatCharacter::OnSprintKeyPressed()
 {
-	DLOG_S(Log);
-
 	SetSprint(true);
 }
 
 void ACombatCharacter::OnSprintKeyReleased()
 {
-	DLOG_S(Log);
-
 	SetSprint(false);
+}
+
+void ACombatCharacter::OnInputBufferConsumed(EInputBufferKey InKey)
+{
+	if (IsAlive() == false)
+	{
+		return;
+	}
+
+	switch (InKey)
+	{
+	default:
+		return;
+
+	case EInputBufferKey::LightAttack:
+		break;
+	case EInputBufferKey::HeavyAttack:
+		break;
+	case EInputBufferKey::ThrustAttack:
+		break;
+	case EInputBufferKey::SpecialAttack:
+		break;
+	case EInputBufferKey::FallingAttack:
+		break;
+	case EInputBufferKey::Roll:
+		break;
+	case EInputBufferKey::Jump:
+		break;
+	case EInputBufferKey::Parry:
+		break;
+	case EInputBufferKey::ToggleCombat:
+		ToggleCombat();
+		break;
+	case EInputBufferKey::SwitchMainHandTypeUp:
+		break;
+	case EInputBufferKey::SwitchMainHandTypeDown:
+		break;
+	case EInputBufferKey::SwitchMainHandItemUp:
+		break;
+	case EInputBufferKey::SwitchMainHandItemDown:
+		break;
+	}
 }
 
 void ACombatCharacter::OnMoveForward(float InAxisValue)
@@ -281,31 +359,18 @@ void ACombatCharacter::OnMoveRight(float InAxisValue)
 
 void ACombatCharacter::OnHorizontalLook(float InAxisValue)
 {
-	DLOG_S(Log);
-
 	AddControllerYawInput(HorizontalLockRate * InAxisValue * UDCSLib::GetDTS(this));
 	CDynamicTargeting->FindTargetWithAxisInput(InAxisValue);
 }
 
 void ACombatCharacter::OnVerticalLook(float InAxisValue)
 {
-	DLOG_S(Log);
-
 	AddControllerPitchInput(VerticalLookRate * InAxisValue * UDCSLib::GetDTS(this));
-}
-
-void ACombatCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
-{
-	Super::EndPlay(EndPlayReason);
-
-	PostEndPlayEvent.Broadcast();
-	PostEndPlayEvent.Clear();
 }
 
 void ACombatCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 	UpdateAimAlpha();
 }
 
@@ -331,6 +396,9 @@ void ACombatCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		&ACombatCharacter::OnJumpKeyReleased);
 	PlayerInputComponent->BindAction(EVENT_ROLL, IE_Pressed, this,
 		&ACombatCharacter::OnRollKeyPressed);
+
+	PlayerInputComponent->BindAction(EVENT_TOGGLECOMBAT, IE_Pressed, this,
+		&ACombatCharacter::OnToggleCombatKeyPressed);
 }
 
 // start interfaces
@@ -436,6 +504,42 @@ void ACombatCharacter::OnHideKeyBindings()
 }
 
 void ACombatCharacter::SetSprint(bool bActivate)
+{
+	// TODO: fill function
+}
+
+void ACombatCharacter::ResetAimingMode()
+{
+	StopLookingForward();
+
+	StopAming();
+
+	StopZooming();
+
+	HideCrossHair();
+}
+
+void ACombatCharacter::StopLookingForward()
+{
+	// TODO: fill function
+}
+
+void ACombatCharacter::StopAming()
+{
+	// TODO: fill function
+}
+
+void ACombatCharacter::StopZooming()
+{
+	// TODO: fill function
+}
+
+void ACombatCharacter::HideCrossHair()
+{
+	// TODO: fill function
+}
+
+void ACombatCharacter::ToggleCombat()
 {
 	// TODO: fill function
 }

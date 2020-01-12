@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Structs.h"
+#include "Map.h"
 #include "StateManagerComponent.generated.h"
 
 
@@ -13,16 +15,20 @@ class DCS_API UStateManagerComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:	
-	// Sets default values for this component's properties
 	UStateManagerComponent();
 
-protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
+	FORCEINLINE bool GetActivityValue(EActivity InType) const;
+	FORCEINLINE void SetState(EState InState);
+	FORCEINLINE EState GetState() const;
+	FORCEINLINE void SetActivity();
+	FORCEINLINE void ResetState();
 
-public:	
-	// Called every frame
+protected:
+	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-		
+private: 
+	TMap<EActivity, bool> Activities;
+
+	EState CurrentState;
 };

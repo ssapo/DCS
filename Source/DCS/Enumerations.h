@@ -4,18 +4,19 @@
 #include "Enumerations.generated.h"
 
 UENUM()
-enum class EState : int8
+enum class EState : uint8
 {
-	None = 0				UMETA(DisplayName = "None"),
-	Disabled				UMETA(DisplayName = "Disabled"),
-	Attacking				UMETA(DisplayName = "Attacking"),
-	Rolling					UMETA(DisplayName = "Rolling"),
-	Falling					UMETA(DisplayName = "Falling"),
-	Interacting				UMETA(DisplayName = "Interacting"),
-	Backstabbing			UMETA(DisplayName = "Backstabbing"),
-	Parrying				UMETA(DisplayName = "Parrying"),
-	Dead					UMETA(DisplayName = "Dead"),
-	Count					UMETA(Hidden)
+	None = 0,
+	Idle,
+	Disabled,
+	Attacking,
+	Rolling,
+	Falling,
+	Interacting,
+	Backstabbing,
+	Parrying,
+	Dead,
+	Count,
 };
 
 UENUM()
@@ -250,7 +251,7 @@ enum class EDemoRoom : int8
 };
 
 UENUM()
-enum class EDemoDisplay : int16
+enum class EDemoDisplay : int8
 {
 	Round					UMETA(DisplayName = "Round"),
 	SquareL					UMETA(DisplayName = "SquareL"),
@@ -258,4 +259,18 @@ enum class EDemoDisplay : int16
 	DescriptionOnly			UMETA(DisplayName = "DescriptionOnly"),
 	SquareLFlatWall			UMETA(DisplayName = "SquareL_FlatWall"),
 	Count					UMETA(Hidden)
+};
+
+UENUM()
+enum class EActivity : uint8
+{
+	None,
+	IsBlockingPressed,
+	IsAimingPressed,
+	IsImmortal,
+	CantBeInterrupted,
+	IsLoockingForward,
+	CanParryHit,
+	IsZooming,
+	Count
 };
