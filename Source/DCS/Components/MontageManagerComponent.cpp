@@ -1,34 +1,59 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "MontageManagerComponent.h"
+#include "DCSLib.h"
+#include "Defines.h"
+#include "Interfaces/IsMontageManager.h"
+#include "Engine/DataTable.h"
 
-// Sets default values for this component's properties
+// start public:
 UMontageManagerComponent::UMontageManagerComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-	// ...
+	LastRequestedAction = EMontage::None;
 }
 
+UAnimMontage* UMontageManagerComponent::GetMontageForAction(EMontage InType, int32 Index)
+{
+	LastRequestedAction = InType;
 
-// Called when the game starts
+	FMontageActionData Data = GetMontage(LastRequestedAction);
+	if (Data.Montages.IsValidIndex(Index))
+	{
+		return Data.Montages[Index];
+	}
+
+	return nullptr;
+}
+// end public:
+
+// start protected:
 void UMontageManagerComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
-	
+	check(UDCSLib::IsInterface(GetOwner(), UIsMontageManager::StaticClass()));
+
+	IMontageManager = Cast<IIsMontageManager>(GetOwner());
 }
 
-
-// Called every frame
 void UMontageManagerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
 }
+// end protected:
 
+// start private:
+FMontageActionData UMontageManagerComponent::GetMontage(EMontage InAction) const
+{
+	FMontageActionData RetVal;
+	UDataTable* Montages = IMontageManager->GetMontages(InAction);
+	auto MontagesMap = Montages->GetRowMap();
+	auto Name = UDCSLib::GetStringAsEnum<EMontage>(InAction);
+	if (auto Ret = MontagesMap[FName(*Name)])
+	{
+		RetVal = *(FMontageActionData*)(Ret);
+	}
+
+	return RetVal;
+}
+// end private:

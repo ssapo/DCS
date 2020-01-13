@@ -198,21 +198,6 @@ public:
 };
 
 USTRUCT()
-struct FMontageAction
-{
-	GENERATED_BODY()
-
-public:
-	FMontageAction()
-		: Action(EMontage::None)
-		, Montages()
-	{}
-
-	EMontage Action;
-	TArray<TWeakObjectPtr<UAnimMontage>> Montages;
-};
-
-USTRUCT()
 struct FStat
 {
 	GENERATED_BODY()

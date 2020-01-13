@@ -30,6 +30,8 @@ public:
 	bool IsSlotHidden(EItem InType, int32 Index) const;
 	bool IsEquippedItem(const FGuid& InItemID) const;
 	bool IsActiveItem(const FGuid& InItemID) const;
+	void ToggleCombat();
+
 private:
 	int32 GetEquipmentSlotsIndex(EItem InType) const;
 	bool IsSlotIndexValid(EItem InType, int32 Index) const;
@@ -78,4 +80,5 @@ private:
 	EItem SelectedMainHandType;
 
 	bool bIsInCombat;
+
 };

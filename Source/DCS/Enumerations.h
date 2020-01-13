@@ -211,33 +211,33 @@ enum class ERotationMode : int8
 	Count					UMETA(Hidden)
 };
 
-UENUM()
-enum class EMontage : int8
+UENUM(BlueprintType)
+enum class EMontage : uint8
 {
-	None					UMETA(DisplayName = "None"),
-	LightAttack				UMETA(DisplayName = "LightAttack"),
-	HeavyAttack				UMETA(DisplayName = "HeavyAttack"),
-	ThrustAttack			UMETA(DisplayName = "ThrustAttack"),
-	SpecialAttack			UMETA(DisplayName = "SpecialAttack"),
-	FallingAttack			UMETA(DisplayName = "FallingAttack"),
-	RollForward				UMETA(DisplayName = "RollForward"),
-	RollLeft				UMETA(DisplayName = "RollLeft"),
-	RollRight				UMETA(DisplayName = "RollRight"),
-	RollBackward			UMETA(DisplayName = "RollBackward"),
-	DrawWeapon				UMETA(DisplayName = "DrawWeapon"),
-	DisarmWeapon			UMETA(DisplayName = "DisarmWeapon"),
-	StunFront				UMETA(DisplayName = "StunFront"),
-	StunBack				UMETA(DisplayName = "StunBack"),
-	StunRight				UMETA(DisplayName = "StunRight"),
-	StunLeft				UMETA(DisplayName = "StunLeft"),
-	Impact					UMETA(DisplayName = "Impact"),
-	Block					UMETA(DisplayName = "Block"),
-	Parry					UMETA(DisplayName = "Parry"),
-	Parried					UMETA(DisplayName = "Parried"),
-	Backstabbed				UMETA(DisplayName = "Backstabbed"),
-	Backstab				UMETA(DisplayName = "Backstab"),
-	ShootArrow				UMETA(DisplayName = "ShootArrow"),
-	Count					UMETA(Hidden)
+	None,
+	LightAttack,
+	HeavyAttack,
+	ThrustAttack,
+	SpecialAttack,
+	FallingAttack,
+	RollForward,
+	RollLeft,
+	RollRight,
+	RollBackward,
+	DrawWeapon,
+	DisarmWeapon,
+	StunFront,
+	StunBack,
+	StunRight,
+	StunLeft,
+	Impact,
+	Block,
+	Parry,
+	Parried,
+	Backstabbed,
+	Backstab,
+	ShootArrow,
+	Count,
 };
 
 UENUM()
@@ -273,4 +273,12 @@ enum class EActivity : uint8
 	CanParryHit,
 	IsZooming,
 	Count
+};
+
+UENUM()
+enum class EWidgetID
+{
+	None = 0,
+	InGame,
+	KeyBindings,
 };

@@ -45,6 +45,11 @@ bool UEquipmentComponent::IsSlotIndexValid(EItem InType, int32 Index) const
 	return false;
 }
 
+void UEquipmentComponent::ToggleCombat()
+{
+	// TODO: Fill Function
+}
+
 bool UEquipmentComponent::IsSlotHidden(EItem InType, int32 Index) const
 {
 	if (IsSlotIndexValid(InType, Index))

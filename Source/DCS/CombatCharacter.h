@@ -9,6 +9,7 @@
 #include "Interfaces/CanDesiredRotating.h"
 #include "Interfaces/IsArcher.h"
 #include "Interfaces/CanOpenUI.h"
+#include "Interfaces/IsMontageManager.h"
 #include "CombatCharacter.generated.h"
 
 class USpringArmComponent;
@@ -42,6 +43,7 @@ class DCS_API ACombatCharacter : public ACharacter
 	, public ICanDesiredRotating
 	, public IIsArcher
 	, public ICanOpenUI
+	, public IIsMontageManager
 {
 	GENERATED_BODY()
 
@@ -61,6 +63,7 @@ protected:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+	virtual UDataTable* GetMontages(EMontage InType) const override;
 
 	// start interfaces
 	void Interact(AActor* Actor) override;

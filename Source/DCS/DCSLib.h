@@ -14,6 +14,8 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/Pawn.h"
+#include "Defines.h"
+#include "DCS.h"
 #include "DCSLib.generated.h"
 
 class APawn;
@@ -49,6 +51,9 @@ public:
 	template <typename T = UUserWidget>
 	static FORCEINLINE TArray<T*> GetWidgets(UObject* WCO);
 
+	template <typename T = enum class>
+	static FORCEINLINE FString GetStringAsEnum(T EValue);
+
 	static FORCEINLINE bool IsValidClass(UClass* InClass);
 
 	static FORCEINLINE UCanvasPanelSlot* SlotAsCanvasSlot(UWidget* InWidget);
@@ -68,6 +73,9 @@ public:
 	static FORCEINLINE FVector GetRightVector(FRotator InRot);
 
 	static FORCEINLINE APlayerController* GetPlayerController(UObject* WCO, int32 Index = 0);
+	
+	static FORCEINLINE bool IsInterface(UObject* WCO, TSubclassOf<UInterface> Interface);
+
 };
 
 template <typename T /*= UActorComponent*/>
@@ -143,11 +151,26 @@ FORCEINLINE TArray<T*> UDCSLib::GetWidgets(UObject* WCO)
 	return ReturnWidgets;
 }
 
+template <typename T /*= enum calss*/>
+FORCEINLINE FString UDCSLib::GetStringAsEnum(T EValue)
+{
+	const UEnum* Enum = FindObject<UEnum>(ANY_PACKAGE, T2T(T), true);
+	if (Enum == false)
+	{
+		return INVALID_STRING;
+	}
+	return Enum->GetNameStringByIndex(static_cast<int32>(EValue));
+}
+
+FORCEINLINE bool UDCSLib::IsInterface(UObject* InObject, TSubclassOf<UInterface> Interface)
+{
+	return UKismetSystemLibrary::DoesImplementInterface(InObject, Interface);
+}
+
 FORCEINLINE bool UDCSLib::IsValidClass(UClass* InClass)
 {
 	return UKismetSystemLibrary::IsValidClass(InClass);
 }
-
 
 FORCEINLINE UCanvasPanelSlot* UDCSLib::SlotAsCanvasSlot(UWidget* InWidget)
 {

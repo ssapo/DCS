@@ -20,3 +20,5 @@ DECLARE_LOG_CATEGORY_EXTERN(DCSLog, Log, All);
 #define DPRINT_C(Color, Format, ...) DPRINT_D(-1, Color, 3.0f, true, Format, ##__VA_ARGS__)
 
 #define DPRINT_CS(Color, Sec, Format, ...) DPRINT_D(-1, Color, Sec, true, Format, ##__VA_ARGS__)
+
+#define T2T(Type) TEXT(#Type)

@@ -28,7 +28,7 @@
 #include "Camera/CameraComponent.h"
 
 #include "UserWidget.h"
-#include "Define.h"
+#include "Defines.h"
 #include "WidgetSystem.h"
 #include "DataTables.h"
 #include "Widgets/KeybindingsWidget.h"
@@ -81,6 +81,11 @@ FORCEINLINE bool ACombatCharacter::IsIdleAndNotFalling() const
 FORCEINLINE bool ACombatCharacter::IsStateEqualPure(EState InType) const
 {
 	return CStateManager->GetState() == InType;
+}
+
+UDataTable* ACombatCharacter::GetMontages(EMontage InType) const
+{
+	return nullptr;
 }
 
 // end public:
@@ -185,7 +190,7 @@ void ACombatCharacter::BeginPlay()
 	SetTimerChecker();
 
 	check(CInputBuffer);
-	CInputBuffer->OnInputBufferConsumed().AddEvent(this, ACombatCharacter::OnInputBufferConsumed);
+	CInputBuffer->OnInputBufferConsumed().AddUObject(this, &ACombatCharacter::OnInputBufferConsumed);
 
 	PostBeginPlayEvent.Broadcast();
 	PostBeginPlayEvent.Clear();
@@ -196,7 +201,7 @@ void ACombatCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	Super::EndPlay(EndPlayReason);
 
 	check(CInputBuffer);
-	CInputBuffer->OnInputBufferConsumed().AddEvent();
+	CInputBuffer->OnInputBufferConsumed().RemoveAll(this);
 
 	PostEndPlayEvent.Broadcast();
 	PostEndPlayEvent.Clear();
@@ -305,7 +310,7 @@ void ACombatCharacter::OnInputBufferConsumed(EInputBufferKey InKey)
 	}
 
 	switch (InKey)
-	{
+	{	
 	default:
 		return;
 
@@ -541,7 +546,22 @@ void ACombatCharacter::HideCrossHair()
 
 void ACombatCharacter::ToggleCombat()
 {
-	// TODO: fill function
+	if (IsStateEqualPure(EState::Idle) == false)
+	{
+		return;
+	}
+
+	CStateManager->SetState(EState::Interacting);
+	EMontage Action = CEquipment->IsInCombat() ? EMontage::DrawWeapon : EMontage::DisarmWeapon;
+	if (UAnimMontage* Animation = CMontagesManager->GetMontageForAction(Action, 0))
+	{
+		PlayAnimMontage(Animation);
+	}
+	else
+	{
+		CEquipment->ToggleCombat();
+		CStateManager->ResetState();
+	}
 }
 
 FORCEINLINE UDCSWidget* ACombatCharacter::ShowWidget(EWidgetID InType) const

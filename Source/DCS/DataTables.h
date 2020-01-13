@@ -1,16 +1,10 @@
 #pragma once
 #include "Engine/DataTable.h"
+#include "Enumerations.h"
 #include "DataTables.generated.h"
 
 class UDCSWidget;
-
-UENUM()
-enum class EWidgetID
-{
-	None = 0,
-	InGame,
-	KeyBindings,
-};
+class UAnimMontage;
 
 USTRUCT(BlueprintType)
 struct DCS_API FWidgetDefinitnionData : public FTableRowBase
@@ -26,4 +20,23 @@ public:
 
 	UPROPERTY(EditAnywhere)
 		int32 ZOrder;
+};
+
+
+USTRUCT(BlueprintType)
+struct DCS_API FMontageActionData : public FTableRowBase
+{
+	GENERATED_BODY()
+
+public:
+	FMontageActionData()
+		: Action(EMontage::None)
+		, Montages()
+	{}
+
+	UPROPERTY(EditAnywhere)
+		EMontage Action;
+
+	UPROPERTY(EditAnywhere)
+		TArray<UAnimMontage*> Montages;
 };

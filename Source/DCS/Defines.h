@@ -11,3 +11,4 @@
 #define EVENT_MOVEFORWARD "InputAxisMoveForward"
 #define EVENT_MOVERIGHT "InputAxsMoveRight"
 
+#define INVALID_STRING TEXT("INVALID")
