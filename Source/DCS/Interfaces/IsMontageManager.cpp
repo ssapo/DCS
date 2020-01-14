@@ -1,5 +1,2 @@
-
-
-
-#include "IsTargetable.h"
+#include "IsMontageManager.h"
 

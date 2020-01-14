@@ -20,15 +20,29 @@ public:
 	FORCEINLINE bool GetActivityValue(EActivity InType) const;
 	FORCEINLINE void SetState(EState InState);
 	FORCEINLINE EState GetState() const;
-	FORCEINLINE void SetActivity();
-	FORCEINLINE void ResetState();
+	FORCEINLINE void SetActivity(EActivity InType, bool InValue);
+	FORCEINLINE void ResetState(float InTime);
 
-protected:
-	virtual void BeginPlay() override;
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+private:
+	void SetIdleState();
+
+	// start Declare Events.
+public:
+	DECLARE_EVENT_TwoParams(UStateManagerComponent, FOnStateChanged, EState, EState);
+	FOnStateChanged& OnStateChanged() { return StateChangedEvent; }
+
+	DECLARE_EVENT_TwoParams(UStateManagerComponent, FOnActivityChanged, EActivity, bool);
+	FOnActivityChanged& OnActivityChanged() { return ActivityChangedEvent; }
+
+private:
+	FOnStateChanged StateChangedEvent;
+	FOnActivityChanged ActivityChangedEvent;
+	// end Declare Events.
 
 private: 
 	TMap<EActivity, bool> Activities;
 
 	EState CurrentState;
+	EState PrevState;
+	FTimerHandle IdleTimer;
 };

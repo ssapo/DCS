@@ -560,7 +560,7 @@ void ACombatCharacter::ToggleCombat()
 	else
 	{
 		CEquipment->ToggleCombat();
-		CStateManager->ResetState();
+		CStateManager->ResetState(0.0f);
 	}
 }
 

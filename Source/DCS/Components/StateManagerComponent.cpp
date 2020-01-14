@@ -1,7 +1,7 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "StateManagerComponent.h"
+#include "Components/ActorComponent.h"
+#include "TimerManager.h"
+#include "Engine/World.h"
 
 // start public:
 UStateManagerComponent::UStateManagerComponent()
@@ -21,9 +21,31 @@ FORCEINLINE bool UStateManagerComponent::GetActivityValue(EActivity InType) cons
 	}
 }
 
+FORCEINLINE void UStateManagerComponent::SetActivity(EActivity InType, bool NewValue)
+{
+	bool PrevValue = GetActivityValue(InType);
+
+	if (NewValue == PrevValue)
+	{
+		return;
+	}
+
+	Activities.Add(InType, NewValue);
+
+	ActivityChangedEvent.Broadcast(InType, NewValue);
+}
+
 FORCEINLINE void UStateManagerComponent::SetState(EState InState)
 {
+	GetWorld()->GetTimerManager().ClearTimer(IdleTimer);
+
+	PrevState = CurrentState;
 	CurrentState = InState;
+
+	if (PrevState != CurrentState)
+	{
+		StateChangedEvent.Broadcast(PrevState, CurrentState);
+	}
 }
 
 FORCEINLINE EState UStateManagerComponent::GetState() const
@@ -31,26 +53,28 @@ FORCEINLINE EState UStateManagerComponent::GetState() const
 	return CurrentState;
 }
 
-FORCEINLINE void UStateManagerComponent::SetActivity()
+FORCEINLINE void UStateManagerComponent::ResetState(float InTime)
 {
-	// TODO: fill function
-}
+	if (CurrentState == EState::Dead)
+	{
+		return;
+	}
 
-FORCEINLINE void UStateManagerComponent::ResetState()
-{
-	// TODO: fill function
+	if (InTime <= 0.0f)
+	{
+		SetIdleState();
+	}
+	else
+	{
+		GetWorld()->GetTimerManager().ClearTimer(IdleTimer);
+		GetWorld()->GetTimerManager().SetTimer(IdleTimer, this, &UStateManagerComponent::SetIdleState, InTime);
+	}
 }
-
 // end public:
 
-// start protected:
-void UStateManagerComponent::BeginPlay()
+// start private:
+void UStateManagerComponent::SetIdleState()
 {
-	Super::BeginPlay();
+	SetState(EState::Idle);
 }
-
-void UStateManagerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	// TODO: fill function
-}
-// end protected:
+// end private:

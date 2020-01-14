@@ -29,11 +29,6 @@ struct DCS_API FMontageActionData : public FTableRowBase
 	GENERATED_BODY()
 
 public:
-	FMontageActionData()
-		: Action(EMontage::None)
-		, Montages()
-	{}
-
 	UPROPERTY(EditAnywhere)
 		EMontage Action;
 
