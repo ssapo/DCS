@@ -19,5 +19,5 @@ class DCS_API IIsMontageManager
 	GENERATED_BODY()
 
 public:
-	virtual UDataTable* GetMontages(EMontage InType) const abstract;
+	virtual UDataTable* GetMontages(EMontage InType) abstract;
 };

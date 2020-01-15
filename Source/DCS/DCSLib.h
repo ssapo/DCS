@@ -51,8 +51,7 @@ public:
 	template <typename T = UUserWidget>
 	static FORCEINLINE TArray<T*> GetWidgets(UObject* WCO);
 
-	template <typename T = enum class>
-	static FORCEINLINE FString GetStringAsEnum(T EValue);
+	static FORCEINLINE FString GetStringAsEnum(const FString& TypeName, int32 EnumValue);
 
 	static FORCEINLINE bool IsValidClass(UClass* InClass);
 
@@ -151,15 +150,14 @@ FORCEINLINE TArray<T*> UDCSLib::GetWidgets(UObject* WCO)
 	return ReturnWidgets;
 }
 
-template <typename T /*= enum calss*/>
-FORCEINLINE FString UDCSLib::GetStringAsEnum(T EValue)
+FORCEINLINE FString UDCSLib::GetStringAsEnum(const FString& TypeName, int32 EnumValue)
 {
-	const UEnum* Enum = FindObject<UEnum>(ANY_PACKAGE, T2T(T), true);
+	const UEnum* Enum = FindObject<UEnum>(ANY_PACKAGE, *TypeName, true);
 	if (Enum == false)
 	{
 		return INVALID_STRING;
 	}
-	return Enum->GetNameStringByIndex(static_cast<int32>(EValue));
+	return Enum->GetNameStringByIndex(EnumValue);
 }
 
 FORCEINLINE bool UDCSLib::IsInterface(UObject* InObject, TSubclassOf<UInterface> Interface)

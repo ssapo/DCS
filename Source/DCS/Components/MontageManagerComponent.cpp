@@ -47,11 +47,11 @@ FMontageActionData UMontageManagerComponent::GetMontage(EMontage InAction) const
 {
 	FMontageActionData RetVal;
 	UDataTable* Montages = IMontageManager->GetMontages(InAction);
-	auto MontagesMap = Montages->GetRowMap();
-	auto Name = UDCSLib::GetStringAsEnum<EMontage>(InAction);
-	if (auto Ret = MontagesMap[FName(*Name)])
+	const TMap<FName, uint8*>& MontagesMap = Montages->GetRowMap();
+	FName Name = *UDCSLib::GetStringAsEnum(TEXT("EMontage"), static_cast<int32>(InAction));
+	if (MontagesMap.Contains(Name))
 	{
-		RetVal = *(FMontageActionData*)(Ret);
+		RetVal = *(FMontageActionData*)(MontagesMap[Name]);
 	}
 
 	return RetVal;

@@ -25,7 +25,8 @@ public:
 	FORCEINLINE TArray<FEquiopmentSlots> GetEquipmentSlots() const { return EquipmentSlots; }
 	FORCEINLINE bool IsInCombat() const { return bIsInCombat; }
 	FORCEINLINE EItem GetSelectedMainHandType() const { return SelectedMainHandType; }
-	
+	FORCEINLINE ECombat GetCombatType() const { return CombatType; }
+
 	const FStoredItem* GetActiveItem(EItem InType, int32 Index) const;
 	bool IsSlotHidden(EItem InType, int32 Index) const;
 	bool IsEquippedItem(const FGuid& InItemID) const;
@@ -33,6 +34,8 @@ public:
 	void ToggleCombat();
 
 private:
+	void SetCombat(bool InValue);
+
 	int32 GetEquipmentSlotsIndex(EItem InType) const;
 	bool IsSlotIndexValid(EItem InType, int32 Index) const;
 

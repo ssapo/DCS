@@ -83,11 +83,28 @@ FORCEINLINE bool ACombatCharacter::IsStateEqualPure(EState InType) const
 	return CStateManager->GetState() == InType;
 }
 
-UDataTable* ACombatCharacter::GetMontages(EMontage InType) const
+UDataTable* ACombatCharacter::GetMontages(EMontage InType)
 {
-	return nullptr;
-}
+	LastAction = InType;
 
+	if (LastCommonActions.Contains(LastAction))
+	{
+		return CommonMontageData;
+	}
+
+	if (CEquipment->IsInCombat())
+	{
+		return CombatTypeMontagesData[CEquipment->GetCombatType()];
+	}
+
+	LastCommonActions = { EMontage::DisarmWeapon, EMontage::DrawWeapon };
+	if (LastCommonActions.Contains(LastAction))
+	{
+		return CombatTypeMontagesData[CEquipment->GetCombatType()];
+	}
+
+	return CombatTypeMontagesData[ECombat::None];
+}
 // end public:
 
 // start private:
@@ -508,6 +525,18 @@ void ACombatCharacter::OnHideKeyBindings()
 	}
 }
 
+void ACombatCharacter::OnCombatChanged(bool bChangedValue)
+{
+	UpdateRotationSettings();
+
+	if (bChangedValue == false)
+	{
+		StopBlocking();
+
+		ResetAimingMode();
+	}
+}
+
 void ACombatCharacter::SetSprint(bool bActivate)
 {
 	// TODO: fill function
@@ -552,7 +581,7 @@ void ACombatCharacter::ToggleCombat()
 	}
 
 	CStateManager->SetState(EState::Interacting);
-	EMontage Action = CEquipment->IsInCombat() ? EMontage::DrawWeapon : EMontage::DisarmWeapon;
+	EMontage Action = CEquipment->IsInCombat() ? EMontage::DisarmWeapon : EMontage::DrawWeapon;
 	if (UAnimMontage* Animation = CMontagesManager->GetMontageForAction(Action, 0))
 	{
 		PlayAnimMontage(Animation);
@@ -562,6 +591,21 @@ void ACombatCharacter::ToggleCombat()
 		CEquipment->ToggleCombat();
 		CStateManager->ResetState(0.0f);
 	}
+}
+
+void ACombatCharacter::StartBlocking()
+{
+	CStateManager->SetActivity(EActivity::IsBlockingPressed, true);
+}
+
+void ACombatCharacter::StopBlocking()
+{
+	CStateManager->SetActivity(EActivity::IsBlockingPressed, false);
+}
+
+void ACombatCharacter::UpdateRotationSettings()
+{
+	// TODO: Fill Function
 }
 
 FORCEINLINE UDCSWidget* ACombatCharacter::ShowWidget(EWidgetID InType) const

@@ -6,7 +6,7 @@
 // start public:
 UStateManagerComponent::UStateManagerComponent()
 {
-
+	CurrentState = EState::Idle;
 }
 
 FORCEINLINE bool UStateManagerComponent::GetActivityValue(EActivity InType) const
@@ -39,7 +39,7 @@ FORCEINLINE void UStateManagerComponent::SetState(EState InState)
 {
 	GetWorld()->GetTimerManager().ClearTimer(IdleTimer);
 
-	PrevState = CurrentState;
+	EState PrevState = CurrentState;
 	CurrentState = InState;
 
 	if (PrevState != CurrentState)

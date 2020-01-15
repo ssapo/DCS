@@ -47,7 +47,19 @@ bool UEquipmentComponent::IsSlotIndexValid(EItem InType, int32 Index) const
 
 void UEquipmentComponent::ToggleCombat()
 {
-	// TODO: Fill Function
+	SetCombat(!bIsInCombat);
+}
+
+void UEquipmentComponent::SetCombat(bool InValue)
+{
+	if (bIsInCombat == InValue)
+	{
+		return;
+	}
+
+	bIsInCombat = InValue;
+
+	CombatChangedEnvet.Broadcast(bIsInCombat);
 }
 
 bool UEquipmentComponent::IsSlotHidden(EItem InType, int32 Index) const

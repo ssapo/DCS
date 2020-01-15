@@ -63,7 +63,7 @@ protected:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
-	virtual UDataTable* GetMontages(EMontage InType) const override;
+	virtual UDataTable* GetMontages(EMontage InType) override;
 
 	// start interfaces
 	void Interact(AActor* Actor) override;
@@ -109,6 +109,8 @@ private:
 
 	void OnShowKeyBindings();
 	void OnHideKeyBindings();
+	void OnCombatChanged(bool bChangedValue);
+
 	void SetSprint(bool bActivate);
 	void ResetAimingMode();
 	void StopLookingForward();
@@ -116,6 +118,9 @@ private:
 	void StopZooming();
 	void HideCrossHair();
 	void ToggleCombat();
+	void StartBlocking();
+	void StopBlocking();
+	void UpdateRotationSettings();
 
 	FORCEINLINE UDCSWidget* ShowWidget(EWidgetID InType) const;
 
@@ -133,6 +138,12 @@ private:
 	// end Declare Events.
 
 private:
+	UPROPERTY(EditAnywhere)
+		TMap<ECombat, UDataTable*> CombatTypeMontagesData;
+	
+	UPROPERTY(EditAnywhere)
+		UDataTable* CommonMontageData;
+
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
 		USpringArmComponent* CCameraBoom;
 
@@ -203,6 +214,8 @@ private:
 	EMeleeAttack MeleeAttackType;
 	EDirection ReceivedHitDirection;
 	EMovementState StoredMovementState;
+	TArray<EMontage> LastCommonActions;
+	EMontage LastAction;
 
 	float BlockAlpha;
 	float HorizontalLockRate;
