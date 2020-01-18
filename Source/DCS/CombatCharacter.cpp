@@ -365,8 +365,9 @@ void ACombatCharacter::OnMoveForward(float InAxisValue)
 {
 	if (IsAlive())
 	{
-		FRotator Rot = FRotator(0.0f, 0.0f, GetControlRotation().Yaw);
-		AddMovementInput(UDCSLib::GetForwardVector(Rot), InAxisValue);
+		FVector Forward = UDCSLib::GetForwardVector(FRotator(0.0f, GetControlRotation().Yaw, 0));
+		DLOG(Log, TEXT("Forward-[%s] InAxisValue-[%f]"), *Forward.ToString(), InAxisValue);
+		AddMovementInput(Forward, InAxisValue);
 	}
 }
 
@@ -374,15 +375,16 @@ void ACombatCharacter::OnMoveRight(float InAxisValue)
 {
 	if (IsAlive())
 	{
-		FRotator Rot = FRotator(0.0f, 0.0f, GetControlRotation().Yaw);
-		AddMovementInput(UDCSLib::GetRightVector(Rot), InAxisValue);
+		FVector Right = UDCSLib::GetRightVector(FRotator(0.0f, GetControlRotation().Yaw, 0));
+		DLOG(Log, TEXT("Right-[%s] InAxisValue-[%f]"), *Right.ToString(), InAxisValue);
+		AddMovementInput(Right, InAxisValue);
 	}
 }
 
 void ACombatCharacter::OnHorizontalLook(float InAxisValue)
 {
 	AddControllerYawInput(HorizontalLockRate * InAxisValue * UDCSLib::GetDTS(this));
-	CDynamicTargeting->FindTargetWithAxisInput(InAxisValue);
+	CDynamicTargeting->FindTargetWithAxisInput(HorizontalLockRate);
 }
 
 void ACombatCharacter::OnVerticalLook(float InAxisValue)
@@ -411,6 +413,10 @@ void ACombatCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		&ACombatCharacter::OnMoveForward);
 	PlayerInputComponent->BindAxis(EVENT_MOVERIGHT, this,
 		&ACombatCharacter::OnMoveRight);
+	PlayerInputComponent->BindAxis(EVENT_LOOKH, this,
+		&ACombatCharacter::OnHorizontalLook);
+	PlayerInputComponent->BindAxis(EVENT_LOOKV, this,
+		&ACombatCharacter::OnVerticalLook);
 
 	PlayerInputComponent->BindAction(EVENT_JUMP, IE_Pressed, this, 
 		&ACombatCharacter::OnJumpKeyPressed);
