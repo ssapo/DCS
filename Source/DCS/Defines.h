@@ -9,6 +9,6 @@
 #define EVENT_LOOKH "InputAxisLookHorizontal"
 #define EVENT_LOOKV "InputAxisLookVertical"
 #define EVENT_MOVEFORWARD "InputAxisMoveForward"
-#define EVENT_MOVERIGHT "InputAxsMoveRight"
+#define EVENT_MOVERIGHT "InputAxisMoveRight"
 
 #define INVALID_STRING TEXT("INVALID")
