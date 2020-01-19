@@ -1,38 +1,66 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "StatsManagerComponent.h"
+#include "DCSLib.h"
 
-// Sets default values for this component's properties
+// start public:
 UStatsManagerComponent::UStatsManagerComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
-}
-
-
-// Called when the game starts
-void UStatsManagerComponent::BeginPlay()
-{
-	Super::BeginPlay();
-
-	// ...
-	
-}
-
-
-// Called every frame
-void UStatsManagerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
+	Stats.Empty();
+	Stats.Add(FStat(EStat::Health, 100.0f, 0.0f));
+	Stats.Add(FStat(EStat::Stamina, 100.0f, 0.0f));
+	Stats.Add(FStat(EStat::Mana, 100.0f, 0.0f));
+	Stats.Add(FStat(EStat::Damage, 100.0f, 0.0f));
+	Stats.Add(FStat(EStat::Armor, 100.0f, 0.0f));
+	Stats.Add(FStat(EStat::CritChance, 100.0f, 0.0f));
+	Stats.Add(FStat(EStat::CritMultiplier, 100.0f, 0.0f));
+	Stats.Add(FStat(EStat::AttackSpeed, 100.0f, 0.0f));
+	Stats.Add(FStat(EStat::Block, 100.0f, 0.0f));
+	Stats.Add(FStat(EStat::MeleeAttackStaminaCost, 100.0f, 0.0f));
+	Stats.Add(FStat(EStat::MagicDamage, 100.0f, 0.0f));
+	Stats.Add(FStat(EStat::CastingSpeed, 100.0f, 0.0f));
 }
 
 void UStatsManagerComponent::Initialize()
 {
+	// TODO: fill function
 }
 
+float UStatsManagerComponent::GetStatValue(EStat InType, bool IncludeModifiers) const
+{
+	float RetVal = 0.0f;
+	int32 LastIndex = GetStatIndex(InType);
+	if (Stats.IsValidIndex(LastIndex) == false)
+	{
+		return RetVal;
+	}
+
+	RetVal = Stats[LastIndex].BaseValue;
+	if (IncludeModifiers)
+	{
+		RetVal += Stats[LastIndex].ModifiersValue;
+	}
+
+	return RetVal;
+}
+
+int32 UStatsManagerComponent::GetStatIndex(EStat InType) const
+{
+	int32 RetVal = 0;
+	for (const auto& E : Stats)
+	{
+		if (E.Type == InType)
+		{
+			return RetVal;
+		}
+		++RetVal;
+	}
+
+	return UDCSLib::INV_INDEX;
+}
+// end public:
+
+// start protected:
+void UStatsManagerComponent::BeginPlay()
+{
+	Super::BeginPlay();
+}
+// end protected:

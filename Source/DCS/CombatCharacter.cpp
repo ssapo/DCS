@@ -75,35 +75,12 @@ FORCEINLINE bool ACombatCharacter::IsActivityPure(EActivity InType) const
 
 FORCEINLINE bool ACombatCharacter::IsIdleAndNotFalling() const
 {
-	return GetCharacterMovement()->IsFalling() && IsStateEqualPure(EState::Idle);
+	return !GetCharacterMovement()->IsFalling() && IsStateEqualPure(EState::Idle);
 }
 
 FORCEINLINE bool ACombatCharacter::IsStateEqualPure(EState InType) const
 {
 	return CStateManager->GetState() == InType;
-}
-
-UDataTable* ACombatCharacter::GetMontages(EMontage InType)
-{
-	LastAction = InType;
-
-	if (LastCommonActions.Contains(LastAction))
-	{
-		return CommonMontageData;
-	}
-
-	if (CEquipment->IsInCombat())
-	{
-		return CombatTypeMontagesData[CEquipment->GetCombatType()];
-	}
-
-	LastCommonActions = { EMontage::DisarmWeapon, EMontage::DrawWeapon };
-	if (LastCommonActions.Contains(LastAction))
-	{
-		return CombatTypeMontagesData[CEquipment->GetCombatType()];
-	}
-
-	return CombatTypeMontagesData[ECombat::None];
 }
 // end public:
 
@@ -224,6 +201,74 @@ void ACombatCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	PostEndPlayEvent.Clear();
 }
 
+void ACombatCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	UpdateAimAlpha();
+}
+
+void ACombatCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	check(PlayerInputComponent != nullptr);
+
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	PlayerInputComponent->BindAction(EVENT_KEYBIND, IE_Pressed, this,
+		&ACombatCharacter::OnShowKeyBindings);
+	PlayerInputComponent->BindAction(EVENT_KEYBIND, IE_Released, this,
+		&ACombatCharacter::OnHideKeyBindings);
+
+	PlayerInputComponent->BindAxis(EVENT_MOVEFORWARD, this,
+		&ACombatCharacter::OnMoveForward);
+	PlayerInputComponent->BindAxis(EVENT_MOVERIGHT, this,
+		&ACombatCharacter::OnMoveRight);
+	PlayerInputComponent->BindAxis(EVENT_LOOKH, this,
+		&ACombatCharacter::OnHorizontalLook);
+	PlayerInputComponent->BindAxis(EVENT_LOOKV, this,
+		&ACombatCharacter::OnVerticalLook);
+
+	PlayerInputComponent->BindAction(EVENT_JUMP, IE_Pressed, this,
+		&ACombatCharacter::OnJumpKeyPressed);
+	PlayerInputComponent->BindAction(EVENT_JUMP, IE_Released, this,
+		&ACombatCharacter::OnJumpKeyReleased);
+	PlayerInputComponent->BindAction(EVENT_ROLL, IE_Pressed, this,
+		&ACombatCharacter::OnRollKeyPressed);
+
+	PlayerInputComponent->BindAction(EVENT_TOGGLECOMBAT, IE_Pressed, this,
+		&ACombatCharacter::OnToggleCombatKeyPressed);
+}
+
+UDataTable* ACombatCharacter::GetMontages(EMontage InType)
+{
+	EMontage LastAction = InType;
+	
+	TArray<EMontage> LastCommonActions {
+		EMontage::Backstabbed,
+		EMontage::RollForward,
+		EMontage::RollLeft,
+		EMontage::RollRight,
+		EMontage::RollBackward
+	};
+
+	if (LastCommonActions.Contains(LastAction))
+	{
+		return CommonMontageData;
+	}
+
+	if (CEquipment->IsInCombat())
+	{
+		return CombatTypeMontagesData[CEquipment->GetCombatType()];
+	}
+
+	LastCommonActions = { EMontage::DisarmWeapon, EMontage::DrawWeapon };
+	if (LastCommonActions.Contains(LastAction))
+	{
+		return CombatTypeMontagesData[CEquipment->GetCombatType()];
+	}
+
+	return CombatTypeMontagesData[ECombat::None];
+}
+
 void ACombatCharacter::InitializeComponents()
 {
 	CDynamicTargeting->Initialize(*CTargetingArrow);
@@ -342,6 +387,7 @@ void ACombatCharacter::OnInputBufferConsumed(EInputBufferKey InKey)
 	case EInputBufferKey::FallingAttack:
 		break;
 	case EInputBufferKey::Roll:
+		Roll();
 		break;
 	case EInputBufferKey::Jump:
 		break;
@@ -390,43 +436,6 @@ void ACombatCharacter::OnHorizontalLook(float InAxisValue)
 void ACombatCharacter::OnVerticalLook(float InAxisValue)
 {
 	AddControllerPitchInput(VerticalLookRate * InAxisValue * UDCSLib::GetDTS(this));
-}
-
-void ACombatCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-	UpdateAimAlpha();
-}
-
-void ACombatCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	check(PlayerInputComponent != nullptr);
-
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-	PlayerInputComponent->BindAction(EVENT_KEYBIND, IE_Pressed, this, 
-		&ACombatCharacter::OnShowKeyBindings);
-	PlayerInputComponent->BindAction(EVENT_KEYBIND, IE_Released, this, 
-		&ACombatCharacter::OnHideKeyBindings);
-
-	PlayerInputComponent->BindAxis(EVENT_MOVEFORWARD, this,
-		&ACombatCharacter::OnMoveForward);
-	PlayerInputComponent->BindAxis(EVENT_MOVERIGHT, this,
-		&ACombatCharacter::OnMoveRight);
-	PlayerInputComponent->BindAxis(EVENT_LOOKH, this,
-		&ACombatCharacter::OnHorizontalLook);
-	PlayerInputComponent->BindAxis(EVENT_LOOKV, this,
-		&ACombatCharacter::OnVerticalLook);
-
-	PlayerInputComponent->BindAction(EVENT_JUMP, IE_Pressed, this, 
-		&ACombatCharacter::OnJumpKeyPressed);
-	PlayerInputComponent->BindAction(EVENT_JUMP, IE_Released, this,
-		&ACombatCharacter::OnJumpKeyReleased);
-	PlayerInputComponent->BindAction(EVENT_ROLL, IE_Pressed, this,
-		&ACombatCharacter::OnRollKeyPressed);
-
-	PlayerInputComponent->BindAction(EVENT_TOGGLECOMBAT, IE_Pressed, this,
-		&ACombatCharacter::OnToggleCombatKeyPressed);
 }
 
 // start interfaces
@@ -612,6 +621,58 @@ void ACombatCharacter::StopBlocking()
 void ACombatCharacter::UpdateRotationSettings()
 {
 	// TODO: Fill Function
+}
+
+void ACombatCharacter::Roll()
+{
+	if (CanRoll() == false)
+	{
+		return;
+	}
+
+	CStateManager->SetState(EState::Rolling);
+
+	UAnimMontage* MontageRoll = GetRollMontages();
+	if (MontageRoll)
+	{
+		PlayAnimMontage(MontageRoll);
+		CExtendedStamina->ModifyStat(-RollStaminaCost, true);
+	}
+	else
+	{
+		CStateManager->ResetState(0.0f);
+	}
+}
+
+FORCEINLINE bool ACombatCharacter::CanRoll() const
+{
+	return IsIdleAndNotFalling() && IsEnoughStamina(1.0f);
+}
+
+FORCEINLINE bool ACombatCharacter::HasMovementInput() const
+{
+	return FVector::ZeroVector.Equals(GetCharacterMovement()->GetLastInputVector(), 0.0001f);
+}
+
+FORCEINLINE bool ACombatCharacter::IsEnoughStamina(float InValue) const
+{
+	return CExtendedStamina->GetCurrentValue() >= InValue;
+}
+
+UAnimMontage* ACombatCharacter::GetRollMontages() const
+{
+	UAnimMontage* RetVal = nullptr;
+	if (HasMovementInput() == false)
+	{
+		RetVal = CMontagesManager->GetMontageForAction(EMontage::RollBackward, 0);
+		if (RetVal)
+		{
+			return RetVal;
+		}
+	}
+
+	RetVal = CMontagesManager->GetMontageForAction(EMontage::RollForward, 0);
+	return RetVal;
 }
 
 FORCEINLINE UDCSWidget* ACombatCharacter::ShowWidget(EWidgetID InType) const

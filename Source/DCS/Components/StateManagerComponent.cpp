@@ -39,12 +39,12 @@ FORCEINLINE void UStateManagerComponent::SetState(EState InState)
 {
 	GetWorld()->GetTimerManager().ClearTimer(IdleTimer);
 
-	EState PrevState = CurrentState;
+	EState PreviousState = CurrentState;
 	CurrentState = InState;
 
-	if (PrevState != CurrentState)
+	if (PreviousState != CurrentState)
 	{
-		StateChangedEvent.Broadcast(PrevState, CurrentState);
+		StateChangedEvent.Broadcast(PreviousState, CurrentState);
 	}
 }
 

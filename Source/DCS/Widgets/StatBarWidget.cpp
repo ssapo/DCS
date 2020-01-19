@@ -23,15 +23,26 @@ void UStatBarWidget::NativeConstruct()
 	SetStatBar(UDCSLib::GetComponent<UExtendedStatComponent>(GetOwningPlayerPawn()));
 }
 
+void UStatBarWidget::NativeDestruct()
+{
+	Super::NativeDestruct();
+
+	if (WP_CStat.IsValid())
+	{
+		WP_CStat->OnValueChanged().RemoveAll(this);
+	}
+}
+
 void UStatBarWidget::SetStatBar(UExtendedStatComponent* InComponent)
 {
-	if (InComponent == nullptr)
+	WP_CStat = InComponent;
+	if (WP_CStat.IsValid() == false)
 	{
 		return;
 	}
 	
-	OnValueChanged(InComponent->GetCurrentValue(), InComponent->GetMaxValue());
-	InComponent->OnValueChanged.AddDynamic(this, &UStatBarWidget::OnValueChanged);
+	OnValueChanged(WP_CStat->GetCurrentValue(), WP_CStat->GetMaxValue());
+	WP_CStat->OnValueChanged().AddUObject(this, &UStatBarWidget::OnValueChanged);
 }
 
 void UStatBarWidget::OnValueChanged(float InValue, float MaxValue)
