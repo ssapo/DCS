@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Structs.h"
 #include "DCSWidget.h"
+#include "WeakObjectPtrTemplates.h"
 #include "StatBarWidget.generated.h"
 
 class UProgressBar;
@@ -22,17 +23,19 @@ class DCS_API UStatBarWidget : public UDCSWidget
 protected:
 	virtual void NativePreConstruct() override;
 	virtual void NativeConstruct() override;
+	virtual void NativeDestruct() override;
 
 private:
 	void SetStatBar(UExtendedStatComponent* InComponent);
 
-	UFUNCTION()
-		void OnValueChanged(float InValue, float MaxValue);
+	void OnValueChanged(float InValue, float MaxValue);
 
 	void UpdatePercent(float InPercent);
 	void UpdateWidth(float InMaxValue);
 
 private:
+	TWeakObjectPtr<UExtendedStatComponent> WP_CStat;
+
 	UPROPERTY(meta = (BindWidget))
 		UProgressBar* StatProgressBar;
 

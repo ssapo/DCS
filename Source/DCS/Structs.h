@@ -204,9 +204,13 @@ struct FStat
 
 public:
 	FStat()
-		: Type(EStat::None)
-		, BaseValue(0)
-		, ModifiersValue(0)
+		: FStat(EStat::None, 0.0f, 0.0f)
+	{}
+
+	FStat(EStat InStat, float InBase, float InModifiersValue)
+		: Type(InStat)
+		, BaseValue(InBase)
+		, ModifiersValue(InModifiersValue)
 	{}
 
 	UPROPERTY(EditAnywhere)

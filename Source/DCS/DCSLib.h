@@ -73,8 +73,11 @@ public:
 
 	static FORCEINLINE APlayerController* GetPlayerController(UObject* WCO, int32 Index = 0);
 	
-	static FORCEINLINE bool IsInterface(UObject* WCO, TSubclassOf<UInterface> Interface);
+	static FORCEINLINE bool IsInterface(UObject* InObject, TSubclassOf<UInterface> Interface);
 
+public:
+	static FString INV_STRING;
+	static int32 INV_INDEX;
 };
 
 template <typename T /*= UActorComponent*/>
@@ -155,7 +158,7 @@ FORCEINLINE FString UDCSLib::GetStringAsEnum(const FString& TypeName, int32 Enum
 	const UEnum* Enum = FindObject<UEnum>(ANY_PACKAGE, *TypeName, true);
 	if (Enum == false)
 	{
-		return INVALID_STRING;
+		return INV_STRING;
 	}
 	return Enum->GetNameStringByIndex(EnumValue);
 }

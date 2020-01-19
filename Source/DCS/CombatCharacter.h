@@ -122,6 +122,12 @@ private:
 	void StopBlocking();
 	void UpdateRotationSettings();
 
+	void Roll();
+	UAnimMontage* GetRollMontages() const;
+	FORCEINLINE bool CanRoll() const;
+	FORCEINLINE bool HasMovementInput() const;
+	FORCEINLINE bool IsEnoughStamina(float InValue) const;
+
 	FORCEINLINE UDCSWidget* ShowWidget(EWidgetID InType) const;
 
 	// start Declare Events.
@@ -214,8 +220,7 @@ private:
 	EMeleeAttack MeleeAttackType;
 	EDirection ReceivedHitDirection;
 	EMovementState StoredMovementState;
-	TArray<EMontage> LastCommonActions;
-	EMontage LastAction;
+	EMontage LastRollDirection;
 
 	float BlockAlpha;
 	float HorizontalLockRate;

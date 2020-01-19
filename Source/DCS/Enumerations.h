@@ -52,7 +52,7 @@ enum class EWeapon : uint8
 };
 
 UENUM()
-enum class EStat : int8
+enum class EStat : uint8
 {
 	None					UMETA(DisplayName = "None"),
 	Health					UMETA(DisplayName = "Health"),
