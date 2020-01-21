@@ -8,5 +8,9 @@ UCLASS()
 class DCS_API UANS_InputBuffer : public UAnimNotifyState
 {
 	GENERATED_BODY()
-	
+
+private:
+	void NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration) override;
+	void NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation) override;
+	FString GetNotifyName_Implementation() const override;
 };

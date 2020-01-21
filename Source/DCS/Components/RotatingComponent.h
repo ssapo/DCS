@@ -1,11 +1,9 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Structs.h"
 #include "RotatingComponent.generated.h"
-
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class DCS_API URotatingComponent : public UActorComponent
@@ -13,16 +11,38 @@ class DCS_API URotatingComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:	
-	// Sets default values for this component's properties
 	URotatingComponent();
 
+	void StartRotatingWithLimit(float InMaxPossibleRotation, float InMaxDegreesPerSecond);
+	void StartRotatingWithTime(float Time, float InMaxDegreesPerSecond);
+	void StopRotating();
+	
+	void SetRotationMode(ERotationMode Mode);
+
+	FORCEINLINE bool IsRotating() const;
+
 protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
+	void BeginPlay() override;
+	void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	// start Declare Events.
+public:
+	DECLARE_EVENT(URotatingComponent, FOnRotatingStart);
+	FOnRotatingStart& OnRotatingStart() { return RotatingStartEvent; }
 
-		
+	DECLARE_EVENT(URotatingComponent, FOnRotatingEnd);
+	FOnRotatingEnd& OnRotatingEnd() { return RotatingEndEvent; }
+
+private:
+	FOnRotatingStart RotatingStartEvent;
+	FOnRotatingEnd RotatingEndEvent;
+	// end Declare Events.
+
+private:
+	float TimeElapsed;
+	float RotateTime;
+	float MaxDegreesPerSecond;
+	float MaxAllowedDegrees;
+
+	bool bShouldRotate;
 };
