@@ -203,7 +203,7 @@ enum class EMovementState : int8
 };
 
 UENUM()
-enum class ERotationMode : int8
+enum class ERotationMode : uint8
 {
 	None					UMETA(DisplayName = "None"),
 	FaceCamera				UMETA(DisplayName = "FaceCamera"),
@@ -241,7 +241,7 @@ enum class EMontage : uint8
 };
 
 UENUM()
-enum class EDemoRoom : int8
+enum class EDemoRoom : uint8
 {
 	None					UMETA(DisplayName = "None"),
 	Standard				UMETA(DisplayName = "Standard"),
@@ -251,7 +251,7 @@ enum class EDemoRoom : int8
 };
 
 UENUM()
-enum class EDemoDisplay : int8
+enum class EDemoDisplay : uint8
 {
 	Round					UMETA(DisplayName = "Round"),
 	SquareL					UMETA(DisplayName = "SquareL"),
@@ -261,7 +261,7 @@ enum class EDemoDisplay : int8
 	Count					UMETA(Hidden)
 };
 
-UENUM()
+UENUM(BlueprintType)
 enum class EActivity : uint8
 {
 	None,
