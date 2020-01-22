@@ -75,10 +75,10 @@ FORCEINLINE bool ACombatCharacter::IsActivityPure(EActivity InType) const
 
 FORCEINLINE bool ACombatCharacter::IsIdleAndNotFalling() const
 {
-	return !GetCharacterMovement()->IsFalling() && IsStateEqualPure(EState::Idle);
+	return !GetCharacterMovement()->IsFalling() && IsStateEqual(EState::Idle);
 }
 
-FORCEINLINE bool ACombatCharacter::IsStateEqualPure(EState InType) const
+FORCEINLINE bool ACombatCharacter::IsStateEqual(EState InType) const
 {
 	return CStateManager->GetState() == InType;
 }
@@ -183,8 +183,10 @@ void ACombatCharacter::BeginPlay()
 
 	SetTimerChecker();
 
-	check(CInputBuffer);
+	CInputBuffer->OnInputBufferClosed().AddUObject(this, &ACombatCharacter::OnInputBufferClosed);
 	CInputBuffer->OnInputBufferConsumed().AddUObject(this, &ACombatCharacter::OnInputBufferConsumed);
+	CRotating->OnRotatingStart().AddUObject(this, &ACombatCharacter::OnRotatingStart);
+	CRotating->OnRotatingEnd().AddUObject(this, &ACombatCharacter::OnRotatingEnd);
 
 	PostBeginPlayEvent.Broadcast();
 	PostBeginPlayEvent.Clear();
@@ -194,8 +196,9 @@ void ACombatCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
 
-	check(CInputBuffer);
 	CInputBuffer->OnInputBufferConsumed().RemoveAll(this);
+	CRotating->OnRotatingStart().RemoveAll(this);
+	CRotating->OnRotatingEnd().RemoveAll(this);
 
 	PostEndPlayEvent.Broadcast();
 	PostEndPlayEvent.Clear();
@@ -364,49 +367,6 @@ void ACombatCharacter::OnSprintKeyReleased()
 	SetSprint(false);
 }
 
-void ACombatCharacter::OnInputBufferConsumed(EInputBufferKey InKey)
-{
-	if (IsAlive() == false)
-	{
-		return;
-	}
-
-	switch (InKey)
-	{	
-	default:
-		return;
-
-	case EInputBufferKey::LightAttack:
-		break;
-	case EInputBufferKey::HeavyAttack:
-		break;
-	case EInputBufferKey::ThrustAttack:
-		break;
-	case EInputBufferKey::SpecialAttack:
-		break;
-	case EInputBufferKey::FallingAttack:
-		break;
-	case EInputBufferKey::Roll:
-		Roll();
-		break;
-	case EInputBufferKey::Jump:
-		break;
-	case EInputBufferKey::Parry:
-		break;
-	case EInputBufferKey::ToggleCombat:
-		ToggleCombat();
-		break;
-	case EInputBufferKey::SwitchMainHandTypeUp:
-		break;
-	case EInputBufferKey::SwitchMainHandTypeDown:
-		break;
-	case EInputBufferKey::SwitchMainHandItemUp:
-		break;
-	case EInputBufferKey::SwitchMainHandItemDown:
-		break;
-	}
-}
-
 void ACombatCharacter::OnMoveForward(float InAxisValue)
 {
 	if (IsAlive())
@@ -540,6 +500,59 @@ void ACombatCharacter::OnHideKeyBindings()
 	}
 }
 
+void ACombatCharacter::OnInputBufferConsumed(EInputBufferKey InKey)
+{
+	if (IsAlive() == false)
+	{
+		return;
+	}
+
+	switch (InKey)
+	{
+	default:
+		return;
+
+	case EInputBufferKey::LightAttack:
+		break;
+	case EInputBufferKey::HeavyAttack:
+		break;
+	case EInputBufferKey::ThrustAttack:
+		break;
+	case EInputBufferKey::SpecialAttack:
+		break;
+	case EInputBufferKey::FallingAttack:
+		break;
+	case EInputBufferKey::Roll:
+		Roll();
+		break;
+	case EInputBufferKey::Jump:
+		break;
+	case EInputBufferKey::Parry:
+		break;
+	case EInputBufferKey::ToggleCombat:
+		ToggleCombat();
+		break;
+	case EInputBufferKey::SwitchMainHandTypeUp:
+		break;
+	case EInputBufferKey::SwitchMainHandTypeDown:
+		break;
+	case EInputBufferKey::SwitchMainHandItemUp:
+		break;
+	case EInputBufferKey::SwitchMainHandItemDown:
+		break;
+	}
+}
+
+void ACombatCharacter::OnInputBufferClosed()
+{
+	if (IsStateEqual(EState::Disabled))
+	{
+		return;
+	}
+
+	CStateManager->ResetState(0.0f);
+}
+
 void ACombatCharacter::OnCombatChanged(bool bChangedValue)
 {
 	UpdateRotationSettings();
@@ -550,6 +563,16 @@ void ACombatCharacter::OnCombatChanged(bool bChangedValue)
 
 		ResetAimingMode();
 	}
+}
+
+void ACombatCharacter::OnRotatingStart()
+{
+	// TODO: fill function
+}
+
+void ACombatCharacter::OnRotatingEnd()
+{
+	// TODO: fill function
 }
 
 void ACombatCharacter::SetSprint(bool bActivate)
@@ -590,7 +613,7 @@ void ACombatCharacter::HideCrossHair()
 
 void ACombatCharacter::ToggleCombat()
 {
-	if (IsStateEqualPure(EState::Idle) == false)
+	if (IsStateEqual(EState::Idle) == false)
 	{
 		return;
 	}
@@ -664,14 +687,14 @@ UAnimMontage* ACombatCharacter::GetRollMontages() const
 	UAnimMontage* RetVal = nullptr;
 	if (HasMovementInput() == false)
 	{
-		RetVal = CMontagesManager->GetMontageForAction(EMontage::RollBackward, 0);
+		RetVal = CMontagesManager->GetMontageForAction(EMontage::RollForward, 0);
 		if (RetVal)
 		{
 			return RetVal;
 		}
 	}
 
-	RetVal = CMontagesManager->GetMontageForAction(EMontage::RollForward, 0);
+	RetVal = CMontagesManager->GetMontageForAction(EMontage::RollBackward, 0);
 	return RetVal;
 }
 

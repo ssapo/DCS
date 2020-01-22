@@ -56,7 +56,7 @@ public:
 	FORCEINLINE float GetAimAlpha() const override;
 	FORCEINLINE bool IsActivityPure(EActivity InType) const;
 	FORCEINLINE bool IsIdleAndNotFalling() const;
-	FORCEINLINE bool IsStateEqualPure(EState InType) const;
+	FORCEINLINE bool IsStateEqual(EState InType) const;
 
 protected:
 	virtual void BeginPlay() override;
@@ -100,7 +100,6 @@ private:
 	void OnToggleKeyPressed();
 	void OnSprintKeyPressed();
 	void OnSprintKeyReleased();
-	void OnInputBufferConsumed(EInputBufferKey InKey);
 
 	void OnMoveForward(float InAxisValue);
 	void OnMoveRight(float InAxisValue);
@@ -109,7 +108,13 @@ private:
 
 	void OnShowKeyBindings();
 	void OnHideKeyBindings();
+
+	void OnInputBufferConsumed(EInputBufferKey InKey);
+	void OnInputBufferClosed();
+
 	void OnCombatChanged(bool bChangedValue);
+	void OnRotatingStart();
+	void OnRotatingEnd();
 
 	void SetSprint(bool bActivate);
 	void ResetAimingMode();

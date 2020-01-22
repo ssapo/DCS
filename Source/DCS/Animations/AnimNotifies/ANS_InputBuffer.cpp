@@ -11,7 +11,7 @@ void UANS_InputBuffer::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequen
 	auto CInputBuffer = UDCSLib::GetComponent<UInputBufferComponent>(MeshComp->GetOwner());
 	if (CInputBuffer)
 	{
-		CInputBuffer->CloseInputBuffer();
+		CInputBuffer->OpenInputBuffer();
 	}
 }
 
@@ -20,7 +20,7 @@ void UANS_InputBuffer::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequence
 	auto CInputBuffer = UDCSLib::GetComponent<UInputBufferComponent>(MeshComp->GetOwner());
 	if (CInputBuffer)
 	{
-		CInputBuffer->OpenInputBuffer();
+		CInputBuffer->CloseInputBuffer();
 	}
 }
 

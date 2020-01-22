@@ -75,6 +75,8 @@ public:
 	
 	static FORCEINLINE bool IsInterface(UObject* InObject, TSubclassOf<UInterface> Interface);
 
+	static FORCEINLINE FRotator InterpToConstant(FRotator Current, FRotator Target, float DT, float RotSpeed);
+
 public:
 	static FString INV_STRING;
 	static int32 INV_INDEX;
@@ -163,11 +165,6 @@ FORCEINLINE FString UDCSLib::GetStringAsEnum(const FString& TypeName, int32 Enum
 	return Enum->GetNameStringByIndex(EnumValue);
 }
 
-FORCEINLINE bool UDCSLib::IsInterface(UObject* InObject, TSubclassOf<UInterface> Interface)
-{
-	return UKismetSystemLibrary::DoesImplementInterface(InObject, Interface);
-}
-
 FORCEINLINE bool UDCSLib::IsValidClass(UClass* InClass)
 {
 	return UKismetSystemLibrary::IsValidClass(InClass);
@@ -208,4 +205,14 @@ FORCEINLINE FVector UDCSLib::GetRightVector(FRotator InRot)
 FORCEINLINE APlayerController* UDCSLib::GetPlayerController(UObject* WCO, int32 Index)
 {
 	return UGameplayStatics::GetPlayerController(WCO, Index);
+}
+
+FORCEINLINE bool UDCSLib::IsInterface(UObject* InObject, TSubclassOf<UInterface> Interface)
+{
+	return UKismetSystemLibrary::DoesImplementInterface(InObject, Interface);
+}
+
+FORCEINLINE FRotator UDCSLib::InterpToConstant(FRotator Current, FRotator Target, float DT, float RotSpeed)
+{
+	return UKismetMathLibrary::RInterpTo_Constant(Current, Target, DT, RotSpeed);
 }
