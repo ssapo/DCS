@@ -5,6 +5,8 @@
 #include "Structs.h"
 #include "RotatingComponent.generated.h"
 
+class ICanDesiredRotating;
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class DCS_API URotatingComponent : public UActorComponent
 {
@@ -39,6 +41,8 @@ private:
 	// end Declare Events.
 
 private:
+	ICanDesiredRotating* IDesiredRotating;
+
 	float TimeElapsed;
 	float RotateTime;
 	float MaxDegreesPerSecond;
