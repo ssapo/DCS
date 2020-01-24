@@ -20,7 +20,7 @@ enum class EState : uint8
 };
 
 UENUM()
-enum class EItem : int8
+enum class EItem : uint8
 {
 	None = 0				UMETA(DisplayName = "None"),
 	Spell					UMETA(DisplayName = "Spell"),
@@ -71,7 +71,7 @@ enum class EStat : uint8
 };
 
 UENUM()
-enum class EEffect : int8
+enum class EEffect : uint8
 {
 	None					UMETA(DisplayName = "None"),
 	Stun					UMETA(DisplayName = "Stun"),
@@ -84,7 +84,7 @@ enum class EEffect : int8
 };
 
 UENUM()
-enum class EAIBehavior : int8
+enum class EAIBehavior : uint8
 {
 	None					UMETA(DisplayName = "None"),
 	Patrol					UMETA(DisplayName = "Patrol"),
@@ -97,7 +97,7 @@ enum class EAIBehavior : int8
 };
 
 UENUM()
-enum class EApplyEffectMethod : int8
+enum class EApplyEffectMethod : uint8
 {
 	None					UMETA(DisplayName = "None"),
 	Stack					UMETA(DisplayName = "Stack"),
@@ -106,7 +106,7 @@ enum class EApplyEffectMethod : int8
 };
 
 UENUM()
-enum class EAttackResult : int8
+enum class EAttackResult : uint8
 {
 	None					UMETA(DisplayName = "None"),
 	Stack					UMETA(DisplayName = "Failed"),
@@ -115,7 +115,7 @@ enum class EAttackResult : int8
 };
 
 UENUM()
-enum class ECollisionPart : int8
+enum class ECollisionPart : uint8
 {
 	None					UMETA(DisplayName = "None"),
 	MainHandItem			UMETA(DisplayName = "MainHandItem"),

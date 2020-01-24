@@ -61,7 +61,7 @@ struct FDisplayedItems
 		: DisplayedItems()
 	{}
 
-	TArray<TWeakObjectPtr<ADisplayedItem>> DisplayedItems;
+	TArray<ADisplayedItem*> DisplayedItems;
 };
 
 USTRUCT()

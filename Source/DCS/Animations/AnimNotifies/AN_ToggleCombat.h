@@ -8,5 +8,8 @@ UCLASS()
 class DCS_API UAN_ToggleCombat : public UAnimNotify
 {
 	GENERATED_BODY()
-	
+
+private:
+	void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation) override;
+	FString GetNotifyName_Implementation() const override;
 };

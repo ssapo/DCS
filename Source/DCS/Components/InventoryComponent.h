@@ -16,7 +16,7 @@ class DCS_API UInventoryComponent : public UActorComponent
 public:	
 	UInventoryComponent();
 
-	virtual void BeginPlay() override;
+	void UseItem(FGuid Id);
 
 	FORCEINLINE TArray<FStoredItem> GetInventory() const { return Inventory; }
 
