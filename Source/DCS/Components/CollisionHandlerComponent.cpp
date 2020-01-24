@@ -1,34 +1,37 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "CollisionHandlerComponent.h"
 
-// Sets default values for this component's properties
 UCollisionHandlerComponent::UCollisionHandlerComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-	// ...
+	bCanPerformTrace = false;
+	bCollisionActive = false;
 }
 
+void UCollisionHandlerComponent::ActivateCollision(ECollisionPart InType)
+{
+	HitActors.Empty();
 
-// Called when the game starts
+	bCollisionActive = true;
+
+	CollisionActivatedEvent.Broadcast(InType);
+}
+
+void UCollisionHandlerComponent::DeActivateCollision()
+{
+	bCollisionActive = false;
+	bCanPerformTrace = false;
+
+	CollisionDeActivatedEvent.Broadcast();
+}
+
 void UCollisionHandlerComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// ...
-	
 }
 
-
-// Called every frame
 void UCollisionHandlerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
 }
 

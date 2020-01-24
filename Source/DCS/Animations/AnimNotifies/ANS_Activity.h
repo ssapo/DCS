@@ -3,18 +3,18 @@
 #include "CoreMinimal.h"
 #include "Animation/AnimNotifies/AnimNotifyState.h"
 #include "Structs.h"
-#include "ANS_Acitivity.generated.h"
+#include "ANS_Activity.generated.h"
 
 class USkeletalMeshComponent;
 class UAnimSequenceBase;
 
 UCLASS()
-class DCS_API UANS_Acitivity : public UAnimNotifyState
+class DCS_API UANS_Activity : public UAnimNotifyState
 {
 	GENERATED_BODY()
 	
 public:
-	UANS_Acitivity();
+	UANS_Activity();
 
 private:
 	void NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration) override;

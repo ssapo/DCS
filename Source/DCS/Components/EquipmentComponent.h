@@ -8,6 +8,7 @@
 
 class UInventoryComponent;
 class AGameMode;
+class ADisplayedItem;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class DCS_API UEquipmentComponent : public UActorComponent
@@ -28,10 +29,13 @@ public:
 	FORCEINLINE ECombat GetCombatType() const { return CombatType; }
 
 	const FStoredItem* GetActiveItem(EItem InType, int32 Index) const;
+	ADisplayedItem* GetDisplayedItem(EItem InType, int32 Index) const;
+	
 	bool IsSlotHidden(EItem InType, int32 Index) const;
 	bool IsEquippedItem(const FGuid& InItemID) const;
 	bool IsActiveItem(const FGuid& InItemID) const;
 	void ToggleCombat();
+
 
 private:
 	void SetCombat(bool InValue);

@@ -1,4 +1,4 @@
-#include "ANS_Acitivity.h"
+#include "ANS_Activity.h"
 
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/StateManagerComponent.h"
@@ -6,12 +6,12 @@
 
 #include "DCSLib.h"
 
-UANS_Acitivity::UANS_Acitivity()
+UANS_Activity::UANS_Activity()
 {
 	Activity = EActivity::IsImmortal;
 }
 
-void UANS_Acitivity::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration)
+void UANS_Activity::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration)
 {
 	auto CStateManager = UDCSLib::GetComponent<UStateManagerComponent>(MeshComp->GetOwner());
 	if (CStateManager)
@@ -22,7 +22,7 @@ void UANS_Acitivity::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequence
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration);
 }
 
-void UANS_Acitivity::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)
+void UANS_Activity::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)
 {
 	auto CStateManager = UDCSLib::GetComponent<UStateManagerComponent>(MeshComp->GetOwner());
 	if (CStateManager)
@@ -33,7 +33,7 @@ void UANS_Acitivity::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBa
 	Super::NotifyEnd(MeshComp, Animation);
 }
 
-FString UANS_Acitivity::GetNotifyName_Implementation() const
+FString UANS_Activity::GetNotifyName_Implementation() const
 {
 	return UDCSLib::GetStringAsEnum(TEXT("EActivity"), static_cast<int32>(Activity));
 }

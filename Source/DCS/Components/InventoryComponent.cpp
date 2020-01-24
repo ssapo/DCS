@@ -7,7 +7,7 @@ UInventoryComponent::UInventoryComponent()
 {
 }
 
-void UInventoryComponent::BeginPlay()
+void UInventoryComponent::UseItem(FGuid Id)
 {
-	Super::BeginPlay();
+	// TODO: fill function
 }

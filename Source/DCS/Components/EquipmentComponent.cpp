@@ -95,3 +95,19 @@ const FStoredItem* UEquipmentComponent::GetActiveItem(EItem InType, int32 Index)
 
 	return nullptr;
 }
+
+ADisplayedItem* UEquipmentComponent::GetDisplayedItem(EItem InType, int32 Index) const
+{
+	if (DisplayedItems.Contains(InType) == false)
+	{
+		return nullptr;
+	}
+
+	FDisplayedItems FItem = DisplayedItems[InType];
+	if (FItem.DisplayedItems.IsValidIndex(Index) == false)
+	{
+		return nullptr;
+	}
+
+	return FItem.DisplayedItems[Index];
+}
