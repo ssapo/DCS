@@ -1,7 +1,7 @@
 #include "ANS_SetDisplayedItemVisibility.h"
 
 #include "DCSLib.h"
-#include "Items/DisplayedItem.h"
+#include "Items/DisplayedItems/DisplayedItem.h"
 
 #include "Components/EquipmentComponent.h"
 
