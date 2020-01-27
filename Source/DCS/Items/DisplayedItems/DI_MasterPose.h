@@ -1,15 +1,14 @@
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Items/DisplayedItems/DisplayedItem.h"
-#include "OneHand.generated.h"
+#include "DI_MasterPose.generated.h"
 
 UCLASS()
-class DCS_API AOneHand : public ADisplayedItem
+class DCS_API ADI_MasterPose : public ADisplayedItem
 {
 	GENERATED_BODY()
 	
 public:	
-	AOneHand();
+	ADI_MasterPose();
 };

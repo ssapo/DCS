@@ -7,7 +7,7 @@
 
 class AActor;
 
-UCLASS()
+UCLASS(Blueprintable)
 class DCS_API UItemBase : public UObject
 {
 	GENERATED_BODY()

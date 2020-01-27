@@ -6,7 +6,7 @@
 
 class AActor;
 
-UCLASS()
+UCLASS(Blueprintable)
 class DCS_API UItemNecklace : public UItemBase
 {
 	GENERATED_BODY()
