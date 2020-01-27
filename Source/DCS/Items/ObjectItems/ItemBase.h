@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -13,10 +11,11 @@ UCLASS()
 class DCS_API UItemBase : public UObject
 {
 	GENERATED_BODY()
-	
+		
 public:
-	virtual void UseItem(AActor* Caller) {}
-	FItem GetItemRef() const;
+	virtual void UseItem(AActor* Caller) {};
+
+	const FItem& GetItemRef() const;
 
 private:
 	FItem Item;

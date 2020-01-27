@@ -7,6 +7,7 @@
 #include "TextBlock.h"
 #include "Button.h"
 #include "ItemGridWidget.h"
+#include "Structs.h"
 
 void UInventoryItemWidget::NativePreConstruct()
 {
@@ -113,7 +114,7 @@ void UInventoryItemWidget::UpdateWidget(const FStoredItem& InItem)
 		SetVisibility(ESlateVisibility::Visible);
 
 		UItemBase* Default = Item.ItemClass.GetDefaultObject();
-		ItemImage->SetBrushFromTexture(Default->GetItemRef().Image.Get());
+		ItemImage->SetBrushFromTexture(Default->GetItemRef().Image);
 
 		UpdateAmountText();
 		UpdateIsEquippedImage();
