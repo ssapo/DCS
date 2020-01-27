@@ -13,6 +13,7 @@
 #include "WeakObjectPtrTemplates.h"
 #include "Components/InventoryComponent.h"
 #include "Components/EquipmentComponent.h"
+#include "Structs.h"
 
 void UActiveEquipmentSlotWidget::NativePreConstruct()
 {
@@ -96,7 +97,7 @@ void UActiveEquipmentSlotWidget::UpdateItemImage()
 		ItemImage->SetVisibility(ESlateVisibility::HitTestInvisible);
 		
 		UItemBase& DefaultItem = *Item.ItemClass.GetDefaultObject();
-		ItemImage->SetBrushFromTexture(DefaultItem.GetItemRef().Image.Get());
+		ItemImage->SetBrushFromTexture(DefaultItem.GetItemRef().Image);
 	}
 	else
 	{

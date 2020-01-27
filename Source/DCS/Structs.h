@@ -7,8 +7,6 @@
 #include "Text.h"
 #include "NoExportTypes.h"
 #include "NameTypes.h"
-#include "WeakObjectPtrTemplates.h"
-#include "SharedPointer.h"
 #include "Structs.generated.h"
 
 class UAnimMontage;
@@ -19,7 +17,6 @@ class ADisplayedItem;
 class UMaterialInterface;
 class UMaterialInstanceDynamic;
 struct FStoredItem;
-class FName;
 class UItemBase;
 
 USTRUCT()
@@ -34,7 +31,7 @@ public:
 	{}
 
 	UPrimitiveComponent* Component;
-	TArray<TWeakObjectPtr<AActor>> HitActors;
+	TArray<AActor*> HitActors;
 };
 
 USTRUCT()
@@ -81,8 +78,8 @@ public:
 
 	UPrimitiveComponent* Component;
 	float Value;
-	TArray<TWeakObjectPtr<UMaterialInterface>> Materials;
-	TArray<TWeakObjectPtr<UMaterialInstanceDynamic>> DissolveMaterials;
+	TArray<UMaterialInterface*> Materials;
+	TArray<UMaterialInstanceDynamic*> DissolveMaterials;
 	bool Reverse;
 	bool IsRunning;
 };
@@ -101,7 +98,7 @@ public:
 
 	EEffect Type;
 	float Duration;
-	TWeakObjectPtr<AActor> Applier;
+	AActor* Applier;
 };
 
 USTRUCT()
@@ -150,7 +147,7 @@ public:
 	{}
 
 	float Damage;
-	TWeakObjectPtr<AActor> DamageCauser;
+	AActor* DamageCauser;
 	FVector HitFromDirection;
 	bool CanBeParried;
 	bool CanBeBlocked;
@@ -179,7 +176,7 @@ public:
 	bool IsStackable;
 	bool IsDroppable;
 	bool IsConsumable;
-	TWeakObjectPtr<UTexture2D> Image;
+	UTexture2D* Image;
 };
 
 USTRUCT()

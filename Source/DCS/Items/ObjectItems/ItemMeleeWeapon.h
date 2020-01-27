@@ -9,4 +9,7 @@ class DCS_API UItemMeleeWeapon : public UItemWeapon
 {
 	GENERATED_BODY()
 	
+public:
+	virtual void UseItem(AActor* Caller) override;
+
 };
