@@ -75,7 +75,13 @@ public:
 	
 	static FORCEINLINE bool IsInterface(UObject* InObject, TSubclassOf<UInterface> Interface);
 
-	static FORCEINLINE FRotator InterpToConstant(FRotator Current, FRotator Target, float DT, float RotSpeed);
+	static FORCEINLINE FRotator InterpTo(FRotator Current, FRotator Target, float DT, float InterpSpeed);
+
+	static FORCEINLINE float InterpTo(float Current, float Target, float DT, float InterpSpeed);
+
+	static FORCEINLINE FRotator Delta(FRotator A, FRotator B);
+
+	static FORCEINLINE FRotator MakeRot(float X, float Y, float Z);
 
 public:
 	static FString INV_STRING;
@@ -212,7 +218,22 @@ FORCEINLINE bool UDCSLib::IsInterface(UObject* InObject, TSubclassOf<UInterface>
 	return UKismetSystemLibrary::DoesImplementInterface(InObject, Interface);
 }
 
-FORCEINLINE FRotator UDCSLib::InterpToConstant(FRotator Current, FRotator Target, float DT, float RotSpeed)
+FORCEINLINE FRotator UDCSLib::InterpTo(FRotator Current, FRotator Target, float DT, float InterpSpeed)
 {
-	return UKismetMathLibrary::RInterpTo_Constant(Current, Target, DT, RotSpeed);
+	return UKismetMathLibrary::RInterpTo_Constant(Current, Target, DT, InterpSpeed);
+}
+
+FORCEINLINE float UDCSLib::InterpTo(float Current, float Target, float DT, float InterpSpeed)
+{
+	return UKismetMathLibrary::FInterpTo_Constant(Current, Target, DT, InterpSpeed);
+}
+
+FORCEINLINE FRotator UDCSLib::Delta(FRotator A, FRotator B)
+{
+	return UKismetMathLibrary::NormalizedDeltaRotator(A, B);
+}
+
+FORCEINLINE FRotator UDCSLib::MakeRot(float Roll, float Pitch, float Yaw)
+{
+	return UKismetMathLibrary::MakeRotator(Roll, Pitch, Yaw);
 }

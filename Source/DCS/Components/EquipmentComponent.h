@@ -23,25 +23,31 @@ public:
 
 	void Initialize();
 
-	FORCEINLINE TArray<FEquiopmentSlots> GetEquipmentSlots() const { return EquipmentSlots; }
+	FORCEINLINE TArray<FEquipmentSlots> GetEquipmentSlots() const { return EquipmentSlots; }
 	FORCEINLINE bool IsInCombat() const { return bIsInCombat; }
 	FORCEINLINE EItem GetSelectedMainHandType() const { return SelectedMainHandType; }
 	FORCEINLINE ECombat GetCombatType() const { return CombatType; }
 
 	const FStoredItem* GetActiveItem(EItem InType, int32 Index) const;
+	const FStoredItem* GetItemInSlot(EItem InType, int32 SlotIndex, int32 ItemIndex) const;
+	const FStoredItem* GetWeapon() const;
+	int32 GetActiveItemIndex(EItem InType, int32 Index) const;
 	ADisplayedItem* GetDisplayedItem(EItem InType, int32 Index) const;
 	
 	bool IsSlotHidden(EItem InType, int32 Index) const;
 	bool IsEquippedItem(const FGuid& InItemID) const;
 	bool IsActiveItem(const FGuid& InItemID) const;
-	void ToggleCombat();
 
+	bool IsShieldEquipped() const;
+	bool IsTwoHandedWeaponEquipped() const;
+	void ToggleCombat();
 
 private:
 	void SetCombat(bool InValue);
 
 	int32 GetEquipmentSlotsIndex(EItem InType) const;
 	bool IsSlotIndexValid(EItem InType, int32 Index) const;
+	bool IsItemIndexValid(EItem InType, int32 Index, int32 ItemIndex) const;
 
 	// start Declare Events.
 public:
@@ -75,7 +81,7 @@ private:
 private:
 	TWeakObjectPtr<UInventoryComponent> InventoryComponent;
 
-	TArray<FEquiopmentSlots> EquipmentSlots;
+	TArray<FEquipmentSlots> EquipmentSlots;
 	TArray<EItem> MainHandTypes;
 	TArray<FGuid> EquippedItems;
 	TArray<FGuid> ActiveItems;

@@ -27,7 +27,7 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	TArray<FEquiopmentSlots> EquipmentSlots;
+	TArray<FEquipmentSlots> EquipmentSlots;
 	TArray<FStoredItem> Inventory;
 	TMap<EStat, float> CurrentStatValues;
 	EItem SelectedMainHandSlotType;

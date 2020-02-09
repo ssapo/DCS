@@ -102,12 +102,12 @@ public:
 };
 
 USTRUCT()
-struct FEquiopmentSlot
+struct FEquipmentSlot
 {
 	GENERATED_BODY()
 
 public:
-	FEquiopmentSlot()
+	FEquipmentSlot()
 		: Items()
 		, ActiveItemIndex(0)
 		, IsHidden(false)
@@ -119,16 +119,16 @@ public:
 };
 
 USTRUCT()
-struct FEquiopmentSlots
+struct FEquipmentSlots
 {
 	GENERATED_BODY()
-	FEquiopmentSlots()
+	FEquipmentSlots()
 		: Type(EItem::None)
 		, Slots()
 	{}
 
 	EItem Type;
-	TArray<FEquiopmentSlot> Slots;
+	TArray<FEquipmentSlot> Slots;
 };
 
 USTRUCT()

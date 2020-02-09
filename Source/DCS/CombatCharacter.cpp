@@ -6,6 +6,7 @@
 
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/MovementComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/AudioComponent.h"
 #include "Components/EffectsComponent.h"
@@ -82,6 +83,31 @@ FORCEINLINE bool ACombatCharacter::IsStateEqual(EState InType) const
 {
 	return CStateManager->GetState() == InType;
 }
+
+const TTuple<float, float> ACombatCharacter::CalculateLeanAmount() const
+{
+	TTuple<float, float> ReturnValue;
+
+	EMovementState StateType = CMovementSpeed->GetMovementState();
+	bool IdleAndNotFalling = IsIdleAndNotFalling();
+	bool JogOrSprint = (StateType == EMovementState::Jog || StateType == EMovementState::Sprint);
+	bool FasterThan10 = (GetCharacterMovement()->Velocity.Size() > 10.0f);
+	bool LookingFowardIsDisabled = (IsActivityPure(EActivity::IsLoockingForward) == false);
+
+	if (IdleAndNotFalling && JogOrSprint && FasterThan10 && LookingFowardIsDisabled)
+	{
+		ReturnValue.Key = FMath::Clamp(GetInputAxisValue(EVENT_LOOKH), -1.0f, 1.0f);
+		ReturnValue.Value = 1.0f;
+	}
+	else
+	{
+		ReturnValue.Key = 0.0f;
+		ReturnValue.Value = 10.0f;
+	}
+
+	return ReturnValue;
+}
+
 // end public:
 
 // start private:
@@ -158,7 +184,7 @@ void ACombatCharacter::CtorInitialize()
 	MeleeAttackType = EMeleeAttack::None;
 	ReceivedHitDirection = EDirection::None;
 
-	HorizontalLockRate = 45.0f;
+	HorizontalLookRate = 45.0f;
 	VerticalLookRate = 45.0f;
 	RollStaminaCost = 25.0f;
 	SprintStaminaCost = 0.5f;
@@ -389,8 +415,8 @@ void ACombatCharacter::OnMoveRight(float InAxisValue)
 
 void ACombatCharacter::OnHorizontalLook(float InAxisValue)
 {
-	AddControllerYawInput(HorizontalLockRate * InAxisValue * UDCSLib::GetDTS(this));
-	CDynamicTargeting->FindTargetWithAxisInput(HorizontalLockRate);
+	AddControllerYawInput(HorizontalLookRate * InAxisValue * UDCSLib::GetDTS(this));
+	CDynamicTargeting->FindTargetWithAxisInput(GetInputAxisValue(EVENT_LOOKH));
 }
 
 void ACombatCharacter::OnVerticalLook(float InAxisValue)

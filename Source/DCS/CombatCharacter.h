@@ -58,6 +58,8 @@ public:
 	FORCEINLINE bool IsIdleAndNotFalling() const;
 	FORCEINLINE bool IsStateEqual(EState InType) const;
 
+	const TTuple<float, float> CalculateLeanAmount() const;
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
@@ -228,7 +230,7 @@ private:
 	EMontage LastRollDirection;
 
 	float BlockAlpha;
-	float HorizontalLockRate;
+	float HorizontalLookRate;
 	float VerticalLookRate;
 	float RollStaminaCost;
 	float SprintStaminaCost;

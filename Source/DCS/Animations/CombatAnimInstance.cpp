@@ -91,27 +91,33 @@ void UCombatAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 void UCombatAnimInstance::OnActiveItemChanged(const FStoredItem& Old, const FStoredItem& New, EItem InType, int32 SlotIndex, int32 ActiveIndex)
 {
-	// TODO: Fill Function
+	UpdateHandItemsInfo();
 }
 
 void UCombatAnimInstance::UpdateLookAtValues()
 {
-	// TODO: Fill Function
+	FRotator CurrentRot = UDCSLib::MakeRot(0.0f, LookAtPitch, LookAtYaw);
+	FRotator TargetRot = UDCSLib::Delta(WP_Character->GetControlRotation(), WP_Character->GetActorRotation());
+	FRotator Constant = UDCSLib::InterpTo(CurrentRot, TargetRot, UDCSLib::GetDTS(this), 15.0f);
+	LookAtPitch = FMath::ClampAngle(Constant.Pitch, -90.0f, 90.0f);
+	LookAtYaw = FMath::ClampAngle(Constant.Yaw, -90.0f, 90.0f);
 }
 
 void UCombatAnimInstance::UpdateLeanAmount()
 {
-	// TODO: Fill Function
+	const TTuple<float, float>& CharacterLeanAmount = WP_Character->CalculateLeanAmount();
+	LeanAmount = FMath::FInterpTo(LeanAmount, CharacterLeanAmount.Key, UDCSLib::GetDTS(this), CharacterLeanAmount.Value);
 }
 
 void UCombatAnimInstance::UpdateAimOffsetAlpha()
 {
-	// TODO: Fill Function
+	AimOffsetAlpha = UDCSLib::InterpTo(AimOffsetAlpha, IsLookingForward, UDCSLib::GetDTS(this), 5.0f);
 }
 
 void UCombatAnimInstance::UpdateHandItemsInfo()
 {
-	// TODO: Fill Function
+	IsShieldEquipped = WP_EquipmentComponent->IsShieldEquipped();
+	IsTwoHandedWeaponEquipped = WP_EquipmentComponent->IsTwoHandedWeaponEquipped();
 }
 
 void UCombatAnimInstance::StoreCharacterInfo()
