@@ -57,6 +57,7 @@ public:
 	FORCEINLINE bool IsActivityPure(EActivity InType) const;
 	FORCEINLINE bool IsIdleAndNotFalling() const;
 	FORCEINLINE bool IsStateEqual(EState InType) const;
+	FORCEINLINE bool IsCombatEqual(ECombat InType) const;
 
 	const TTuple<float, float> CalculateLeanAmount() const;
 
@@ -102,6 +103,10 @@ private:
 	void OnToggleKeyPressed();
 	void OnSprintKeyPressed();
 	void OnSprintKeyReleased();
+	void OnZoomKeyPressed();
+	void OnZoomKeyReleased();
+	void OnLightAttackPressed();
+	void OnHeavyAttackPressed();
 
 	void OnMoveForward(float InAxisValue);
 	void OnMoveRight(float InAxisValue);
@@ -120,20 +125,28 @@ private:
 
 	void SetSprint(bool bActivate);
 	void ResetAimingMode();
+
+	void StartLookingForward();
 	void StopLookingForward();
-	void StopAming();
+	void StartAiming();
+	void StopAiming();
+	void StartZooming();
 	void StopZooming();
-	void HideCrossHair();
-	void ToggleCombat();
 	void StartBlocking();
 	void StopBlocking();
+
+	void HideCrossHair();
+	void ToggleCombat();
 	void UpdateRotationSettings();
 
 	void Roll();
+	bool AttemptBackstab();
+
 	UAnimMontage* GetRollMontages() const;
 	FORCEINLINE bool CanRoll() const;
 	FORCEINLINE bool HasMovementInput() const;
 	FORCEINLINE bool IsEnoughStamina(float InValue) const;
+	FORCEINLINE bool CanMeleeAttack() const;
 
 	FORCEINLINE UDCSWidget* ShowWidget(EWidgetID InType) const;
 
@@ -249,6 +262,7 @@ private:
 	bool bIsCrossHairVisible;
 	bool bIsInSlowMotion;
 
-	FTimerHandle CheckTimer;
+	FTimerHandle TH_Check;
+	FTimerHandle TH_SprintLoop;
 };
 

@@ -38,6 +38,17 @@ FORCEINLINE EMovementState UMovementSpeedComponent::GetMovementState() const
 	return MovementState;
 }
 
+void UMovementSpeedComponent::SetMovementState(EMovementState InState)
+{
+	OnMovementStateEnd().Broadcast(MovementState);
+	MovementState = InState;
+
+	TargetSpeed = GetSelectSpeed(InState);
+
+	bIsUpdatingSpeed = true;
+	OnMovementStateStart().Broadcast(MovementState);
+}
+
 void UMovementSpeedComponent::BeginPlay()
 {
 	Super::BeginPlay();

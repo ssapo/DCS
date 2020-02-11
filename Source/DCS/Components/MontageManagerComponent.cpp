@@ -24,6 +24,12 @@ UAnimMontage* UMontageManagerComponent::GetMontageForAction(EMontage InType, int
 
 	return nullptr;
 }
+
+EMontage UMontageManagerComponent::GetLastRequestedAction() const
+{
+	return LastRequestedAction;
+}
+
 // end public:
 
 // start protected:

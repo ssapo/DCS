@@ -7,6 +7,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/MovementComponent.h"
+#include "GameFramework/Actor.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/AudioComponent.h"
 #include "Components/EffectsComponent.h"
@@ -28,16 +29,17 @@
 #include "Components/DynamicTargetingComponent.h"
 #include "Camera/CameraComponent.h"
 
+#include "Widgets/KeybindingsWidget.h"
+#include "Widgets/InGameWidget.h"
+
 #include "UserWidget.h"
 #include "Defines.h"
 #include "WidgetSystem.h"
 #include "DataTables.h"
-#include "Widgets/KeybindingsWidget.h"
-#include "Widgets/InGameWidget.h"
-#include "Engine/World.h"
 #include "TimerManager.h"
 #include "DCSLib.h"
 #include "DCS.h"
+#include "Engine/World.h"
 
 // start public:
 ACombatCharacter::ACombatCharacter()
@@ -82,6 +84,11 @@ FORCEINLINE bool ACombatCharacter::IsIdleAndNotFalling() const
 FORCEINLINE bool ACombatCharacter::IsStateEqual(EState InType) const
 {
 	return CStateManager->GetState() == InType;
+}
+
+FORCEINLINE bool ACombatCharacter::IsCombatEqual(ECombat InType) const
+{
+	return CEquipment->GetCombatType() == InType;
 }
 
 const TTuple<float, float> ACombatCharacter::CalculateLeanAmount() const
@@ -265,6 +272,19 @@ void ACombatCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 	PlayerInputComponent->BindAction(EVENT_TOGGLECOMBAT, IE_Pressed, this,
 		&ACombatCharacter::OnToggleCombatKeyPressed);
+	PlayerInputComponent->BindAction(EVENT_SPRINT, IE_Pressed, this, 
+		&ACombatCharacter::OnSprintKeyPressed);
+	PlayerInputComponent->BindAction(EVENT_SPRINT, IE_Released, this, 
+		&ACombatCharacter::OnSprintKeyReleased);
+	PlayerInputComponent->BindAction(EVENT_ZOOM, IE_Pressed, this,
+		&ACombatCharacter::OnZoomKeyPressed);
+	PlayerInputComponent->BindAction(EVENT_ZOOM, IE_Released, this,
+		&ACombatCharacter::OnZoomKeyReleased);
+
+	PlayerInputComponent->BindAction(EVENT_ATTACK, IE_Pressed, this,
+		&ACombatCharacter::OnLightAttackPressed);
+	PlayerInputComponent->BindAction(EVENT_HEAVYATTACK, IE_Pressed, this,
+		&ACombatCharacter::OnHeavyAttackPressed);
 }
 
 UDataTable* ACombatCharacter::GetMontages(EMontage InType)
@@ -347,7 +367,7 @@ void ACombatCharacter::SetTimerChecker()
 		
 	};
 
-	TimerMangaer.SetTimer(CheckTimer, CheckForInteractable, 0.1f, true);
+	TimerMangaer.SetTimer(TH_Check, CheckForInteractable, 0.1f, true);
 }
 
 void ACombatCharacter::OnRollKeyPressed()
@@ -391,6 +411,46 @@ void ACombatCharacter::OnSprintKeyPressed()
 void ACombatCharacter::OnSprintKeyReleased()
 {
 	SetSprint(false);
+}
+
+void ACombatCharacter::OnZoomKeyPressed()
+{
+	StartZooming();
+}
+
+void ACombatCharacter::OnZoomKeyReleased()
+{
+	StopZooming();
+}
+
+void ACombatCharacter::OnLightAttackPressed()
+{
+	if (CEquipment->IsInCombat())
+	{
+		if (IsCombatEqual(ECombat::Melee))
+		{
+			if (AttemptBackstab() == false)
+			{
+				CInputBuffer->UpdateKey(EInputBufferKey::LightAttack);
+			}
+		}
+		else
+		{
+			if (IsCombatEqual(ECombat::Unarmed))
+			{
+				CInputBuffer->UpdateKey(EInputBufferKey::LightAttack);
+			}
+		}
+	}
+	else
+	{
+		CInputBuffer->UpdateKey(EInputBufferKey::ToggleCombat);
+	}
+}
+
+void ACombatCharacter::OnHeavyAttackPressed()
+{
+
 }
 
 void ACombatCharacter::OnMoveForward(float InAxisValue)
@@ -466,8 +526,58 @@ FName ACombatCharacter::GetBowStringSocketName() const
 
 FRotator ACombatCharacter::GetDesiredRotation() const
 {
-	// TODO: fill function
-	return FRotator();
+	if (IsStateEqual(EState::Backstabbing))
+	{
+		if (WP_BackstabbedActor.IsValid())
+		{
+			FVector Start = GetActorLocation();
+			FVector Target = WP_BackstabbedActor->GetActorLocation();
+
+			FRotator ActorRot = GetActorRotation();
+			FRotator LookatRot = UDCSLib::FindLookat(Start, Target);
+			return UDCSLib::MakeRot(ActorRot.Roll, ActorRot.Pitch, LookatRot.Yaw);
+		}
+	}
+	else
+	{
+		if (CDynamicTargeting->IsTargetingEnabled())
+		{
+			if (HasMovementInput())
+			{
+				if (IsStateEqual(EState::Rolling))
+				{
+					if (CMontagesManager->GetLastRequestedAction() == EMontage::RollForward)
+					{
+						return UDCSLib::RotationFromXVector(GetLastMovementInputVector());
+					}
+				}
+			}
+			else
+			{
+				if (IsStateEqual(EState::Rolling))
+				{
+					if (CMontagesManager->GetLastRequestedAction() == EMontage::RollForward)
+					{
+						return GetActorRotation();
+					}
+				}
+			}
+
+			FVector Start = GetActorLocation();
+			FVector Target = CDynamicTargeting->GetSelectedActor()->GetActorLocation();
+
+			FRotator ActorRot = GetActorRotation();
+			FRotator LookatRot = UDCSLib::FindLookat(Start, Target);
+			return UDCSLib::MakeRot(ActorRot.Roll, ActorRot.Pitch, LookatRot.Yaw);
+		}
+	}
+
+	if (HasMovementInput())
+	{
+		return GetLastMovementInputVector().ToOrientationRotator();
+	}
+
+	return GetActorRotation();
 }
 
 bool ACombatCharacter::IsAlive() const
@@ -490,7 +600,6 @@ bool ACombatCharacter::DoesHoldBowString()
 
 void ACombatCharacter::CreateKeyBindings()
 {
-	
 	if (auto NewWidget = Cast<UKeybindingsWidget>(ShowWidget(EWidgetID::KeyBindings)))
 	{
 		WP_KeyBindingsWidget = NewWidget;
@@ -598,38 +707,73 @@ void ACombatCharacter::OnRotatingStart()
 
 void ACombatCharacter::OnRotatingEnd()
 {
-	// TODO: fill function
+	bool bAttacking = IsStateEqual(EState::Attacking);
+	bool bUnarmedMelee = IsCombatEqual(ECombat::Unarmed) || IsCombatEqual(ECombat::Melee);
+	bool bTargetingEnabled = CDynamicTargeting->IsTargetingEnabled();
+	bool bIsInCombat = CEquipment->IsInCombat();
+
+	if (bAttacking && bUnarmedMelee && bTargetingEnabled && bIsInCombat)
+	{
+		CRotating->StartRotatingWithTime(0.5f, 720.0f);
+	}
 }
 
 void ACombatCharacter::SetSprint(bool bActivate)
 {
-	// TODO: fill function
+	if (bActivate)
+	{
+		StoredMovementState = CMovementSpeed->GetMovementState();
+		CMovementSpeed->SetMovementState(EMovementState::Sprint);
+	}
+	else
+	{
+		FTimerManager& TimerManager = GetWorld()->GetTimerManager();
+		if (TimerManager.IsTimerActive(TH_SprintLoop))
+		{
+			CMovementSpeed->SetMovementState(StoredMovementState);
+		}
+	}
 }
 
 void ACombatCharacter::ResetAimingMode()
 {
 	StopLookingForward();
 
-	StopAming();
+	StopAiming();
 
 	StopZooming();
 
 	HideCrossHair();
 }
 
-void ACombatCharacter::StopLookingForward()
+void ACombatCharacter::StartLookingForward()
 {
-	// TODO: fill function
+	CStateManager->SetActivity(EActivity::IsLoockingForward, true);
 }
 
-void ACombatCharacter::StopAming()
+void ACombatCharacter::StopLookingForward()
 {
-	// TODO: fill function
+	CStateManager->SetActivity(EActivity::IsLoockingForward, false);
+}
+
+void ACombatCharacter::StartAiming()
+{
+	CStateManager->SetActivity(EActivity::IsAimingPressed, true);
+}
+
+void ACombatCharacter::StopAiming()
+{
+	CStateManager->SetActivity(EActivity::IsAimingPressed, false);
+}
+
+void ACombatCharacter::StartZooming()
+{
+	CStateManager->SetActivity(EActivity::IsZooming, true);
 }
 
 void ACombatCharacter::StopZooming()
 {
-	// TODO: fill function
+	CStateManager->SetActivity(EActivity::IsZooming, false);
 }
 
 void ACombatCharacter::HideCrossHair()
@@ -693,6 +837,49 @@ void ACombatCharacter::Roll()
 	}
 }
 
+bool ACombatCharacter::AttemptBackstab()
+{
+	bool bCanMeleeAttack = CanMeleeAttack();
+	if (bCanMeleeAttack)
+	{
+		auto Start = GetActorLocation();
+		auto End = Start + (GetActorForwardVector() * 150.0f);
+
+		TArray<AActor*> Empty;
+		FHitResult OutHit;
+		bool Result = UDCSLib::LineTraceByChannel(this, Start, End, ETraceTypeQuery::TraceTypeQuery1, false, Empty, EDrawDebugTrace::ForDuration, OutHit, true, FLinearColor::Green, FLinearColor::Red, 5.0f);
+
+		if (Result == false)
+		{
+			return false;
+		}
+
+		if (GetDotProductTo(OutHit.Actor.Get()) >= -0.25f)
+		{
+			return false;
+		}
+
+		UEffectsComponent* Effects = UDCSLib::GetComponent<UEffectsComponent>(*OutHit.Actor);
+		if (Effects == nullptr)
+		{
+			return false;
+		}
+
+		float Damage = CStatsManager->GetDamage() * 3.0f;
+		EApplyEffectMethod Effect = EApplyEffectMethod::Replace;
+		bool Applied = Effects->ApplyBackstabEffect(1.0f, Effect, this, Damage);
+		if (Applied == false)
+		{
+			return false;
+		}
+
+		WP_BackstabbedActor = OutHit.Actor.Get();
+		CStateManager->SetState(EState::Backstabbing);
+	}
+
+	return false;
+}
+
 FORCEINLINE bool ACombatCharacter::CanRoll() const
 {
 	return IsIdleAndNotFalling() && IsEnoughStamina(1.0f);
@@ -700,7 +887,7 @@ FORCEINLINE bool ACombatCharacter::CanRoll() const
 
 FORCEINLINE bool ACombatCharacter::HasMovementInput() const
 {
-	return FVector::ZeroVector.Equals(GetCharacterMovement()->GetLastInputVector(), 0.0001f);
+	return UDCSLib::NotEqual(FVector::ZeroVector, GetCharacterMovement()->GetLastInputVector());
 }
 
 FORCEINLINE bool ACombatCharacter::IsEnoughStamina(float InValue) const
@@ -708,19 +895,28 @@ FORCEINLINE bool ACombatCharacter::IsEnoughStamina(float InValue) const
 	return CExtendedStamina->GetCurrentValue() >= InValue;
 }
 
+FORCEINLINE bool ACombatCharacter::CanMeleeAttack() const
+{
+	bool bIdle = IsStateEqual(EState::Idle);
+	bool bInCombat = CEquipment->IsInCombat();
+	bool bUnarmedOrMelee = IsCombatEqual(ECombat::Unarmed) || IsCombatEqual(ECombat::Melee);
+	bool bEnoughStam = IsEnoughStamina(1.0f);
+	return bIdle && bInCombat && bUnarmedOrMelee && bEnoughStam;
+}
+
 UAnimMontage* ACombatCharacter::GetRollMontages() const
 {
 	UAnimMontage* RetVal = nullptr;
 	if (HasMovementInput() == false)
 	{
-		RetVal = CMontagesManager->GetMontageForAction(EMontage::RollForward, 0);
+		RetVal = CMontagesManager->GetMontageForAction(EMontage::RollBackward, 0);
 		if (RetVal)
 		{
 			return RetVal;
 		}
 	}
 
-	RetVal = CMontagesManager->GetMontageForAction(EMontage::RollBackward, 0);
+	RetVal = CMontagesManager->GetMontageForAction(EMontage::RollForward, 0);
 	return RetVal;
 }
 

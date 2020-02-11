@@ -17,6 +17,7 @@ public:
 
 	float GetStatValue(EStat InType, bool IncludeModifiers) const;
 	int32 GetStatIndex(EStat InType) const;
+	float GetDamage() const;
 
 protected:
 	virtual void BeginPlay() override;

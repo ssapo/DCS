@@ -5,6 +5,8 @@
 URotatingComponent::URotatingComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
+
+	bShouldRotate = false;
 }
 
 void URotatingComponent::StartRotatingWithLimit(float InMaxPossibleRotation, float InMaxDegreesPerSecond)

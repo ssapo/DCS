@@ -9,9 +9,6 @@ public class DCSTarget : TargetRules
 	{
 		Type = TargetType.Game;
 
-		bUseUnityBuild = true;
-		bUsePCHFiles = true;
-
 		ExtraModuleNames.AddRange(new string[] { "DCS" });
 	}
 }

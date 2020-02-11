@@ -56,6 +56,21 @@ int32 UStatsManagerComponent::GetStatIndex(EStat InType) const
 
 	return UDCSLib::INV_INDEX;
 }
+
+float UStatsManagerComponent::GetDamage() const
+{
+	float Damage = GetStatValue(EStat::Damage, true);
+	float CritChance = GetStatValue(EStat::CritChance, true);
+
+	float CritMult = 1.0f;
+	float RandRangeValue = FMath::RandRange(1.0f, 100.0f);
+	if (CritChance > RandRangeValue)
+	{
+		CritMult = GetStatValue(EStat::CritMultiplier, true);
+	}
+
+	return FMath::TruncToInt(Damage * CritMult);
+}
 // end public:
 
 // start protected:

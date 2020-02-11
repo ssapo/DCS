@@ -18,6 +18,8 @@ public:
 
 	FORCEINLINE float GetJogSpeed() const;
 	FORCEINLINE EMovementState GetMovementState() const;
+	void SetMovementState(EMovementState InState);
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
