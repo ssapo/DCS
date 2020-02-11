@@ -1,34 +1,50 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "EffectsComponent.h"
 
-// Sets default values for this component's properties
+#include "Interfaces/CanGetEffects.h"
+
+#include "DCSLib.h"
+
+// start public:
 UEffectsComponent::UEffectsComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
 }
 
+bool UEffectsComponent::ApplyBackstabEffect(float Duration, EApplyEffectMethod Method, AActor* Applier, float Damage)
+{
+	if (ICanGetEffects* Owner = Cast<ICanGetEffects>(GetOwner()))
+	{
+		if (Owner->CanEffectBeApplied(EEffect::Backstab, Applier) == false)
+		{
+			return false;
+		}
+	}
 
-// Called when the game starts
+	BackstabDamage = Damage;
+
+	UpdateEffect(EEffect::Backstab, Duration, Method, Applier);
+
+	EffectAppliedEvent.Broadcast(EEffect::Backstab);
+
+	return true;
+}
+// end public:
+
+// start protected:
 void UEffectsComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// ...
-	
 }
 
-
-// Called every frame
 void UEffectsComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
 }
+// end protected:
 
+// start private:
+void UEffectsComponent::UpdateEffect(EEffect Type, float Duration, EApplyEffectMethod Method, AActor* Applier)
+{
+	// TODO: fill function
+}
+// end private:

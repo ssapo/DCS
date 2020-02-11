@@ -65,6 +65,8 @@ public:
 		OUT FHitResult& OutHit, bool bIgnoreSelf, float DrawTime = 5.0f,
 		FLinearColor TraceColor = FLinearColor::Red, FLinearColor TraceHitColor = FLinearColor::Green);
 
+	static FORCEINLINE bool LineTraceByChannel(UObject* WCO, const FVector Start, const FVector End, ETraceTypeQuery TraceChannel, bool bTraceComplex, const TArray<AActor*>& ActorsToIgnore, EDrawDebugTrace::Type DrawDebugType, FHitResult& OutHit, bool bIgnoreSelf, FLinearColor TraceColor, FLinearColor TraceHitColor, float DrawTime);
+
 	static FORCEINLINE float GetDTS(const UObject* WCO);
 
 	static FORCEINLINE FVector GetForwardVector(FRotator InRot);
@@ -75,7 +77,19 @@ public:
 	
 	static FORCEINLINE bool IsInterface(UObject* InObject, TSubclassOf<UInterface> Interface);
 
-	static FORCEINLINE FRotator InterpToConstant(FRotator Current, FRotator Target, float DT, float RotSpeed);
+	static FORCEINLINE FRotator InterpTo(FRotator Current, FRotator Target, float DT, float InterpSpeed);
+
+	static FORCEINLINE float InterpTo(float Current, float Target, float DT, float InterpSpeed);
+
+	static FORCEINLINE FRotator Delta(FRotator A, FRotator B);
+
+	static FORCEINLINE FRotator MakeRot(float X, float Y, float Z);
+
+	static FORCEINLINE FRotator FindLookat(const FVector& Start, const FVector& Target);
+
+	static FORCEINLINE FRotator RotationFromXVector(const FVector& XVector);
+
+	static FORCEINLINE bool NotEqual(const FVector& A, const FVector& B);
 
 public:
 	static FString INV_STRING;
@@ -187,6 +201,13 @@ FORCEINLINE bool UDCSLib::CapsuleTraceForObjects(UObject* WCO, const FVector Sta
 		DrawDebugType, OutHit, bIgnoreSelf, TraceColor, TraceHitColor, DrawTime);
 }
 
+FORCEINLINE bool UDCSLib::LineTraceByChannel(UObject* WCO, const FVector Start, const FVector End, ETraceTypeQuery TraceChannel, bool bTraceComplex, const TArray<AActor*>& ActorsToIgnore, EDrawDebugTrace::Type DrawDebugType, FHitResult& OutHit, bool bIgnoreSelf, FLinearColor TraceColor, FLinearColor TraceHitColor, float DrawTime)
+{
+	return UKismetSystemLibrary::LineTraceSingle(
+		WCO, Start, End, TraceChannel, bTraceComplex, ActorsToIgnore, 
+		DrawDebugType, OutHit, bIgnoreSelf, TraceColor, TraceHitColor, DrawTime);
+}
+
 FORCEINLINE float UDCSLib::GetDTS(const UObject* WCO)
 {
 	return UGameplayStatics::GetWorldDeltaSeconds(WCO);
@@ -212,7 +233,37 @@ FORCEINLINE bool UDCSLib::IsInterface(UObject* InObject, TSubclassOf<UInterface>
 	return UKismetSystemLibrary::DoesImplementInterface(InObject, Interface);
 }
 
-FORCEINLINE FRotator UDCSLib::InterpToConstant(FRotator Current, FRotator Target, float DT, float RotSpeed)
+FORCEINLINE FRotator UDCSLib::InterpTo(FRotator Current, FRotator Target, float DT, float InterpSpeed)
 {
-	return UKismetMathLibrary::RInterpTo_Constant(Current, Target, DT, RotSpeed);
+	return UKismetMathLibrary::RInterpTo_Constant(Current, Target, DT, InterpSpeed);
+}
+
+FORCEINLINE float UDCSLib::InterpTo(float Current, float Target, float DT, float InterpSpeed)
+{
+	return UKismetMathLibrary::FInterpTo_Constant(Current, Target, DT, InterpSpeed);
+}
+
+FORCEINLINE FRotator UDCSLib::Delta(FRotator A, FRotator B)
+{
+	return UKismetMathLibrary::NormalizedDeltaRotator(A, B);
+}
+
+FORCEINLINE FRotator UDCSLib::MakeRot(float Roll, float Pitch, float Yaw)
+{
+	return UKismetMathLibrary::MakeRotator(Roll, Pitch, Yaw);
+}
+
+FORCEINLINE FRotator UDCSLib::FindLookat(const FVector& Start, const FVector& Target)
+{
+	return UKismetMathLibrary::FindLookAtRotation(Start, Target);
+}
+
+FORCEINLINE FRotator UDCSLib::RotationFromXVector(const FVector& XVector)
+{
+	return UKismetMathLibrary::Conv_VectorToRotator(XVector);
+}
+
+FORCEINLINE bool UDCSLib::NotEqual(const FVector& A, const FVector& B)
+{
+	return UKismetMathLibrary::NotEqual_VectorVector(A, B, 0.0001f);
 }

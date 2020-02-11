@@ -5,6 +5,8 @@
 URotatingComponent::URotatingComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
+
+	bShouldRotate = false;
 }
 
 void URotatingComponent::StartRotatingWithLimit(float InMaxPossibleRotation, float InMaxDegreesPerSecond)
@@ -68,7 +70,7 @@ void URotatingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 
 		FRotator DesiredRot = IDesiredRotating->GetDesiredRotation();
 
-		FRotator Rot = UDCSLib::InterpToConstant(ActorRot, DesiredRot, UDCSLib::GetDTS(this), MaxDegreesPerSecond);
+		FRotator Rot = UDCSLib::InterpTo(ActorRot, DesiredRot, UDCSLib::GetDTS(this), MaxDegreesPerSecond);
 
 		GetOwner()->SetActorRotation(Rot);
 	}

@@ -18,6 +18,7 @@ public:
 	// Sets default values for this component's properties
 	UMontageManagerComponent();
 	UAnimMontage* GetMontageForAction(EMontage InType, int32 Index);
+	EMontage GetLastRequestedAction() const;
 
 protected:
 	virtual void BeginPlay() override;
