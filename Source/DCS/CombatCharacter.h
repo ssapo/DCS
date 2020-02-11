@@ -136,13 +136,20 @@ private:
 	void StopBlocking();
 
 	void HideCrossHair();
-	void ToggleCombat();
 	void UpdateRotationSettings();
 
+	//start OnInputBufferConsumed
+	void MeleeAttack(EMeleeAttack InType);
 	void Roll();
+	void ToggleCombat();
+
+	//end OnInputBufferConsumed
 	bool AttemptBackstab();
 
-	UAnimMontage* GetRollMontages() const;
+	UAnimMontage* GetMontageRoll() const;
+	UAnimMontage* GetMontageMeleeAttack(EMeleeAttack InType) const;
+
+
 	FORCEINLINE bool CanRoll() const;
 	FORCEINLINE bool HasMovementInput() const;
 	FORCEINLINE bool IsEnoughStamina(float InValue) const;
@@ -264,5 +271,6 @@ private:
 
 	FTimerHandle TH_Check;
 	FTimerHandle TH_SprintLoop;
+	FTimerHandle TH_ResetMeleeAttackCounter;
 };
 

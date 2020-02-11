@@ -648,14 +648,19 @@ void ACombatCharacter::OnInputBufferConsumed(EInputBufferKey InKey)
 		return;
 
 	case EInputBufferKey::LightAttack:
+		MeleeAttack(EMeleeAttack::Light);
 		break;
 	case EInputBufferKey::HeavyAttack:
+		MeleeAttack(EMeleeAttack::Heavy);
 		break;
 	case EInputBufferKey::ThrustAttack:
+		MeleeAttack(EMeleeAttack::Thrust);
 		break;
 	case EInputBufferKey::SpecialAttack:
+		MeleeAttack(EMeleeAttack::Special);
 		break;
 	case EInputBufferKey::FallingAttack:
+		MeleeAttack(EMeleeAttack::Falling);
 		break;
 	case EInputBufferKey::Roll:
 		Roll();
@@ -781,6 +786,28 @@ void ACombatCharacter::HideCrossHair()
 	// TODO: fill function
 }
 
+
+void ACombatCharacter::Roll()
+{
+	if (CanRoll() == false)
+	{
+		return;
+	}
+
+	CStateManager->SetState(EState::Rolling);
+
+	UAnimMontage* MontageRoll = GetMontageRoll();
+	if (MontageRoll)
+	{
+		PlayAnimMontage(MontageRoll);
+		CExtendedStamina->ModifyStat(-RollStaminaCost, true);
+	}
+	else
+	{
+		CStateManager->ResetState(0.0f);
+	}
+}
+
 void ACombatCharacter::ToggleCombat()
 {
 	if (IsStateEqual(EState::Idle) == false)
@@ -816,25 +843,27 @@ void ACombatCharacter::UpdateRotationSettings()
 	// TODO: Fill Function
 }
 
-void ACombatCharacter::Roll()
+void ACombatCharacter::MeleeAttack(EMeleeAttack InType)
 {
-	if (CanRoll() == false)
+	if (CanMeleeAttack() == false)
 	{
 		return;
 	}
 
-	CStateManager->SetState(EState::Rolling);
+	if (GetCharacterMovement()->IsFalling())
+	{
+		// 강제 대입
+		InType = EMeleeAttack::Falling;
+	}
 
-	UAnimMontage* MontageRoll = GetRollMontages();
-	if (MontageRoll)
-	{
-		PlayAnimMontage(MontageRoll);
-		CExtendedStamina->ModifyStat(-RollStaminaCost, true);
-	}
-	else
-	{
-		CStateManager->ResetState(0.0f);
-	}
+	MeleeAttackType = InType;
+
+	CStateManager->SetState(EState::Attacking);
+
+	FTimerManager& TimerMangaer = GetWorld()->GetTimerManager();
+	TimerMangaer.ClearTimer(TH_ResetMeleeAttackCounter);
+
+	UAnimMontage* MeleeAttackMontage = GetMontageMeleeAttack(MeleeAttackType);
 }
 
 bool ACombatCharacter::AttemptBackstab()
@@ -904,7 +933,7 @@ FORCEINLINE bool ACombatCharacter::CanMeleeAttack() const
 	return bIdle && bInCombat && bUnarmedOrMelee && bEnoughStam;
 }
 
-UAnimMontage* ACombatCharacter::GetRollMontages() const
+UAnimMontage* ACombatCharacter::GetMontageRoll() const
 {
 	UAnimMontage* RetVal = nullptr;
 	if (HasMovementInput() == false)
@@ -918,6 +947,13 @@ UAnimMontage* ACombatCharacter::GetRollMontages() const
 
 	RetVal = CMontagesManager->GetMontageForAction(EMontage::RollForward, 0);
 	return RetVal;
+}
+
+UAnimMontage* ACombatCharacter::GetMontageMeleeAttack(EMeleeAttack InType) const
+{
+	EMontage Action = UDCSLib::CovertMeleeAttackTypeToAction(InType);
+
+	return nullptr;
 }
 
 FORCEINLINE UDCSWidget* ACombatCharacter::ShowWidget(EWidgetID InType) const

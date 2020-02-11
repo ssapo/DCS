@@ -14,8 +14,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/Pawn.h"
-#include "Defines.h"
-#include "DCS.h"
+#include "Structs.h"
 #include "DCSLib.generated.h"
 
 class APawn;
@@ -90,6 +89,8 @@ public:
 	static FORCEINLINE FRotator RotationFromXVector(const FVector& XVector);
 
 	static FORCEINLINE bool NotEqual(const FVector& A, const FVector& B);
+
+	static FORCEINLINE EMontage CovertMeleeAttackTypeToAction(EMeleeAttack InType);
 
 public:
 	static FString INV_STRING;
@@ -267,3 +268,17 @@ FORCEINLINE bool UDCSLib::NotEqual(const FVector& A, const FVector& B)
 {
 	return UKismetMathLibrary::NotEqual_VectorVector(A, B, 0.0001f);
 }
+
+FORCEINLINE EMontage UDCSLib::CovertMeleeAttackTypeToAction(EMeleeAttack InType)
+{
+	switch (InType)
+	{
+	case EMeleeAttack::Light: return EMontage::LightAttack;
+	case EMeleeAttack::Heavy: return EMontage::HeavyAttack;
+	case EMeleeAttack::Special: return EMontage::SpecialAttack;
+	case EMeleeAttack::Thrust: return EMontage::ThrustAttack;
+	case EMeleeAttack::Falling: return EMontage::FallingAttack;
+	default: return EMontage::None;
+	}
+}
+
