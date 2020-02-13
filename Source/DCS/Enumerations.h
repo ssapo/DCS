@@ -138,7 +138,7 @@ enum class ECombat : uint8
 };
 
 UENUM()
-enum class EDirection : int8
+enum class EDirection : uint8
 {
 	None					UMETA(DisplayName = "None"),
 	Foward					UMETA(DisplayName = "Foward"),
@@ -149,7 +149,7 @@ enum class EDirection : int8
 };
 
 UENUM()
-enum class EMeleeAttack : int8
+enum class EMeleeAttack : uint8
 {
 	None					UMETA(DisplayName = "None"),
 	Light					UMETA(DisplayName = "Light"),
@@ -161,7 +161,7 @@ enum class EMeleeAttack : int8
 };
 
 UENUM()
-enum class EInputBufferKey : int8
+enum class EInputBufferKey : uint8
 {
 	None					UMETA(DisplayName = "None"),
 	LightAttack				UMETA(DisplayName = "LightAttack"),
@@ -183,7 +183,7 @@ enum class EInputBufferKey : int8
 };
 
 UENUM()
-enum class EHandleSameItemMethod : int8
+enum class EHandleSameItemMethod : uint8
 {
 	None					UMETA(DisplayName = "None"),
 	UnEquip					UMETA(DisplayName = "UnEquip"),
@@ -192,7 +192,7 @@ enum class EHandleSameItemMethod : int8
 };
 
 UENUM()
-enum class EMovementState : int8
+enum class EMovementState : uint8
 {
 	None					UMETA(DisplayName = "None"),
 	Idle					UMETA(DisplayName = "Idle"),

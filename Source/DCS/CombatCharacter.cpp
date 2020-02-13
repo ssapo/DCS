@@ -646,16 +646,20 @@ void ACombatCharacter::OnInputBufferConsumed(EInputBufferKey InKey)
 	{
 	default:
 		return;
-
 	case EInputBufferKey::LightAttack:
+		MeleeAttack(EMeleeAttack::Light);
 		break;
 	case EInputBufferKey::HeavyAttack:
+		MeleeAttack(EMeleeAttack::Heavy);
 		break;
 	case EInputBufferKey::ThrustAttack:
+		MeleeAttack(EMeleeAttack::Thrust);
 		break;
 	case EInputBufferKey::SpecialAttack:
+		MeleeAttack(EMeleeAttack::Special);
 		break;
 	case EInputBufferKey::FallingAttack:
+		MeleeAttack(EMeleeAttack::Falling);
 		break;
 	case EInputBufferKey::Roll:
 		Roll();
@@ -781,6 +785,28 @@ void ACombatCharacter::HideCrossHair()
 	// TODO: fill function
 }
 
+
+void ACombatCharacter::Roll()
+{
+	if (CanRoll() == false)
+	{
+		return;
+	}
+
+	CStateManager->SetState(EState::Rolling);
+
+	UAnimMontage* MontageRoll = GetMontageRoll();
+	if (MontageRoll)
+	{
+		PlayAnimMontage(MontageRoll);
+		CExtendedStamina->ModifyStat(-RollStaminaCost, true);
+	}
+	else
+	{
+		CStateManager->ResetState(0.0f);
+	}
+}
+
 void ACombatCharacter::ToggleCombat()
 {
 	if (IsStateEqual(EState::Idle) == false)
@@ -816,24 +842,45 @@ void ACombatCharacter::UpdateRotationSettings()
 	// TODO: Fill Function
 }
 
-void ACombatCharacter::Roll()
+void ACombatCharacter::ResetMeleeAttackCounter()
 {
-	if (CanRoll() == false)
+	MeleeAttackCounter = 0;
+}
+
+void ACombatCharacter::MeleeAttack(EMeleeAttack InType)
+{
+	if (CanMeleeAttack() == false)
 	{
 		return;
 	}
 
-	CStateManager->SetState(EState::Rolling);
-
-	UAnimMontage* MontageRoll = GetRollMontages();
-	if (MontageRoll)
+	if (GetCharacterMovement()->IsFalling())
 	{
-		PlayAnimMontage(MontageRoll);
-		CExtendedStamina->ModifyStat(-RollStaminaCost, true);
+		InType = EMeleeAttack::Falling;
+	}
+
+	MeleeAttackType = InType;
+	CStateManager->SetState(EState::Attacking);
+
+	FTimerManager& TimerMangaer = GetWorld()->GetTimerManager();
+	TimerMangaer.ClearTimer(TH_ResetMeleeAttackCounter);
+
+	UAnimMontage* MeleeAttackMontage = GetMontageMeleeAttack(MeleeAttackType);
+	if (MeleeAttackMontage)
+	{
+		float AttackSpeed = CStatsManager->GetStatValue(EStat::AttackSpeed, true);
+		float Duration = PlayAnimMontage(MeleeAttackMontage, AttackSpeed);
+		TimerMangaer.SetTimer(TH_ResetMeleeAttackCounter, Duration, false);
+
+		float AttackStam = CStatsManager->GetStatValue(EStat::MeleeAttackStaminaCost, true);
+		AttackStam = UDCSLib::ScaleMeleeAttackStaminaCost(MeleeAttackType, AttackStam);
+
+		CExtendedStamina->ModifyStat(AttackStam, true);
 	}
 	else
 	{
 		CStateManager->ResetState(0.0f);
+		ResetMeleeAttackCounter();
 	}
 }
 
@@ -904,7 +951,7 @@ FORCEINLINE bool ACombatCharacter::CanMeleeAttack() const
 	return bIdle && bInCombat && bUnarmedOrMelee && bEnoughStam;
 }
 
-UAnimMontage* ACombatCharacter::GetRollMontages() const
+UAnimMontage* ACombatCharacter::GetMontageRoll() const
 {
 	UAnimMontage* RetVal = nullptr;
 	if (HasMovementInput() == false)
@@ -918,6 +965,22 @@ UAnimMontage* ACombatCharacter::GetRollMontages() const
 
 	RetVal = CMontagesManager->GetMontageForAction(EMontage::RollForward, 0);
 	return RetVal;
+}
+
+UAnimMontage* ACombatCharacter::GetMontageMeleeAttack(EMeleeAttack InType) const
+{
+	EMontage Action = UDCSLib::CovertMeleeAttackTypeToAction(InType);
+
+	int32 LastIndex = CMontagesManager->GetMontageActionLastIndex(Action);
+	int32 ActionIndex = LastIndex;
+	if (MeleeAttackCounter < LastIndex)
+	{
+		ActionIndex = MeleeAttackCounter;
+	}
+
+	UAnimMontage* Montage = CMontagesManager->GetMontageForAction(Action, ActionIndex);
+	MeleeAttackCounter = (++MeleeAttackCounter) % LastIndex;
+	return Montage;
 }
 
 FORCEINLINE UDCSWidget* ACombatCharacter::ShowWidget(EWidgetID InType) const

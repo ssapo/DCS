@@ -12,6 +12,12 @@ UMontageManagerComponent::UMontageManagerComponent()
 	LastRequestedAction = EMontage::None;
 }
 
+int32 UMontageManagerComponent::GetMontageActionLastIndex(EMontage InType) const
+{
+	FMontageActionData Data = GetMontage(LastRequestedAction);
+	return Data.Montages.Num() - 1;
+}
+
 UAnimMontage* UMontageManagerComponent::GetMontageForAction(EMontage InType, int32 Index)
 {
 	LastRequestedAction = InType;

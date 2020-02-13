@@ -19,6 +19,7 @@ public:
 	UMontageManagerComponent();
 	UAnimMontage* GetMontageForAction(EMontage InType, int32 Index);
 	EMontage GetLastRequestedAction() const;
+	int32 GetMontageActionLastIndex(EMontage InType) const;
 
 protected:
 	virtual void BeginPlay() override;
