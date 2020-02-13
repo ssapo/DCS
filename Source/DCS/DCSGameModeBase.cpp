@@ -37,7 +37,8 @@ void ADCSGameModeBase::UpdateEquipmentValues()
 	auto Character = UGameplayStatics::GetPlayerCharacter(this, 0);
 	verify(Character != nullptr);
 
-	auto Components = Character->GetComponentsByClass(UExtendedStatComponent::StaticClass());
+	TArray<UExtendedStatComponent*> Components;
+	Character->GetComponents(Components);
 	verify(Components.Num() > 0);
 
 	for (auto Element : Components)

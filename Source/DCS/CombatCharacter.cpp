@@ -646,7 +646,6 @@ void ACombatCharacter::OnInputBufferConsumed(EInputBufferKey InKey)
 	{
 	default:
 		return;
-
 	case EInputBufferKey::LightAttack:
 		MeleeAttack(EMeleeAttack::Light);
 		break;
@@ -843,6 +842,11 @@ void ACombatCharacter::UpdateRotationSettings()
 	// TODO: Fill Function
 }
 
+void ACombatCharacter::ResetMeleeAttackCounter()
+{
+	MeleeAttackCounter = 0;
+}
+
 void ACombatCharacter::MeleeAttack(EMeleeAttack InType)
 {
 	if (CanMeleeAttack() == false)
@@ -852,18 +856,32 @@ void ACombatCharacter::MeleeAttack(EMeleeAttack InType)
 
 	if (GetCharacterMovement()->IsFalling())
 	{
-		// 강제 대입
 		InType = EMeleeAttack::Falling;
 	}
 
 	MeleeAttackType = InType;
-
 	CStateManager->SetState(EState::Attacking);
 
 	FTimerManager& TimerMangaer = GetWorld()->GetTimerManager();
 	TimerMangaer.ClearTimer(TH_ResetMeleeAttackCounter);
 
 	UAnimMontage* MeleeAttackMontage = GetMontageMeleeAttack(MeleeAttackType);
+	if (MeleeAttackMontage)
+	{
+		float AttackSpeed = CStatsManager->GetStatValue(EStat::AttackSpeed, true);
+		float Duration = PlayAnimMontage(MeleeAttackMontage, AttackSpeed);
+		TimerMangaer.SetTimer(TH_ResetMeleeAttackCounter, Duration, false);
+
+		float AttackStam = CStatsManager->GetStatValue(EStat::MeleeAttackStaminaCost, true);
+		AttackStam = UDCSLib::ScaleMeleeAttackStaminaCost(MeleeAttackType, AttackStam);
+
+		CExtendedStamina->ModifyStat(AttackStam, true);
+	}
+	else
+	{
+		CStateManager->ResetState(0.0f);
+		ResetMeleeAttackCounter();
+	}
 }
 
 bool ACombatCharacter::AttemptBackstab()
@@ -953,7 +971,16 @@ UAnimMontage* ACombatCharacter::GetMontageMeleeAttack(EMeleeAttack InType) const
 {
 	EMontage Action = UDCSLib::CovertMeleeAttackTypeToAction(InType);
 
-	return nullptr;
+	int32 LastIndex = CMontagesManager->GetMontageActionLastIndex(Action);
+	int32 ActionIndex = LastIndex;
+	if (MeleeAttackCounter < LastIndex)
+	{
+		ActionIndex = MeleeAttackCounter;
+	}
+
+	UAnimMontage* Montage = CMontagesManager->GetMontageForAction(Action, ActionIndex);
+	MeleeAttackCounter = (++MeleeAttackCounter) % LastIndex;
+	return Montage;
 }
 
 FORCEINLINE UDCSWidget* ACombatCharacter::ShowWidget(EWidgetID InType) const

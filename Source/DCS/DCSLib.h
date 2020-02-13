@@ -92,6 +92,8 @@ public:
 
 	static FORCEINLINE EMontage CovertMeleeAttackTypeToAction(EMeleeAttack InType);
 
+	static FORCEINLINE float ScaleMeleeAttackStaminaCost(EMeleeAttack InType, float InCost);
+
 public:
 	static FString INV_STRING;
 	static int32 INV_INDEX;
@@ -279,6 +281,19 @@ FORCEINLINE EMontage UDCSLib::CovertMeleeAttackTypeToAction(EMeleeAttack InType)
 	case EMeleeAttack::Thrust: return EMontage::ThrustAttack;
 	case EMeleeAttack::Falling: return EMontage::FallingAttack;
 	default: return EMontage::None;
+	}
+}
+
+FORCEINLINE float UDCSLib::ScaleMeleeAttackStaminaCost(EMeleeAttack InType, float InCost)
+{
+	switch (InType)
+	{
+	case EMeleeAttack::Light: return InCost * 1.0f;
+	case EMeleeAttack::Heavy: return InCost * 1.75f;
+	case EMeleeAttack::Special: return InCost * 1.75f;
+	case EMeleeAttack::Thrust: return InCost * 1.75f;
+	case EMeleeAttack::Falling: return InCost * 0.75f;
+	default: return InCost * 1.0f;
 	}
 }
 

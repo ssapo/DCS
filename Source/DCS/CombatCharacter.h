@@ -137,6 +137,7 @@ private:
 
 	void HideCrossHair();
 	void UpdateRotationSettings();
+	void ResetMeleeAttackCounter();
 
 	//start OnInputBufferConsumed
 	void MeleeAttack(EMeleeAttack InType);
@@ -263,7 +264,7 @@ private:
 	float InitialCameraArmLength;
 	float InitialCameraLagSpeed;
 
-	int32 MeleeAttackCounter;
+	mutable int32 MeleeAttackCounter;
 
 	bool bAutoZoom;
 	bool bIsCrossHairVisible;
