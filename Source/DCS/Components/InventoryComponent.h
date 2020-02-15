@@ -20,6 +20,19 @@ public:
 
 	FORCEINLINE TArray<FStoredItem> GetInventory() const { return Inventory; }
 
+	// start Declare Events.
+public:
+	DECLARE_EVENT_OneParam(UInventoryComponent, FOnItemRemoved, const FStoredItem&);
+	FOnItemRemoved& OnItemRemoved() { return ItemRemovedEvent; }
+
+	DECLARE_EVENT_OneParam(UInventoryComponent, FOnItemAdded, const FStoredItem&);
+	FOnItemAdded& OnItemAdded() { return ItemAddedEvent; }
+
+private:
+	FOnItemRemoved ItemRemovedEvent;
+	FOnItemAdded ItemAddedEvent;
+	// end Declare Events.
+
 private:
 	TArray<FStoredItem> Inventory;
 };
