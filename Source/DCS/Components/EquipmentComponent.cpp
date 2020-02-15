@@ -1,5 +1,6 @@
 
 #include "EquipmentComponent.h"
+#include "InventoryComponent.h"
 
 #include "Interfaces/ItemCanBlock.h"
 #include "Interfaces/ItemCanBeTwoHanded.h"
@@ -25,8 +26,12 @@ void UEquipmentComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 void UEquipmentComponent::Initialize()
 {
-
-	// TODO: Fill Function.
+	WP_Inventory = UDCSLib::GetComponent<UInventoryComponent>(GetOwner());
+	if (WP_Inventory.IsValid() == false)
+	{
+		WP_Inventory->OnItemAdded().AddUObject(this, &UEquipmentComponent::OnItemModified);
+		WP_Inventory->OnItemRemoved().AddUObject(this, &UEquipmentComponent::OnItemModified);
+	}
 }
 
 int32 UEquipmentComponent::GetEquipmentSlotsIndex(EItem InType) const
@@ -67,6 +72,19 @@ bool UEquipmentComponent::IsItemIndexValid(EItem InType, int32 Index, int32 Item
 	return false;
 }
 
+EItem UEquipmentComponent::GetItemType(const FStoredItem& InItem) const
+{
+	UItemBase* CDO = Cast<UItemBase>(InItem.ItemClass->ClassDefaultObject);
+	return CDO->GetItemRef().Type;
+}
+
+TTuple<EItem, int32, int32> UEquipmentComponent::FindItem(const FStoredItem& InItem)
+{
+	EItem ItemType = GetItemType(InItem);
+
+	return TTuple<EItem, int32, int32>();
+}
+
 void UEquipmentComponent::ToggleCombat()
 {
 	SetCombat(!bIsInCombat);
@@ -82,6 +100,24 @@ void UEquipmentComponent::SetCombat(bool InValue)
 	bIsInCombat = InValue;
 
 	CombatChangedEnvet.Broadcast(bIsInCombat);
+}
+
+void UEquipmentComponent::UpdateItemInSlot(EItem Type, int32 SlotIndex, int32 ItemIndex, const FStoredItem& InItem, EHandleSameItemMethod Method)
+{
+
+}
+
+void UEquipmentComponent::OnItemModified(const FStoredItem& InItem)
+{
+	const TTuple<EItem, int32, int32>& Info = FindItem(InItem);
+	EItem Type = Info.Get<0>();
+	int32 SlotIndex = Info.Get<1>();
+	int32 ItemIndex = Info.Get<2>();
+
+	if (SlotIndex >= 0)
+	{
+		UpdateItemInSlot(Type, SlotIndex, ItemIndex, InItem, EHandleSameItemMethod::Update);
+	}
 }
 
 bool UEquipmentComponent::IsSlotHidden(EItem InType, int32 Index) const

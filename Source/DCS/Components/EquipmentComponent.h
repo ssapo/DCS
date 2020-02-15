@@ -43,11 +43,16 @@ public:
 	void ToggleCombat();
 
 private:
-	void SetCombat(bool InValue);
+	void OnItemModified(const FStoredItem& InItem);
 
+	void SetCombat(bool InValue);
+	void UpdateItemInSlot(EItem Type, int32 SlotIndex, int32 ItemIndex, const FStoredItem& InItem, EHandleSameItemMethod Method);
+	void UpdateCombatType();
+	TTuple<EItem, int32, int32> FindItem(const FStoredItem& InItem);
 	int32 GetEquipmentSlotsIndex(EItem InType) const;
 	bool IsSlotIndexValid(EItem InType, int32 Index) const;
 	bool IsItemIndexValid(EItem InType, int32 Index, int32 ItemIndex) const;
+	EItem GetItemType(const FStoredItem& InItem) const;
 
 	// start Declare Events.
 public:
@@ -79,7 +84,7 @@ private:
 	// end Declare Events.
 
 private:
-	TWeakObjectPtr<UInventoryComponent> InventoryComponent;
+	TWeakObjectPtr<UInventoryComponent> WP_Inventory;
 
 	TArray<FEquipmentSlots> EquipmentSlots;
 	TArray<EItem> MainHandTypes;
