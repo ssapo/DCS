@@ -17,11 +17,11 @@ class DCS_API UStateManagerComponent : public UActorComponent
 public:	
 	UStateManagerComponent();
 
-	FORCEINLINE bool GetActivityValue(EActivity InType) const;
-	FORCEINLINE void SetState(EState InState);
-	FORCEINLINE EState GetState() const;
-	FORCEINLINE void SetActivity(EActivity InType, bool InValue);
-	FORCEINLINE void ResetState(float InTime);
+	bool GetActivityValue(EActivity InType) const;
+	void SetState(EState InState);
+	EState GetState() const;
+	void SetActivity(EActivity InType, bool InValue);
+	void ResetState(float InTime);
 
 private:
 	void SetIdleState();
