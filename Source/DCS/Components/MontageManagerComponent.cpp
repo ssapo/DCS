@@ -1,7 +1,10 @@
 #include "MontageManagerComponent.h"
-#include "DCSLib.h"
-#include "Defines.h"
 #include "Interfaces/IsMontageManager.h"
+
+#include "Items/ObjectItems/ItemBase.h"
+
+#include "Defines.h"
+#include "DCSLib.h"
 #include "Engine/DataTable.h"
 
 // start public:
@@ -14,7 +17,7 @@ UMontageManagerComponent::UMontageManagerComponent()
 
 int32 UMontageManagerComponent::GetMontageActionLastIndex(EMontage InType) const
 {
-	FMontageActionData Data = GetMontage(LastRequestedAction);
+	FMontageActionData Data = GetMontage(InType);
 	return Data.Montages.Num() - 1;
 }
 

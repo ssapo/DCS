@@ -23,8 +23,25 @@ public:
 	void UpdateInventoryValues();
 	void UpdateStatValues();
 
+	const TArray<FEquipmentSlots>& GetEquipmentSlots() const { return EquipmentSlots; }
+	EItem GetSelectedMainHandSlotType() const { return SelectedMainHandSlotType; }
+	bool IsInCombat() const { return bIsInCombat; }
+
 protected:
 	virtual void BeginPlay() override;
+
+	// start delcare event
+public:
+	DECLARE_EVENT(ADCSGameModeBase, FOnGameSaved);
+	FOnGameSaved& OnGameSaved() { return GameSavedEvent; }
+
+	DECLARE_EVENT(ADCSGameModeBase, FOnGameLoaded);
+	FOnGameLoaded& OnGameLoaded() { return GameLoadedEvent; }
+
+private:
+	FOnGameSaved GameSavedEvent;
+	FOnGameLoaded GameLoadedEvent;
+	// end delcare event
 
 private:
 	TArray<FEquipmentSlots> EquipmentSlots;

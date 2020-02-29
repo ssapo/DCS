@@ -7,6 +7,7 @@
 #include "Text.h"
 #include "NoExportTypes.h"
 #include "NameTypes.h"
+#include "SubclassOf.h"
 #include "Structs.generated.h"
 
 class UAnimMontage;
@@ -16,8 +17,8 @@ class UPrimitiveComponent;
 class ADisplayedItem;
 class UMaterialInterface;
 class UMaterialInstanceDynamic;
-struct FStoredItem;
 class UItemBase;
+struct FStoredItem;
 
 USTRUCT()
 struct FCollCompHitActors
@@ -25,13 +26,13 @@ struct FCollCompHitActors
 	GENERATED_BODY()
 
 public:
-	FCollCompHitActors()
-		: Component(nullptr)
-		, HitActors()
-	{}
+	FCollCompHitActors();
 
-	UPrimitiveComponent* Component;
-	TArray<AActor*> HitActors;
+	UPROPERTY(Transient)
+		UPrimitiveComponent* Component;
+
+	UPROPERTY(Transient)
+		TArray<AActor*> HitActors;
 };
 
 USTRUCT()
@@ -40,13 +41,13 @@ struct FCollisionComponent
 	GENERATED_BODY()
 
 public:
-	FCollisionComponent()
-		: Component(nullptr)
-		, Sockets()
-	{}
+	FCollisionComponent();
 
-	UPrimitiveComponent* Component;
-	TArray<FName> Sockets;
+	UPROPERTY(Transient)
+		UPrimitiveComponent* Component;
+
+	UPROPERTY(Transient)
+		TArray<FName> Sockets;
 };
 
 USTRUCT()
@@ -54,11 +55,11 @@ struct FDisplayedItems
 {
 	GENERATED_BODY()
 
-	FDisplayedItems()
-		: DisplayedItems()
-	{}
+public:
+	FDisplayedItems();
 
-	TArray<ADisplayedItem*> DisplayedItems;
+	UPROPERTY(Transient)
+		TArray<ADisplayedItem*> DisplayedItemActors;
 };
 
 USTRUCT()
@@ -67,21 +68,25 @@ struct FDissolvedItems
 	GENERATED_BODY()
 
 public:
-	FDissolvedItems()
-		:Component(nullptr)
-		, Value(0)
-		, Materials()
-		, DissolveMaterials()
-		, Reverse(false)
-		, IsRunning(false)
-	{}
+	FDissolvedItems();
 
-	UPrimitiveComponent* Component;
-	float Value;
-	TArray<UMaterialInterface*> Materials;
-	TArray<UMaterialInstanceDynamic*> DissolveMaterials;
-	bool Reverse;
-	bool IsRunning;
+	UPROPERTY(Transient)
+		UPrimitiveComponent* Component;
+
+	UPROPERTY(Transient)
+		float Value;
+
+	UPROPERTY(Transient)
+		TArray<UMaterialInterface*> Materials;
+
+	UPROPERTY(Transient)
+		TArray<UMaterialInstanceDynamic*> DissolveMaterials;
+
+	UPROPERTY(Transient)
+		bool Reverse;
+
+	UPROPERTY(Transient)
+		bool IsRunning;
 };
 
 USTRUCT()
@@ -90,134 +95,16 @@ struct FEffect
 	GENERATED_BODY()
 
 public:
-	FEffect()
-		: Type(EEffect::Stun)
-		, Duration(0)
-		, Applier(nullptr)
-	{}
+	FEffect();
 
-	EEffect Type;
-	float Duration;
-	AActor* Applier;
-};
+	UPROPERTY(Transient)
+		EEffect Type;
 
-USTRUCT()
-struct FEquipmentSlot
-{
-	GENERATED_BODY()
+	UPROPERTY(Transient)
+		float Duration;
 
-public:
-	FEquipmentSlot()
-		: Items()
-		, ActiveItemIndex(0)
-		, IsHidden(false)
-	{}
-
-	TArray<FStoredItem> Items;
-	int32 ActiveItemIndex;
-	bool IsHidden;
-};
-
-USTRUCT()
-struct FEquipmentSlots
-{
-	GENERATED_BODY()
-	FEquipmentSlots()
-		: Type(EItem::None)
-		, Slots()
-	{}
-
-	EItem Type;
-	TArray<FEquipmentSlot> Slots;
-};
-
-USTRUCT()
-struct FHitData
-{
-	GENERATED_BODY()
-
-public:
-	FHitData()
-		: Damage(0)
-		, DamageCauser(nullptr)
-		, HitFromDirection(FVector::ZeroVector)
-		, CanBeParried(false)
-		, CanBeBlocked(true)
-		, CanReceiveImpact(false)
-	{}
-
-	float Damage;
-	AActor* DamageCauser;
-	FVector HitFromDirection;
-	bool CanBeParried;
-	bool CanBeBlocked;
-	bool CanReceiveImpact;
-};
-
-USTRUCT()
-struct FItem
-{
-	GENERATED_BODY()
-
-public:
-	FItem()
-		: Name("None")
-		, Description(FText::FromString(TEXT("Item Description")))
-		, Type(EItem::None)
-		, IsStackable(false)
-		, IsDroppable(true)
-		, IsConsumable(false)
-		, Image(nullptr)
-	{}
-
-	FName Name;
-	FText Description;
-	EItem Type;
-	bool IsStackable;
-	bool IsDroppable;
-	bool IsConsumable;
-	UTexture2D* Image;
-};
-
-USTRUCT()
-struct FModifier
-{
-	GENERATED_BODY()
-
-public:
-	FModifier()
-		: Type(EStat::None)
-		, Value(0)
-	{}
-
-	EStat Type;
-	float Value;
-};
-
-USTRUCT()
-struct FStat
-{
-	GENERATED_BODY()
-
-public:
-	FStat()
-		: FStat(EStat::None, 0.0f, 0.0f)
-	{}
-
-	FStat(EStat InStat, float InBase, float InModifiersValue)
-		: Type(InStat)
-		, BaseValue(InBase)
-		, ModifiersValue(InModifiersValue)
-	{}
-
-	UPROPERTY(EditAnywhere)
-		EStat Type;
-
-	UPROPERTY(EditAnywhere)
-		float BaseValue;
-
-	UPROPERTY(EditAnywhere)
-		float ModifiersValue;
+	UPROPERTY(Transient)
+		AActor* Applier;
 };
 
 USTRUCT()
@@ -243,16 +130,137 @@ public:
 };
 
 USTRUCT()
+struct FEquipmentSlot
+{
+	GENERATED_BODY()
+
+public:
+	FEquipmentSlot();
+
+	UPROPERTY(Transient)
+		TArray<FStoredItem> Items;
+
+	UPROPERTY(Transient)
+		int32 ActiveItemIndex;
+
+	UPROPERTY(Transient)
+		bool IsHidden;
+};
+
+USTRUCT()
+struct FEquipmentSlots
+{
+	GENERATED_BODY()
+
+public:
+	FEquipmentSlots();
+
+	UPROPERTY(Transient)
+		EItem Type;
+
+	UPROPERTY(Transient)
+		TArray<FEquipmentSlot> Slots;
+};
+
+USTRUCT()
+struct FHitData
+{
+	GENERATED_BODY()
+
+public:
+	FHitData();
+
+	UPROPERTY(Transient)
+		float Damage;
+
+	UPROPERTY(Transient)
+		AActor* DamageCauser;
+
+	UPROPERTY(Transient)
+		FVector HitFromDirection;
+
+	UPROPERTY(Transient)
+		bool CanBeParried;
+
+	UPROPERTY(Transient)
+		bool CanBeBlocked;
+
+	UPROPERTY(Transient)
+		bool CanReceiveImpact;
+};
+
+USTRUCT()
+struct FItem
+{
+	GENERATED_BODY()
+
+public:
+	FItem();
+
+	UPROPERTY(Transient)
+		FName Name;
+
+	UPROPERTY(Transient)
+		FText Description;
+
+	UPROPERTY(Transient)
+
+		EItem Type;
+	UPROPERTY(Transient)
+		bool IsStackable;
+
+	UPROPERTY(Transient)
+		bool IsDroppable;
+
+	UPROPERTY(Transient)
+		bool IsConsumable;
+
+	UPROPERTY(Transient)
+		UTexture2D* Image;
+};
+
+USTRUCT()
+struct FModifier
+{
+	GENERATED_BODY()
+
+public:
+	FModifier();
+
+	UPROPERTY(Transient)
+		EStat Type;
+
+	UPROPERTY(Transient)
+		float Value;
+};
+
+USTRUCT()
+struct FStat
+{
+	GENERATED_BODY()
+
+public:
+	FStat();
+
+	FStat(EStat InStat, float InBase, float InModifiersValue);
+
+	UPROPERTY(EditAnywhere)
+		EStat Type;
+
+	UPROPERTY(EditAnywhere)
+		float BaseValue;
+
+	UPROPERTY(EditAnywhere)
+		float ModifiersValue;
+};
+
+USTRUCT()
 struct FDemoRoomInfo
 {
 	GENERATED_BODY()
 
 public:
-	FDemoRoomInfo()
-		: RoomName()
-		, RoomType(EDemoRoom::Standard)
-		, OverrideSize(0)
-	{}
+	FDemoRoomInfo();
 
 	UPROPERTY(EditAnywhere)
 		FText RoomName;

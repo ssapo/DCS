@@ -32,6 +32,8 @@
 #include "Widgets/KeybindingsWidget.h"
 #include "Widgets/InGameWidget.h"
 
+#include "Items/ObjectItems/ItemBase.h"
+
 #include "UserWidget.h"
 #include "Defines.h"
 #include "WidgetSystem.h"
@@ -240,6 +242,7 @@ void ACombatCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 void ACombatCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
 	UpdateAimAlpha();
 }
 
@@ -434,12 +437,9 @@ void ACombatCharacter::OnLightAttackPressed()
 				CInputBuffer->UpdateKey(EInputBufferKey::LightAttack);
 			}
 		}
-		else
+		else if(IsCombatEqual(ECombat::Unarmed))
 		{
-			if (IsCombatEqual(ECombat::Unarmed))
-			{
-				CInputBuffer->UpdateKey(EInputBufferKey::LightAttack);
-			}
+			CInputBuffer->UpdateKey(EInputBufferKey::LightAttack);
 		}
 	}
 	else
@@ -970,7 +970,6 @@ UAnimMontage* ACombatCharacter::GetMontageRoll() const
 UAnimMontage* ACombatCharacter::GetMontageMeleeAttack(EMeleeAttack InType) const
 {
 	EMontage Action = UDCSLib::CovertMeleeAttackTypeToAction(InType);
-
 	int32 LastIndex = CMontagesManager->GetMontageActionLastIndex(Action);
 	int32 ActionIndex = LastIndex;
 	if (MeleeAttackCounter < LastIndex)

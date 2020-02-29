@@ -1,4 +1,7 @@
 #include "StatsManagerComponent.h"
+
+#include "Items/ObjectItems/ItemBase.h"
+
 #include "DCSLib.h"
 
 // start public:
@@ -8,15 +11,15 @@ UStatsManagerComponent::UStatsManagerComponent()
 	Stats.Add(FStat(EStat::Health, 100.0f, 0.0f));
 	Stats.Add(FStat(EStat::Stamina, 100.0f, 0.0f));
 	Stats.Add(FStat(EStat::Mana, 100.0f, 0.0f));
-	Stats.Add(FStat(EStat::Damage, 100.0f, 0.0f));
-	Stats.Add(FStat(EStat::Armor, 100.0f, 0.0f));
-	Stats.Add(FStat(EStat::CritChance, 100.0f, 0.0f));
-	Stats.Add(FStat(EStat::CritMultiplier, 100.0f, 0.0f));
-	Stats.Add(FStat(EStat::AttackSpeed, 100.0f, 0.0f));
-	Stats.Add(FStat(EStat::Block, 100.0f, 0.0f));
-	Stats.Add(FStat(EStat::MeleeAttackStaminaCost, 100.0f, 0.0f));
-	Stats.Add(FStat(EStat::MagicDamage, 100.0f, 0.0f));
-	Stats.Add(FStat(EStat::CastingSpeed, 100.0f, 0.0f));
+	Stats.Add(FStat(EStat::Damage, 10.0f, 0.0f));
+	Stats.Add(FStat(EStat::Armor, 0.0f, 0.0f));
+	Stats.Add(FStat(EStat::CritChance, 0.0f, 0.0f));
+	Stats.Add(FStat(EStat::CritMultiplier, 0.0f, 0.0f));
+	Stats.Add(FStat(EStat::AttackSpeed, 1.0f, 0.0f));
+	Stats.Add(FStat(EStat::Block, 50.0f, 0.0f));
+	Stats.Add(FStat(EStat::MeleeAttackStaminaCost, 15.0f, 0.0f));
+	Stats.Add(FStat(EStat::MagicDamage, 10.0f, 0.0f));
+	Stats.Add(FStat(EStat::CastingSpeed, 1.0f, 0.0f));
 }
 
 void UStatsManagerComponent::Initialize()

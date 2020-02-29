@@ -37,24 +37,28 @@ public:
 	bool IsSlotHidden(EItem InType, int32 Index) const;
 	bool IsEquippedItem(const FGuid& InItemID) const;
 	bool IsActiveItem(const FGuid& InItemID) const;
-
 	bool IsShieldEquipped() const;
 	bool IsTwoHandedWeaponEquipped() const;
 	void ToggleCombat();
 
 private:
+	void OnGameLoaded();
 	void OnItemModified(const FStoredItem& InItem);
 
 	void SetCombat(bool InValue);
+	void SetSlotActiveIndex(EItem Type, int32 SlotIndex, int32 ActiveIndex);
+	void SetSlotHidden(EItem Type, int32 SlotIndex, bool bInHidden);
+	void SetItemInSlot(EItem Type, int32 SlotIndex, int32 ItemIndex, const FStoredItem& InItem);
 	void UpdateItemInSlot(EItem Type, int32 SlotIndex, int32 ItemIndex, const FStoredItem& InItem, EHandleSameItemMethod Method);
 	void UpdateCombatType();
+	void BuildEquipment(const TArray<FEquipmentSlots>& EquipmentSlots);
 	TTuple<EItem, int32, int32> FindItem(const FStoredItem& InItem);
 	int32 GetEquipmentSlotsIndex(EItem InType) const;
 	bool IsSlotIndexValid(EItem InType, int32 Index) const;
 	bool IsItemIndexValid(EItem InType, int32 Index, int32 ItemIndex) const;
 	EItem GetItemType(const FStoredItem& InItem) const;
 
-	// start Declare Events.
+	// start declare events.
 public:
 	DECLARE_EVENT_FiveParams(UEquipmentComponent, FOnItemInSlotChanged, const FStoredItem&, const FStoredItem&, EItem, int32, int32);
 	FOnItemInSlotChanged& OnInSlotChanged() { return ItemInSlotChangedEvent; }
@@ -63,7 +67,7 @@ public:
 	FOnActiveItemChanged& OnActiveItemChanged() { return ActiveItemChangedEvent; }
 
 	DECLARE_EVENT_OneParam(UEquipmentComponent, FOnCombatChanged, bool);
-	FOnCombatChanged& OnCombatChanged() { return CombatChangedEnvet; }
+	FOnCombatChanged& OnCombatChanged() { return CombatStatusChangedEnvet; }
 
 	DECLARE_EVENT_OneParam(UEquipmentComponent, FOnWeaponTypeChanged, EWeapon);
 	FOnWeaponTypeChanged& OnWeaponTypeChanged() { return WeaponTypeChangedEvent; }
@@ -79,9 +83,9 @@ private:
 	FOnMainHandTypeChanged MainHandTypeChangedEvent;
 	FOnItemInSlotChanged ItemInSlotChangedEvent;
 	FOnActiveItemChanged ActiveItemChangedEvent;
-	FOnCombatChanged CombatChangedEnvet;
+	FOnCombatChanged CombatStatusChangedEnvet;
 	FOnCombatTypeChanged CombatTypeChangedEvent;
-	// end Declare Events.
+	// end declare events.
 
 private:
 	TWeakObjectPtr<UInventoryComponent> WP_Inventory;
@@ -90,11 +94,11 @@ private:
 	TArray<EItem> MainHandTypes;
 	TArray<FGuid> EquippedItems;
 	TArray<FGuid> ActiveItems;
-
+	
 	TMap<EItem, FDisplayedItems> DisplayedItems;
 
 	ECombat CombatType;
-	EWeapon WepaonType;
+	EWeapon WeaponType;
 	EItem SelectedMainHandType;
 
 	bool bIsInCombat;
