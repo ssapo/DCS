@@ -13,5 +13,8 @@ class DCS_API UItemWeapon : public UItemBase
 	
 public:
 	virtual void UseItem(AActor* Caller) override;
+	FORCEINLINE EWeapon GetWeaponType() const { return WeaponType; }
 
+private:
+	EWeapon WeaponType;
 };

@@ -24,6 +24,7 @@ class UWidget;
 class UImage;
 class UUserWidget;
 class APlayerController;
+class ADCSGameModeBase;
 namespace EDrawDebugTrace { enum Type; }
 
 UCLASS()
@@ -49,6 +50,9 @@ public:
 
 	template <typename T = UUserWidget>
 	static FORCEINLINE TArray<T*> GetWidgets(UObject* WCO);
+
+	template <typename T = AGameMode>
+	static FORCEINLINE T * GetGameMode(const UObject* WCO);
 
 	static FORCEINLINE FString GetStringAsEnum(const FString& TypeName, int32 EnumValue);
 
@@ -93,6 +97,8 @@ public:
 	static FORCEINLINE EMontage CovertMeleeAttackTypeToAction(EMeleeAttack InType);
 
 	static FORCEINLINE float ScaleMeleeAttackStaminaCost(EMeleeAttack InType, float InCost);
+
+	static FORCEINLINE bool IsItemValid(const FStoredItem* InItem);
 
 public:
 	static FString INV_STRING;
@@ -170,6 +176,12 @@ FORCEINLINE TArray<T*> UDCSLib::GetWidgets(UObject* WCO)
 	}
 
 	return ReturnWidgets;
+}
+
+template <typename T>
+FORCEINLINE T* UDCSLib::GetGameMode(const UObject* WCO)
+{
+	return Cast<T>(UGameplayStatics::GetGameMode(WCO));
 }
 
 FORCEINLINE FString UDCSLib::GetStringAsEnum(const FString& TypeName, int32 EnumValue)
@@ -297,3 +309,12 @@ FORCEINLINE float UDCSLib::ScaleMeleeAttackStaminaCost(EMeleeAttack InType, floa
 	}
 }
 
+FORCEINLINE bool UDCSLib::IsItemValid(const FStoredItem* InItem)
+{
+	if (InItem && IsValidClass(InItem->ItemClass))
+	{
+		return InItem->Amount > 0;
+	}
+
+	return false;
+}
