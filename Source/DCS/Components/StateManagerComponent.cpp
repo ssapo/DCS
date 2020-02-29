@@ -9,7 +9,7 @@ UStateManagerComponent::UStateManagerComponent()
 	CurrentState = EState::Idle;
 }
 
-FORCEINLINE bool UStateManagerComponent::GetActivityValue(EActivity InType) const
+bool UStateManagerComponent::GetActivityValue(EActivity InType) const
 {
 	if (Activities.Contains(InType))
 	{
@@ -21,7 +21,7 @@ FORCEINLINE bool UStateManagerComponent::GetActivityValue(EActivity InType) cons
 	}
 }
 
-FORCEINLINE void UStateManagerComponent::SetActivity(EActivity InType, bool NewValue)
+void UStateManagerComponent::SetActivity(EActivity InType, bool NewValue)
 {
 	bool PrevValue = GetActivityValue(InType);
 
@@ -35,7 +35,7 @@ FORCEINLINE void UStateManagerComponent::SetActivity(EActivity InType, bool NewV
 	ActivityChangedEvent.Broadcast(InType, NewValue);
 }
 
-FORCEINLINE void UStateManagerComponent::SetState(EState InState)
+void UStateManagerComponent::SetState(EState InState)
 {
 	GetWorld()->GetTimerManager().ClearTimer(IdleTimer);
 
@@ -48,12 +48,12 @@ FORCEINLINE void UStateManagerComponent::SetState(EState InState)
 	}
 }
 
-FORCEINLINE EState UStateManagerComponent::GetState() const
+EState UStateManagerComponent::GetState() const
 {
 	return CurrentState;
 }
 
-FORCEINLINE void UStateManagerComponent::ResetState(float InTime)
+void UStateManagerComponent::ResetState(float InTime)
 {
 	if (CurrentState == EState::Dead)
 	{

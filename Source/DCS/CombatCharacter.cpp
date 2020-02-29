@@ -68,27 +68,27 @@ FORCEINLINE float ACombatCharacter::GetBlockAlpha() const
 	return BlockAlpha;
 }
 
-FORCEINLINE float ACombatCharacter::GetAimAlpha() const
+float ACombatCharacter::GetAimAlpha() const
 {
 	return AimAlpha;
 }
 
-FORCEINLINE bool ACombatCharacter::IsActivityPure(EActivity InType) const
+bool ACombatCharacter::IsActivityPure(EActivity InType) const
 {
 	return CStateManager->GetActivityValue(InType);
 }
 
-FORCEINLINE bool ACombatCharacter::IsIdleAndNotFalling() const
+bool ACombatCharacter::IsIdleAndNotFalling() const
 {
 	return !GetCharacterMovement()->IsFalling() && IsStateEqual(EState::Idle);
 }
 
-FORCEINLINE bool ACombatCharacter::IsStateEqual(EState InType) const
+bool ACombatCharacter::IsStateEqual(EState InType) const
 {
 	return CStateManager->GetState() == InType;
 }
 
-FORCEINLINE bool ACombatCharacter::IsCombatEqual(ECombat InType) const
+bool ACombatCharacter::IsCombatEqual(ECombat InType) const
 {
 	return CEquipment->GetCombatType() == InType;
 }
@@ -927,22 +927,22 @@ bool ACombatCharacter::AttemptBackstab()
 	return false;
 }
 
-FORCEINLINE bool ACombatCharacter::CanRoll() const
+bool ACombatCharacter::CanRoll() const
 {
 	return IsIdleAndNotFalling() && IsEnoughStamina(1.0f);
 }
 
-FORCEINLINE bool ACombatCharacter::HasMovementInput() const
+bool ACombatCharacter::HasMovementInput() const
 {
 	return UDCSLib::NotEqual(FVector::ZeroVector, GetCharacterMovement()->GetLastInputVector());
 }
 
-FORCEINLINE bool ACombatCharacter::IsEnoughStamina(float InValue) const
+bool ACombatCharacter::IsEnoughStamina(float InValue) const
 {
 	return CExtendedStamina->GetCurrentValue() >= InValue;
 }
 
-FORCEINLINE bool ACombatCharacter::CanMeleeAttack() const
+bool ACombatCharacter::CanMeleeAttack() const
 {
 	bool bIdle = IsStateEqual(EState::Idle);
 	bool bInCombat = CEquipment->IsInCombat();
@@ -978,7 +978,17 @@ UAnimMontage* ACombatCharacter::GetMontageMeleeAttack(EMeleeAttack InType) const
 	}
 
 	UAnimMontage* Montage = CMontagesManager->GetMontageForAction(Action, ActionIndex);
-	MeleeAttackCounter = (++MeleeAttackCounter) % LastIndex;
+	if (Montage == nullptr)
+	{
+		return nullptr;
+	}
+
+	++MeleeAttackCounter;
+	if (MeleeAttackCounter > LastIndex)
+	{
+		MeleeAttackCounter = 0;
+	}
+
 	return Montage;
 }
 

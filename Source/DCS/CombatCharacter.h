@@ -50,14 +50,14 @@ class DCS_API ACombatCharacter : public ACharacter
 public:
 	ACombatCharacter();
 
-	FORCEINLINE float GetJogSpeed() const;
-	FORCEINLINE bool IsInSlowMotion() const;
-	FORCEINLINE float GetBlockAlpha() const;
-	FORCEINLINE float GetAimAlpha() const override;
-	FORCEINLINE bool IsActivityPure(EActivity InType) const;
-	FORCEINLINE bool IsIdleAndNotFalling() const;
-	FORCEINLINE bool IsStateEqual(EState InType) const;
-	FORCEINLINE bool IsCombatEqual(ECombat InType) const;
+	float GetJogSpeed() const;
+	bool IsInSlowMotion() const;
+	float GetBlockAlpha() const;
+	float GetAimAlpha() const override;
+	bool IsActivityPure(EActivity InType) const;
+	bool IsIdleAndNotFalling() const;
+	bool IsStateEqual(EState InType) const;
+	bool IsCombatEqual(ECombat InType) const;
 
 	const TTuple<float, float> CalculateLeanAmount() const;
 
@@ -150,13 +150,12 @@ private:
 	UAnimMontage* GetMontageRoll() const;
 	UAnimMontage* GetMontageMeleeAttack(EMeleeAttack InType) const;
 
+	bool CanRoll() const;
+	bool HasMovementInput() const;
+	bool IsEnoughStamina(float InValue) const;
+	bool CanMeleeAttack() const;
 
-	FORCEINLINE bool CanRoll() const;
-	FORCEINLINE bool HasMovementInput() const;
-	FORCEINLINE bool IsEnoughStamina(float InValue) const;
-	FORCEINLINE bool CanMeleeAttack() const;
-
-	FORCEINLINE UDCSWidget* ShowWidget(EWidgetID InType) const;
+	UDCSWidget* ShowWidget(EWidgetID InType) const;
 
 	// start Declare Events.
 public:
