@@ -107,6 +107,9 @@ private:
 	void OnZoomKeyReleased();
 	void OnLightAttackPressed();
 	void OnHeavyAttackPressed();
+	void OnThrustAttackPressed();
+	void OnSpecialAttackPressed();
+	void OnParryAttackPressed();
 
 	void OnMoveForward(float InAxisValue);
 	void OnMoveRight(float InAxisValue);
