@@ -288,6 +288,12 @@ void ACombatCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		&ACombatCharacter::OnLightAttackPressed);
 	PlayerInputComponent->BindAction(EVENT_HEAVYATTACK, IE_Pressed, this,
 		&ACombatCharacter::OnHeavyAttackPressed);
+	PlayerInputComponent->BindAction(EVENT_THRUSTATTACK, IE_Pressed, this,
+		&ACombatCharacter::OnThrustAttackPressed);
+	PlayerInputComponent->BindAction(EVENT_SPECIALATTACK, IE_Pressed, this,
+		&ACombatCharacter::OnSpecialAttackPressed);
+	PlayerInputComponent->BindAction(EVENT_PARRY, IE_Pressed, this,
+		&ACombatCharacter::OnParryAttackPressed);
 }
 
 UDataTable* ACombatCharacter::GetMontages(EMontage InType)
@@ -450,7 +456,34 @@ void ACombatCharacter::OnLightAttackPressed()
 
 void ACombatCharacter::OnHeavyAttackPressed()
 {
+	if (IsCombatEqual(ECombat::Melee) || IsCombatEqual(ECombat::Unarmed))
+	{
+		CInputBuffer->UpdateKey(EInputBufferKey::HeavyAttack);
+	}
+}
 
+void ACombatCharacter::OnThrustAttackPressed()
+{
+	if (IsCombatEqual(ECombat::Melee))
+	{
+		CInputBuffer->UpdateKey(EInputBufferKey::ThrustAttack);
+	}
+}
+
+void ACombatCharacter::OnSpecialAttackPressed()
+{
+	if (IsCombatEqual(ECombat::Melee))
+	{
+		CInputBuffer->UpdateKey(EInputBufferKey::SpecialAttack);
+	}
+}
+
+void ACombatCharacter::OnParryAttackPressed()
+{
+	if (IsCombatEqual(ECombat::Melee) || IsCombatEqual(ECombat::Unarmed))
+	{
+		CInputBuffer->UpdateKey(EInputBufferKey::Parry);
+	}
 }
 
 void ACombatCharacter::OnMoveForward(float InAxisValue)
