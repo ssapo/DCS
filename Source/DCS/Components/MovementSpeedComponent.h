@@ -29,6 +29,7 @@ private:
 	void ChangeMovementState(EMovementState InState);
 	float GetSelectSpeed(EMovementState InSelector) const;
 
+	// start declare events.
 public:
 	DECLARE_EVENT_OneParam(UMovementSpeedComponent, FOnMovementStateEnd, EMovementState);
 	FOnMovementStateEnd& OnMovementStateEnd() { return MovementStateEndEvent; }
@@ -37,18 +38,29 @@ public:
 	FOnMovementStateStart& OnMovementStateStart() { return MovementStateStartEvent; }
 
 private:
-	TArray<EMovementState> StatesToToggle;
-
 	FOnMovementStateEnd MovementStateEndEvent;
 	FOnMovementStateStart MovementStateStartEvent;
+	// end declare events.
+
+private:
+	UPROPERTY(EditInstanceOnly)
+		float WalkSpeed;
+
+	UPROPERTY(EditInstanceOnly)
+		float JogSpeed;
+
+	UPROPERTY(EditInstanceOnly)
+		float SprintSpeed;
+
+	UPROPERTY(EditInstanceOnly)
+		float TargetSpeed;
+
+	UPROPERTY(EditInstanceOnly)
+		float SpeedChangeInterpSpeed;
+	
+	UPROPERTY(EditInstanceOnly)
+		TArray<EMovementState> StatesToToggle;
 
 	EMovementState MovementState;
-
-	float WalkSpeed;
-	float JogSpeed;
-	float SprintSpeed;
-	float TargetSpeed;
-	float SpeedChangeInterpSpeed;
-
 	bool bIsUpdatingSpeed;
 };

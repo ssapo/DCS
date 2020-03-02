@@ -87,7 +87,8 @@ protected:
 
 private:
 	void CtorComponents();
-	void CtorInitialize(); 
+	void CtorInitialize();
+
 	void CreateHUD();
 	void CreateKeyBindings();
 	void CreateInGameWidget(); 

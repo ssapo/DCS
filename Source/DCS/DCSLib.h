@@ -34,71 +34,75 @@ class DCS_API UDCSLib : public UBlueprintFunctionLibrary
 	
 public:
 	template <typename T = UActorComponent>
-	static FORCEINLINE T* GetComponent(APawn* Owner);
+	static T* GetComponent(APawn* Owner);
 	
 	template <typename T = UActorComponent>
-	static FORCEINLINE T * GetComponent(const APawn& Owner);
+	static T * GetComponent(const APawn& Owner);
 
 	template <typename T = UActorComponent>
-	static FORCEINLINE T * GetComponent(AActor* Owner);
+	static T * GetComponent(AActor* Owner);
 
 	template <typename T = UActorComponent>
-	static FORCEINLINE T * GetComponent(const AActor& Owner);
+	static T * GetComponent(const AActor& Owner);
 
 	template <typename T = UActorComponent>
-	static FORCEINLINE T* GetComponent(UUserWidget* WCO);
+	static T* GetComponent(UUserWidget* WCO);
 
 	template <typename T = UUserWidget>
-	static FORCEINLINE TArray<T*> GetWidgets(UObject* WCO);
+	static TArray<T*> GetWidgets(UObject* WCO);
 
 	template <typename T = AGameMode>
-	static FORCEINLINE T * GetGameMode(const UObject* WCO);
+	static T * GetGameMode(const UObject * WCO);
 
-	static FORCEINLINE FString GetStringAsEnum(const FString& TypeName, int32 EnumValue);
+	static FString GetStringAsEnum(const FString& TypeName, int32 EnumValue);
 
-	static FORCEINLINE bool IsValidClass(UClass* InClass);
+	static bool IsValidClass(UClass* InClass);
 
-	static FORCEINLINE UCanvasPanelSlot* SlotAsCanvasSlot(UWidget* InWidget);
+	static UCanvasPanelSlot* SlotAsCanvasSlot(UWidget* InWidget);
 
-	static FORCEINLINE FVector2D GetViewportSize(UObject* WCO);
+	static FVector2D GetViewportSize(UObject* WCO);
 
-	static FORCEINLINE bool CapsuleTraceForObjects(UObject* WCO, const FVector Start, const FVector End,
+	static bool CapsuleTraceForObjects(UObject* WCO, const FVector Start, const FVector End,
 		float Radius, float HalfHeight, const TArray<TEnumAsByte<EObjectTypeQuery>>& ObjectTypes, 
 		bool bTraceComplex, const TArray<AActor*>& Ignores, EDrawDebugTrace::Type DrawDebugType, 
 		OUT FHitResult& OutHit, bool bIgnoreSelf, float DrawTime = 5.0f,
 		FLinearColor TraceColor = FLinearColor::Red, FLinearColor TraceHitColor = FLinearColor::Green);
 
-	static FORCEINLINE bool LineTraceByChannel(UObject* WCO, const FVector Start, const FVector End, ETraceTypeQuery TraceChannel, bool bTraceComplex, const TArray<AActor*>& ActorsToIgnore, EDrawDebugTrace::Type DrawDebugType, FHitResult& OutHit, bool bIgnoreSelf, FLinearColor TraceColor, FLinearColor TraceHitColor, float DrawTime);
+	static bool LineTraceByChannel(UObject* WCO, const FVector Start, const FVector End, ETraceTypeQuery TraceChannel, bool bTraceComplex, const TArray<AActor*>& ActorsToIgnore, EDrawDebugTrace::Type DrawDebugType, FHitResult& OutHit, bool bIgnoreSelf, FLinearColor TraceColor, FLinearColor TraceHitColor, float DrawTime);
 
-	static FORCEINLINE float GetDTS(const UObject* WCO);
+	static float GetDTS(const UObject* WCO);
 
-	static FORCEINLINE FVector GetForwardVector(FRotator InRot);
+	static FVector GetForwardVector(FRotator InRot);
 
-	static FORCEINLINE FVector GetRightVector(FRotator InRot);
+	static FVector GetRightVector(FRotator InRot);
 
-	static FORCEINLINE APlayerController* GetPlayerController(UObject* WCO, int32 Index = 0);
+	static APlayerController* GetPlayerController(UObject* WCO, int32 Index = 0);
 	
-	static FORCEINLINE bool IsInterface(UObject* InObject, TSubclassOf<UInterface> Interface);
+	static bool IsInterface(UObject* InObject, TSubclassOf<UInterface> Interface);
 
-	static FORCEINLINE FRotator InterpTo(FRotator Current, FRotator Target, float DT, float InterpSpeed);
+	static FRotator InterpTo(FRotator Current, FRotator Target, float DT, float InterpSpeed);
 
-	static FORCEINLINE float InterpTo(float Current, float Target, float DT, float InterpSpeed);
+	static float InterpTo(float Current, float Target, float DT, float InterpSpeed);
 
-	static FORCEINLINE FRotator Delta(FRotator A, FRotator B);
+	static FRotator Delta(FRotator A, FRotator B);
 
-	static FORCEINLINE FRotator MakeRot(float X, float Y, float Z);
+	static FRotator MakeRot(float X, float Y, float Z);
 
-	static FORCEINLINE FRotator FindLookat(const FVector& Start, const FVector& Target);
+	static FRotator FindLookat(const FVector& Start, const FVector& Target);
 
-	static FORCEINLINE FRotator RotationFromXVector(const FVector& XVector);
+	static FRotator RotationFromXVector(const FVector& XVector);
 
-	static FORCEINLINE bool NotEqual(const FVector& A, const FVector& B);
+	static bool NotEqual(const FVector& A, const FVector& B);
 
-	static FORCEINLINE EMontage CovertMeleeAttackTypeToAction(EMeleeAttack InType);
+	static EMontage CovertMeleeAttackTypeToAction(EMeleeAttack InType);
 
-	static FORCEINLINE float ScaleMeleeAttackStaminaCost(EMeleeAttack InType, float InCost);
+	static float ScaleMeleeAttackStaminaCost(EMeleeAttack InType, float InCost);
 
-	static FORCEINLINE bool IsItemValid(const FStoredItem* InItem);
+	static bool IsItemValid(const FStoredItem* InItem);
+
+	static bool OwnerIsPlayer(AActor* Actor);
+
+	static bool EqualClass(UClass* A, UClass* B);
 
 public:
 	static FString INV_STRING;
@@ -317,4 +321,14 @@ FORCEINLINE bool UDCSLib::IsItemValid(const FStoredItem* InItem)
 	}
 
 	return false;
+}
+
+FORCEINLINE bool UDCSLib::OwnerIsPlayer(AActor* Owner)
+{
+	return Owner == UDCSLib::GetPlayerController(Owner, 0);
+}
+
+FORCEINLINE bool UDCSLib::EqualClass(UClass* A, UClass* B)
+{
+	return UKismetMathLibrary::EqualEqual_ClassClass(A, B);
 }

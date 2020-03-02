@@ -43,7 +43,8 @@ private:
 	FOnGameLoaded GameLoadedEvent;
 	// end delcare event
 
-private:
+	// TODO: temp code
+public:
 	TArray<FEquipmentSlots> EquipmentSlots;
 	TArray<FStoredItem> Inventory;
 	TMap<EStat, float> CurrentStatValues;
