@@ -1,9 +1,12 @@
 #include "ExtendedStatComponent.h"
-#include "DCSLib.h"
 #include "Components/ActorComponent.h"
-#include "Engine/World.h"
 #include "StatsManagerComponent.h"
+
+#include "Items/ObjectItems/ItemBase.h"
+
+#include "DCSLib.h"
 #include "TimerManager.h"
+#include "Engine/World.h"
 
 // start public:
 UExtendedStatComponent::UExtendedStatComponent()
@@ -20,17 +23,17 @@ UExtendedStatComponent::UExtendedStatComponent()
 	bDoesRegenerates = false;
 }
 
-FORCEINLINE EStat UExtendedStatComponent::GetStatType() const
+EStat UExtendedStatComponent::GetStatType() const
 {
 	return StatType;
 }
 
-FORCEINLINE float UExtendedStatComponent::GetCurrentValue() const
+float UExtendedStatComponent::GetCurrentValue() const
 {
 	return CurrentValue;
 }
 
-FORCEINLINE float UExtendedStatComponent::GetMaxValue() const
+float UExtendedStatComponent::GetMaxValue() const
 {
 	return TopValue + ModifierValue;
 }

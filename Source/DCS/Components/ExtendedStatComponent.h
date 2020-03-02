@@ -16,9 +16,9 @@ class DCS_API UExtendedStatComponent : public UActorComponent
 public:
 	UExtendedStatComponent(); 
 
-	FORCEINLINE EStat GetStatType() const;
-	FORCEINLINE float GetCurrentValue() const;
-	FORCEINLINE float GetMaxValue() const;
+	EStat GetStatType() const;
+	float GetCurrentValue() const;
+	float GetMaxValue() const;
 
 	void ModifyStat(float InValue, bool InterruptRegeneration);
 
@@ -51,16 +51,22 @@ private:
 	// end Declare Events.
 
 private:
-	EStat StatType;
+	UPROPERTY(EditInstanceOnly)
+		EStat StatType;
+
+	UPROPERTY(EditInstanceOnly)
+		float RegenValue;
+
+	UPROPERTY(EditInstanceOnly)
+		bool bDoesRegenerates;
+	
+	UPROPERTY(EditInstanceOnly)
+		float ReenableRegenTime;
 
 	float RegenerationTickInterval;
 	float CurrentValue;
 	float TopValue;
 	float ModifierValue;
-	float RegenValue;
-	float ReenableRegenTime;
 	float InitialRegenValue;
-
 	FTimerHandle RegenHandle;
-	bool bDoesRegenerates;
 };

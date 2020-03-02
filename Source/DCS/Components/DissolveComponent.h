@@ -1,28 +1,41 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "DissolveComponent.generated.h"
 
+class UMaterialInstance;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class DCS_API UDissolveComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
-	// Sets default values for this component's properties
-	UDissolveComponent();
+	// start declare events
+public:
+	DECLARE_EVENT(UDissolveComponent, FOnDissolveFinished)
+	FOnDissolveFinished& OnDissolveFinished() { return DissolveFinishedEvent; }
 
-protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
+private:
+	FOnDissolveFinished DissolveFinishedEvent;
+	// end declare events
 
-public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+private:
+	UPROPERTY(EditInstanceOnly)
+		UMaterialInstance* MI_Dissolve;
 
-		
+	UPROPERTY(EditInstanceOnly)
+		FName DissolveValueName;
+
+	UPROPERTY(EditInstanceOnly)
+		FName DissolveColorName;
+
+	UPROPERTY(EditInstanceOnly)
+		float DissolveInterpSpeed;
+
+	UPROPERTY(EditInstanceOnly)
+		FLinearColor DissolveColor;
+
+	UPROPERTY(EditInstanceOnly)
+		TArray<FLinearColor> DissolvedComponents;
 };
