@@ -44,13 +44,6 @@
 #include "Engine/World.h"
 
 // start public:
-ACombatCharacter::ACombatCharacter()
-{
-	CtorComponents();
-
-	CtorInitialize();
-}
-
 FORCEINLINE float ACombatCharacter::GetJogSpeed() const
 {
 	return CMovementSpeed->GetJogSpeed();
@@ -131,9 +124,23 @@ void ACombatCharacter::BeginPlay()
 	CInputBuffer->OnInputBufferConsumed().AddUObject(this, &ACombatCharacter::OnInputBufferConsumed);
 	CRotating->OnRotatingStart().AddUObject(this, &ACombatCharacter::OnRotatingStart);
 	CRotating->OnRotatingEnd().AddUObject(this, &ACombatCharacter::OnRotatingEnd);
+	CStateManager->OnActivityChanged().AddUObject(this, &ACombatCharacter::OnActivityChanged);
+	CStateManager->OnStateChanged().AddUObject(this, &ACombatCharacter::OnStateChanged);
+
+	if (CF_BlockAlpha)
+	{
+		FOnTimelineFloat TimelineCallback;
+		TimelineCallback.BindDynamic(this, &ACombatCharacter::OnTickBlockAlpha);
+		TL_Block.AddInterpFloat(CF_BlockAlpha, TimelineCallback);
+
+		FOnTimelineEvent TimelineFinishedCallback;
+		TimelineFinishedCallback.BindDynamic(this, &ACombatCharacter::OnFinishedBlockAlpha);
+		TL_Block.SetTimelineFinishedFunc(TimelineFinishedCallback);
+	}
 
 	PostBeginPlayEvent.Broadcast();
 	PostBeginPlayEvent.Clear();
+
 }
 
 void ACombatCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -153,6 +160,8 @@ void ACombatCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	UpdateAimAlpha();
+
+	TL_Block.TickTimeline(DeltaTime);
 }
 
 void ACombatCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -203,6 +212,11 @@ void ACombatCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		&ACombatCharacter::OnSpecialAttackPressed);
 	PlayerInputComponent->BindAction(EVENT_PARRY, IE_Pressed, this,
 		&ACombatCharacter::OnParryAttackPressed);
+
+	PlayerInputComponent->BindAction(EVENT_BLOCK, IE_Pressed, this,
+		&ACombatCharacter::OnStartBlocking);
+	PlayerInputComponent->BindAction(EVENT_BLOCK, IE_Released, this,
+		&ACombatCharacter::OnStopBlocking);
 }
 
 UDataTable* ACombatCharacter::GetMontages(EMontage InType)
@@ -634,13 +648,42 @@ void ACombatCharacter::OnInputBufferClosed()
 	CStateManager->ResetState(0.0f);
 }
 
+void ACombatCharacter::OnActivityChanged(EActivity InActivity, bool InValue)
+{
+	switch (InActivity)
+	{
+	case EActivity::IsBlockingPressed:
+		UpdateBlocking();
+		break;
+	case EActivity::IsAimingPressed:
+		break;
+	case EActivity::IsImmortal:
+		break;
+	case EActivity::CantBeInterrupted:
+		break;
+	case EActivity::IsLoockingForward:
+		break;
+	case EActivity::CanParryHit:
+		break;
+	case EActivity::IsZooming:
+		break;
+	default:
+		break;
+	}
+}
+
+void ACombatCharacter::OnStateChanged(EState PrevState, EState NewState)
+{
+	UpdateBlocking();
+}
+
 void ACombatCharacter::OnCombatChanged(bool bChangedValue)
 {
 	UpdateRotationSettings();
 
 	if (bChangedValue == false)
 	{
-		StopBlocking();
+		OnStopBlocking();
 
 		ResetAimingMode();
 	}
@@ -769,14 +812,45 @@ void ACombatCharacter::ToggleCombat()
 	}
 }
 
-void ACombatCharacter::StartBlocking()
+void ACombatCharacter::OnStartBlocking()
 {
 	CStateManager->SetActivity(EActivity::IsBlockingPressed, true);
 }
 
-void ACombatCharacter::StopBlocking()
+void ACombatCharacter::OnStopBlocking()
 {
 	CStateManager->SetActivity(EActivity::IsBlockingPressed, false);
+}
+
+void ACombatCharacter::UpdateBlocking()
+{
+	if (CanBlock())
+	{
+		TL_Block.Play();
+	}
+	else
+	{
+		TL_Block.Reverse();
+	}
+	DFP(FColor::Green);
+}
+
+void ACombatCharacter::OnTickBlockAlpha(float InAlpha)
+{
+	BlockAlpha = InAlpha;
+	DPRINT(TEXT("Value %f"), BlockAlpha);
+}
+
+void ACombatCharacter::OnFinishedBlockAlpha()
+{
+	if (TL_Block.IsReversing())
+	{
+		CExtendedStamina->ChangeRegenPercent(25.0f);
+	}
+	else
+	{
+		CExtendedStamina->ChangeRegenPercent(100.0f);
+	}
 }
 
 void ACombatCharacter::UpdateRotationSettings()
@@ -891,6 +965,15 @@ bool ACombatCharacter::CanMeleeAttack() const
 	bool bUnarmedOrMelee = IsCombatEqual(ECombat::Unarmed) || IsCombatEqual(ECombat::Melee);
 	bool bEnoughStam = IsEnoughStamina(1.0f);
 	return bIdle && bInCombat && bUnarmedOrMelee && bEnoughStam;
+}
+
+bool ACombatCharacter::CanBlock() const
+{
+	bool bActivity = IsActivityPure(EActivity::IsBlockingPressed);
+	bool bIdleAndNotFalling = IsIdleAndNotFalling();
+	bool bCanBlock = CEquipment->CanBlock();
+	bool bEnoughStam = IsEnoughStamina(5.0f);
+	return bActivity && bIdleAndNotFalling && bCanBlock && bEnoughStam;
 }
 
 UAnimMontage* ACombatCharacter::GetMontageRoll() const

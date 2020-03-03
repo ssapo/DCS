@@ -10,6 +10,7 @@
 #include "Interfaces/IsArcher.h"
 #include "Interfaces/CanOpenUI.h"
 #include "Interfaces/IsMontageManager.h"
+#include "Components/TimelineComponent.h"
 #include "CombatCharacter.generated.h"
 
 class USpringArmComponent;
@@ -86,6 +87,12 @@ protected:
 	// end interfaces
 
 private:
+	UFUNCTION()
+		void OnTickBlockAlpha(float InAlpha);
+
+	UFUNCTION()
+		void OnFinishedBlockAlpha();
+
 	void CtorComponents();
 	void CtorInitialize();
 
@@ -106,11 +113,16 @@ private:
 	void OnSprintKeyReleased();
 	void OnZoomKeyPressed();
 	void OnZoomKeyReleased();
+
 	void OnLightAttackPressed();
 	void OnHeavyAttackPressed();
 	void OnThrustAttackPressed();
 	void OnSpecialAttackPressed();
 	void OnParryAttackPressed();
+
+	void OnStartBlocking();
+	void OnStopBlocking();
+	void UpdateBlocking();
 
 	void OnMoveForward(float InAxisValue);
 	void OnMoveRight(float InAxisValue);
@@ -122,6 +134,9 @@ private:
 
 	void OnInputBufferConsumed(EInputBufferKey InKey);
 	void OnInputBufferClosed();
+
+	void OnActivityChanged(EActivity InActivity, bool InValue);
+	void OnStateChanged(EState PrevState, EState NewState);
 
 	void OnCombatChanged(bool bChangedValue);
 	void OnRotatingStart();
@@ -136,8 +151,6 @@ private:
 	void StopAiming();
 	void StartZooming();
 	void StopZooming();
-	void StartBlocking();
-	void StopBlocking();
 
 	void HideCrossHair();
 	void UpdateRotationSettings();
@@ -158,6 +171,7 @@ private:
 	bool HasMovementInput() const;
 	bool IsEnoughStamina(float InValue) const;
 	bool CanMeleeAttack() const;
+	bool CanBlock() const;
 
 	UDCSWidget* ShowWidget(EWidgetID InType) const;
 
@@ -238,6 +252,9 @@ private:
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
 		UDynamicTargetingComponent* CDynamicTargeting;
 
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = true))
+		UCurveFloat* CF_BlockAlpha;
+
 	TWeakObjectPtr<UInGameWidget> WP_InGameWidget;
 	TWeakObjectPtr<UKeybindingsWidget> WP_KeyBindingsWidget;
 	TWeakObjectPtr<AActor> WP_BackstabbedActor;
@@ -276,5 +293,7 @@ private:
 	FTimerHandle TH_Check;
 	FTimerHandle TH_SprintLoop;
 	FTimerHandle TH_ResetMeleeAttackCounter;
+
+	FTimeline TL_Block;
 };
 
