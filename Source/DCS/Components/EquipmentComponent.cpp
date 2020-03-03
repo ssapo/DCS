@@ -359,6 +359,17 @@ bool UEquipmentComponent::IsTwoHandedWeaponEquipped() const
 	return IsTwoHanded;
 }
 
+bool UEquipmentComponent::CanBlock() const
+{
+	if (bIsInCombat)
+	{
+		bool bCanBlock = (ECombat::Melee == CombatType) || (ECombat::Unarmed == CombatType);
+		return bCanBlock;
+	}
+
+	return false;
+}
+
 const FStoredItem* UEquipmentComponent::GetActiveItem(EItem InType, int32 Index) const
 {
 	int32 Result = GetEquipmentSlotsIndex(InType);

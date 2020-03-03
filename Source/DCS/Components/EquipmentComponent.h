@@ -39,6 +39,8 @@ public:
 	bool IsActiveItem(const FGuid& InItemID) const;
 	bool IsShieldEquipped() const;
 	bool IsTwoHandedWeaponEquipped() const;
+	bool CanBlock() const;
+
 	void ToggleCombat();
 
 private:

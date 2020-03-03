@@ -180,3 +180,8 @@ void UExtendedStatComponent::RemoveModifier(float Value)
 	SetCurrentValue(CurrentValue, false);
 	RefreshRegenTimer();
 }
+
+void UExtendedStatComponent::ChangeRegenPercent(float InPercent)
+{
+	RegenValue = (InPercent / 100.0f) * InitialRegenValue;
+}

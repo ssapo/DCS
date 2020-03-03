@@ -23,6 +23,13 @@
 #include "Camera/CameraComponent.h"
 #include "Components/InputBufferComponent.h"
 
+ACombatCharacter::ACombatCharacter()
+{
+	CtorComponents();
+
+	CtorInitialize();
+}
+
 void ACombatCharacter::CtorComponents()
 {
 	USkeletalMeshComponent* MeshComponent = GetMesh();

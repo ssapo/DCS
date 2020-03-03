@@ -21,6 +21,7 @@ public:
 	float GetMaxValue() const;
 
 	void ModifyStat(float InValue, bool InterruptRegeneration);
+	void ChangeRegenPercent(float InPercent);
 
 protected:
 	void BeginPlay() override;
