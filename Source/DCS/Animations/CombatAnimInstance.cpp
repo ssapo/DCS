@@ -7,10 +7,11 @@
 #include "Components/EquipmentComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
 #include "GameFramework/PlayerController.h"
+#include "Items/ObjectItems/ItemBase.h"
 
 UCombatAnimInstance::UCombatAnimInstance()
 {
-	CombatType = ECombat::None;
+	CombatType = ECombat::Unarmed;
 	WeaponType = EWeapon::None;
 
 	LocomotionRateScale = 1.0f;
