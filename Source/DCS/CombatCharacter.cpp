@@ -832,13 +832,11 @@ void ACombatCharacter::UpdateBlocking()
 	{
 		TL_Block.Reverse();
 	}
-	DFP(FColor::Green);
 }
 
 void ACombatCharacter::OnTickBlockAlpha(float InAlpha)
 {
 	BlockAlpha = InAlpha;
-	DPRINT(TEXT("Value %f"), BlockAlpha);
 }
 
 void ACombatCharacter::OnFinishedBlockAlpha()
