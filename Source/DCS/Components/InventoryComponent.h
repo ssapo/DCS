@@ -5,11 +5,11 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Structs.h"
+#include "SubclassOf.h"
 #include "InventoryComponent.generated.h"
 
 class UItemBase;
 class UClass;
-
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class DCS_API UInventoryComponent : public UActorComponent
@@ -20,6 +20,11 @@ public:
 	UInventoryComponent();
 
 	void UseItem(const FGuid& Id);
+
+	int32 FindIndexByClass(const TSubclassOf<UItemBase>& ItemClass) const;
+	int32 FindIndexById(const FGuid& InID) const;
+	FStoredItem FindInvenItemByEqItem(const FStoredItem& Item) const;
+	FStoredItem GetItemAtIndex(int32 Index) const;
 
 	const TArray<FStoredItem>& GetInventory() const { return Inventory; }
 
@@ -34,9 +39,7 @@ private:
 
 	bool IsSlotNotEmpty(int32 Index) const;
 	bool IsSlotEmpty(int32 Index) const;
-	FStoredItem GetItemAtIndex(int32 Index) const;
-	int32 FindIndexByClass(UClass* ItemClass) const;
-	int32 FindIndexById(const FGuid& InID) const;
+
 
 	// start Declare Events.
 public:

@@ -33,7 +33,7 @@ void UEquipmentComponent::Initialize()
 	check(Owner);
 
 	WP_Inventory = UDCSLib::GetComponent<UInventoryComponent>(GetOwner());
-	if (WP_Inventory.IsValid() == false)
+	if (WP_Inventory.IsValid())
 	{
 		WP_Inventory->OnItemAdded().AddUObject(this, &UEquipmentComponent::OnItemModified);
 		WP_Inventory->OnItemRemoved().AddUObject(this, &UEquipmentComponent::OnItemModified);
@@ -53,7 +53,6 @@ void UEquipmentComponent::Initialize()
 	{
 		GameMode->OnGameLoaded().AddUObject(this, &UEquipmentComponent::OnGameLoaded);
 	}
-
 }
 
 int32 UEquipmentComponent::GetEquipmentSlotsIndex(EItem InType) const
@@ -283,6 +282,22 @@ void UEquipmentComponent::BuildEquipment(const TArray<FEquipmentSlots>& InEquipm
 			{
 				ItemIndex = K;
 				const FStoredItem& StoredItem = EqSlot.Items[K];
+
+				if (WP_Inventory.IsValid())
+				{
+					const FStoredItem& FoundItem = WP_Inventory->FindInvenItemByEqItem(StoredItem);
+					if (UDCSLib::IsItemValid(&FoundItem))
+					{
+						UpdateItemInSlot(ItemType, SlotIndex, ItemIndex, FoundItem, EHandleSameItemMethod::Update);
+					}
+				}
+				else
+				{
+					if (UDCSLib::IsItemValid(&StoredItem))
+					{
+						UpdateItemInSlot(ItemType, SlotIndex, ItemIndex, StoredItem, EHandleSameItemMethod::Update);
+					}
+				}
 			}
 		}
 	}

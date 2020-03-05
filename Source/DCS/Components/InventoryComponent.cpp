@@ -119,18 +119,7 @@ bool UInventoryComponent::IsSlotEmpty(int32 Index) const
 	return IsSlotNotEmpty(Index) == false;
 }
 
-FStoredItem UInventoryComponent::GetItemAtIndex(int32 Index) const
-{
-	FStoredItem ReturnValue;
-	if (IsSlotNotEmpty(Index))
-	{
-		ReturnValue = Inventory[Index];
-	}
-
-	return ReturnValue;
-}
-
-int32 UInventoryComponent::FindIndexByClass(UClass* ItemClass) const
+int32 UInventoryComponent::FindIndexByClass(const TSubclassOf<UItemBase>& ItemClass) const
 {
 	for (int32 I = 0; I < Inventory.Num(); ++I)
 	{
@@ -143,6 +132,31 @@ int32 UInventoryComponent::FindIndexByClass(UClass* ItemClass) const
 	}
 
 	return UDCSLib::INV_INDEX;
+}
+
+FStoredItem UInventoryComponent::FindInvenItemByEqItem(const FStoredItem& Item) const
+{
+	int32 FoundItemIndex = UDCSLib::INV_INDEX;
+	if (Item.Id.IsValid())
+	{
+		FoundItemIndex = FindIndexById(Item.Id);
+	}
+	else
+	{
+		FoundItemIndex = FindIndexByClass(Item.ItemClass);
+	}
+	return GetItemAtIndex(FoundItemIndex);
+}
+
+FStoredItem UInventoryComponent::GetItemAtIndex(int32 Index) const
+{
+	FStoredItem RetVal;
+	if (IsSlotNotEmpty(Index))
+	{
+		RetVal = Inventory[Index];
+	}
+
+	return RetVal;
 }
 
 int32 UInventoryComponent::FindIndexById(const FGuid& InID) const
