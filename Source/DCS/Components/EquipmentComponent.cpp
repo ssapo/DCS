@@ -14,7 +14,13 @@
 
 UEquipmentComponent::UEquipmentComponent()
 {
+	MainHandTypes.Add(EItem::MeleeWeapon);
+	MainHandTypes.Add(EItem::Spell);
+	MainHandTypes.Add(EItem::RangeWeapon);
 
+	SelectedMainHandType = EItem::MeleeWeapon;
+
+	CombatType = ECombat::Unarmed;
 }
 
 void UEquipmentComponent::InitializeComponent()
@@ -29,9 +35,6 @@ void UEquipmentComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 void UEquipmentComponent::Initialize()
 {
-	AActor* Owner = GetOwner();
-	check(Owner);
-
 	WP_Inventory = UDCSLib::GetComponent<UInventoryComponent>(GetOwner());
 	if (WP_Inventory.IsValid())
 	{
@@ -44,7 +47,7 @@ void UEquipmentComponent::Initialize()
 	APlayerController* PlayerController = UDCSLib::GetPlayerController(this, 0);
 	check(PlayerController);
 
-	if (Owner != PlayerController)
+	if (GetOwner() != PlayerController)
 	{
 		return;
 	}
@@ -52,6 +55,21 @@ void UEquipmentComponent::Initialize()
 	if (ADCSGameModeBase* GameMode = UDCSLib::GetGameMode<ADCSGameModeBase>(this))
 	{
 		GameMode->OnGameLoaded().AddUObject(this, &UEquipmentComponent::OnGameLoaded);
+	}
+}
+
+void UEquipmentComponent::Finalize()
+{
+	WP_Inventory = UDCSLib::GetComponent<UInventoryComponent>(GetOwner());
+	if (WP_Inventory.IsValid())
+	{
+		WP_Inventory->OnItemAdded().RemoveAll(this);
+		WP_Inventory->OnItemRemoved().RemoveAll(this);
+	}
+
+	if (ADCSGameModeBase * GameMode = UDCSLib::GetGameMode<ADCSGameModeBase>(this))
+	{
+		GameMode->OnGameLoaded().RemoveAll(this);
 	}
 }
 

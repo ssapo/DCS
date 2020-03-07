@@ -100,6 +100,7 @@ private:
 	void CreateKeyBindings();
 	void CreateInGameWidget(); 
 	void InitializeComponents();
+	void FinalizeComponents();
 
 	void UpdateAimAlpha();
 	void SetTimerChecker();

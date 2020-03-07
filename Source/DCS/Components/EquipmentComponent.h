@@ -22,6 +22,7 @@ public:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	void Initialize();
+	void Finalize();
 
 	FORCEINLINE TArray<FEquipmentSlots> GetEquipmentSlots() const { return EquipmentSlots; }
 	FORCEINLINE bool IsInCombat() const { return bIsInCombat; }
@@ -68,6 +69,9 @@ public:
 	DECLARE_EVENT_FiveParams(UEquipmentComponent, FOnActiveItemChanged, const FStoredItem&, const FStoredItem&, EItem, int32, int32);
 	FOnActiveItemChanged& OnActiveItemChanged() { return ActiveItemChangedEvent; }
 
+	DECLARE_EVENT_FourParams(UEquipmentComponent, FOnSlotHiddenChanged, EItem, int32, const FStoredItem&, bool);
+	FOnSlotHiddenChanged& OnSlotHiddenChanged() { return SlotHiddenChangedEvent; }
+
 	DECLARE_EVENT_OneParam(UEquipmentComponent, FOnCombatChanged, bool);
 	FOnCombatChanged& OnCombatChanged() { return CombatStatusChangedEnvet; }
 
@@ -83,6 +87,7 @@ public:
 private:
 	FOnWeaponTypeChanged WeaponTypeChangedEvent;
 	FOnMainHandTypeChanged MainHandTypeChangedEvent;
+	FOnSlotHiddenChanged SlotHiddenChangedEvent;
 	FOnItemInSlotChanged ItemInSlotChangedEvent;
 	FOnActiveItemChanged ActiveItemChangedEvent;
 	FOnCombatChanged CombatStatusChangedEnvet;
@@ -92,7 +97,9 @@ private:
 private:
 	TWeakObjectPtr<UInventoryComponent> WP_Inventory;
 
-	TArray<FEquipmentSlots> EquipmentSlots;
+	UPROPERTY(EditAnywhere)
+		TArray<FEquipmentSlots> EquipmentSlots;
+
 	TArray<EItem> MainHandTypes;
 	TArray<FGuid> EquippedItems;
 	TArray<FGuid> ActiveItems;
