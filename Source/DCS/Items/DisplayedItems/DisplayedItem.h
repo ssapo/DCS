@@ -4,6 +4,7 @@
 #include "GameFramework/Actor.h"
 #include "Structs.h"
 #include "NameTypes.h"
+#include "WeakObjectPtrTemplates.h"
 #include "DisplayedItem.generated.h"
 
 class UEquipmentComponent;
@@ -15,16 +16,22 @@ class DCS_API ADisplayedItem : public AActor
 	
 protected:
 	virtual void BeginPlay() override;
-
-private:
+	virtual FName GetAttachmentSocket() const;
 	UPrimitiveComponent* GetPrimaryComponent() const;
+
 	bool Attach();
 	void SimulatePhysics();
 	
-private:
-	UEquipmentComponent* CEquip;
+protected:
+	UPROPERTY(Transient)
+		TWeakObjectPtr<UEquipmentComponent> WP_Equip;
 
-	FName AttachmentSocket;
-	int32 SLotIndex;
-	EItem ItemType;
+	UPROPERTY(EditAnywhere)
+		FName AttachmentSocket;
+
+	UPROPERTY(EditAnywhere)
+		int32 SlotIndex;
+
+	UPROPERTY(EditAnywhere)
+		EItem ItemType;
 };

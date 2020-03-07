@@ -40,7 +40,6 @@ private:
 	bool IsSlotNotEmpty(int32 Index) const;
 	bool IsSlotEmpty(int32 Index) const;
 
-
 	// start Declare Events.
 public:
 	DECLARE_EVENT_OneParam(UInventoryComponent, FOnItemRemoved, const FStoredItem&);
@@ -55,6 +54,6 @@ private:
 	// end Declare Events.
 
 private:
-	UPROPERTY(EditInstanceOnly)
+	UPROPERTY(EditAnywhere)
 		TArray<FStoredItem> Inventory;
 };

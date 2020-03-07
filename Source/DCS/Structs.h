@@ -137,13 +137,13 @@ struct FEquipmentSlot
 public:
 	FEquipmentSlot();
 
-	UPROPERTY(Transient)
+	UPROPERTY(EditAnywhere)
 		TArray<FStoredItem> Items;
 
-	UPROPERTY(Transient)
+	UPROPERTY(EditAnywhere)
 		int32 ActiveItemIndex;
 
-	UPROPERTY(Transient)
+	UPROPERTY(EditAnywhere)
 		bool IsHidden;
 };
 
@@ -155,10 +155,10 @@ struct FEquipmentSlots
 public:
 	FEquipmentSlots();
 
-	UPROPERTY(Transient)
+	UPROPERTY(EditAnywhere)
 		EItem Type;
 
-	UPROPERTY(Transient)
+	UPROPERTY(EditAnywhere)
 		TArray<FEquipmentSlot> Slots;
 };
 
