@@ -48,20 +48,25 @@ public:
 private:
 	void OnGameLoaded();
 	void OnItemModified(const FStoredItem& InItem);
-
+	void ActiveItemChanged(const FStoredItem& Old , const FStoredItem& New, EItem InType, int32 SlotIndex, int32 ItemIndex);
 	void SetCombat(bool InValue);
 	void SetSlotActiveIndex(EItem Type, int32 SlotIndex, int32 NewActiveIndex);
 	void SetSlotHidden(EItem Type, int32 SlotIndex, bool bInHidden);
 	void SetItemInSlot(EItem Type, int32 SlotIndex, int32 ItemIndex, const FStoredItem& InItem);
 	void UpdateItemInSlot(EItem Type, int32 SlotIndex, int32 ItemIndex, const FStoredItem& InItem, EHandleSameItemMethod Method);
+	void UpdateDisplayedItem(EItem InType, int32 SlotIndex);
+	void AttachDisplayedItem(EItem InType, int32 SlotIndex);
 	void UpdateCombatType();
 	void BuildEquipment(const TArray<FEquipmentSlots>& EquipmentSlots);
 	TTuple<EItem, int32, int32> FindItem(const FStoredItem& InItem);
 	int32 GetEquipmentSlotsIndex(EItem InType) const;
 	bool IsSlotIndexValid(EItem InType, int32 Index) const;
 	bool IsItemIndexValid(EItem InType, int32 Index, int32 ItemIndex) const;
-	bool IsItemValid(const FStoredItem& Item) const;
-	bool IsItemValid(const FStoredItem* Item) const;
+	bool IsValidItem(const FStoredItem& Item) const;
+	bool IsValidItem(const FStoredItem* Item) const;
+	bool IsItemTwoHanded(const FStoredItem& NewItem) const;
+	bool IsRangeTypeCurrentMainHand() const;
+	bool IsRangeTypeCurrentCombat() const;
 	EItem GetItemType(const FStoredItem& InItem) const;
 
 	// start declare events.

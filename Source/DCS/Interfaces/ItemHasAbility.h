@@ -3,11 +3,11 @@
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
 #include "Structs.h"
-#include "ItemHasModifiers.generated.h"
+#include "ItemHasAbility.generated.h"
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
-class UItemHasModifiers : public UInterface
+class UItemHasAbility : public UInterface
 {
 	GENERATED_BODY()
 };
@@ -15,11 +15,10 @@ class UItemHasModifiers : public UInterface
 /**
  * 
  */
-class DCS_API IItemHasModifiers
+class DCS_API IItemHasAbility
 {
 	GENERATED_BODY()
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	virtual const TArray<FModifier>& GetModifiers() const abstract;
 };
