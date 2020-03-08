@@ -197,25 +197,25 @@ struct FItem
 public:
 	FItem();
 
-	UPROPERTY(Transient)
+	UPROPERTY(EditAnywhere)
 		FName Name;
 
-	UPROPERTY(Transient)
+	UPROPERTY(EditAnywhere)
 		FText Description;
 
-	UPROPERTY(Transient)
-
+	UPROPERTY(EditAnywhere)
 		EItem Type;
-	UPROPERTY(Transient)
+
+	UPROPERTY(EditAnywhere)
 		bool IsStackable;
 
-	UPROPERTY(Transient)
+	UPROPERTY(EditAnywhere)
 		bool IsDroppable;
 
-	UPROPERTY(Transient)
+	UPROPERTY(EditAnywhere)
 		bool IsConsumable;
 
-	UPROPERTY(Transient)
+	UPROPERTY(EditAnywhere)
 		UTexture2D* Image;
 };
 

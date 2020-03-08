@@ -13,7 +13,10 @@ UCLASS()
 class DCS_API ADisplayedItem : public AActor
 {
 	GENERATED_BODY()
-	
+
+public:
+	friend class UEquipmentComponent;
+
 protected:
 	virtual void BeginPlay() override;
 	virtual FName GetAttachmentSocket() const;

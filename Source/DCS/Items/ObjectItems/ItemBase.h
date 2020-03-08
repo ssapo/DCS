@@ -18,5 +18,6 @@ public:
 	const FItem& GetItemRef() const;
 
 private:
-	FItem Item;
+	UPROPERTY(EditAnywhere)
+		FItem Item;
 };

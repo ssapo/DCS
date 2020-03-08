@@ -1,7 +1,23 @@
 #include "ItemMeleeWeapon.h"
 #include "GameFramework/Actor.h"
+#include "Items/DisplayedItems/DisplayedItem.h"
 
-void UItemMeleeWeapon::UseItem(AActor* Caller)
+bool UItemMeleeWeapon::IsTwoHanded() const
 {
-	// TODO: fill function.
+	return bTwoHanded;
+}
+
+float UItemMeleeWeapon::GetBlockValue() const
+{
+	return BlockValue;
+}
+
+const TSubclassOf<ADisplayedItem>& UItemMeleeWeapon::GetDisplayedItem() const
+{
+	return DisplayedItemClass;
+}
+
+const TArray<FModifier>& UItemMeleeWeapon::GetModifiers() const
+{
+	return Modifiers;
 }
