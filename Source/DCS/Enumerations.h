@@ -185,7 +185,7 @@ enum class EInputBufferKey : uint8
 UENUM()
 enum class EHandleSameItemMethod : uint8
 {
-	None					UMETA(DisplayName = "None"),
+	None 					UMETA(DisplayName = "None"),
 	UnEquip					UMETA(DisplayName = "UnEquip"),
 	Update					UMETA(DisplayName = "Update"),
 	Count					UMETA(Hidden)

@@ -38,6 +38,7 @@ public:
 	bool IsSlotHidden(EItem InType, int32 Index) const;
 	bool IsEquippedItem(const FGuid& InItemID) const;
 	bool IsActiveItem(const FGuid& InItemID) const;
+	bool IsActiveItemIndex(EItem InType, int32 SlotIndex, int32 ItemIndex) const;
 	bool IsShieldEquipped() const;
 	bool IsTwoHandedWeaponEquipped() const;
 	bool CanBlock() const;
@@ -49,7 +50,7 @@ private:
 	void OnItemModified(const FStoredItem& InItem);
 
 	void SetCombat(bool InValue);
-	void SetSlotActiveIndex(EItem Type, int32 SlotIndex, int32 ActiveIndex);
+	void SetSlotActiveIndex(EItem Type, int32 SlotIndex, int32 NewActiveIndex);
 	void SetSlotHidden(EItem Type, int32 SlotIndex, bool bInHidden);
 	void SetItemInSlot(EItem Type, int32 SlotIndex, int32 ItemIndex, const FStoredItem& InItem);
 	void UpdateItemInSlot(EItem Type, int32 SlotIndex, int32 ItemIndex, const FStoredItem& InItem, EHandleSameItemMethod Method);
@@ -59,6 +60,8 @@ private:
 	int32 GetEquipmentSlotsIndex(EItem InType) const;
 	bool IsSlotIndexValid(EItem InType, int32 Index) const;
 	bool IsItemIndexValid(EItem InType, int32 Index, int32 ItemIndex) const;
+	bool IsItemValid(const FStoredItem& Item) const;
+	bool IsItemValid(const FStoredItem* Item) const;
 	EItem GetItemType(const FStoredItem& InItem) const;
 
 	// start declare events.
