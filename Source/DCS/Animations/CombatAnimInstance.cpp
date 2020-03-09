@@ -36,30 +36,24 @@ void UCombatAnimInstance::NativeBeginPlay()
 	WP_Character = Cast<ACombatCharacter>(TryGetPawnOwner());
 	check(WP_Character.IsValid());
 
-	WP_Character->OnPostBeginPlay().AddUObject(this, &UCombatAnimInstance::BindDelegate);
-	WP_Character->OnPostEndPlay().AddUObject(this, &UCombatAnimInstance::UnBindDelegate);
-	
+	WP_Character->OnPreBeginPlay().AddUObject(this, &UCombatAnimInstance::PreBeginPlay);
+	WP_Character->OnPostEndPlay().AddUObject(this, &UCombatAnimInstance::PostEndPlay);
 }
 
-void UCombatAnimInstance::BindDelegate()
+void UCombatAnimInstance::PreBeginPlay()
 {
 	check(WP_Character.IsValid());
-	UEquipmentComponent* EquipComp = UDCSLib::GetComponent<UEquipmentComponent>(*WP_Character);
-	check(EquipComp != nullptr);
+	WP_CEquip = UDCSLib::GetComponent<UEquipmentComponent>(*WP_Character);
+	check(WP_CEquip.IsValid());
 
-	EquipComp->OnCombatChanged().AddWeakLambda(this,
-		[=](bool IsCombat) { IsInCombat = IsCombat; });
-	EquipComp->OnCombatTypeChanged().AddWeakLambda(this,
-		[=](ECombat InType) { CombatType = InType; });
-	EquipComp->OnMainHandTypeChanged().AddWeakLambda(this,
-		[=](EItem InType) { UpdateHandItemsInfo(); });
-	EquipComp->OnWeaponTypeChanged().AddWeakLambda(this,
-		[=](EWeapon InType) { WeaponType = InType; });
-
-	EquipComp->OnActiveItemChanged().AddUObject(this, &UCombatAnimInstance::OnActiveItemChanged);
+	WP_CEquip->OnCombatChanged().AddUObject(this, &UCombatAnimInstance::OnCombatChanged);
+	WP_CEquip->OnCombatTypeChanged().AddUObject(this, &UCombatAnimInstance::OnCombatTypeChanged);
+	WP_CEquip->OnMainHandTypeChanged().AddUObject(this, &UCombatAnimInstance::OnMainHandTypeChanged);
+	WP_CEquip->OnWeaponTypeChanged().AddUObject(this, &UCombatAnimInstance::OnWeaponTypeChanged);
+	WP_CEquip->OnActiveItemChanged().AddUObject(this, &UCombatAnimInstance::OnActiveItemChanged);
 }
 
-void UCombatAnimInstance::UnBindDelegate()
+void UCombatAnimInstance::PostEndPlay()
 {
 	check(WP_Character.IsValid());
 	UEquipmentComponent* EquipComp = UDCSLib::GetComponent<UEquipmentComponent>(*WP_Character);
@@ -117,8 +111,8 @@ void UCombatAnimInstance::UpdateAimOffsetAlpha()
 
 void UCombatAnimInstance::UpdateHandItemsInfo()
 {
-	IsShieldEquipped = WP_EquipmentComponent->IsShieldEquipped();
-	IsTwoHandedWeaponEquipped = WP_EquipmentComponent->IsTwoHandedWeaponEquipped();
+	IsShieldEquipped = WP_CEquip->IsShieldEquipped();
+	IsTwoHandedWeaponEquipped = WP_CEquip->IsTwoHandedWeaponEquipped();
 }
 
 void UCombatAnimInstance::StoreCharacterInfo()
@@ -151,4 +145,24 @@ void UCombatAnimInstance::StoreCharacterInfo()
 	{
 		PC->GetInputMouseDelta(MouseDeltaX, MouseDeltaY);
 	}
+}
+
+void UCombatAnimInstance::OnCombatChanged(bool bInCombat)
+{
+	IsInCombat = bInCombat;
+}
+
+void UCombatAnimInstance::OnCombatTypeChanged(ECombat InType)
+{
+	CombatType = InType;
+}
+
+void UCombatAnimInstance::OnMainHandTypeChanged(EItem InType)
+{
+	UpdateHandItemsInfo();
+}
+
+void UCombatAnimInstance::OnWeaponTypeChanged(EWeapon InType)
+{
+	WeaponType = InType;
 }

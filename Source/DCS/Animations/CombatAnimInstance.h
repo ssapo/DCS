@@ -52,10 +52,14 @@ protected:
 		bool IsShieldEquipped_BC() const { return IsShieldEquipped; }
 
 private:
+	void OnCombatChanged(bool bInCombat);
+	void OnCombatTypeChanged(ECombat InType);
+	void OnMainHandTypeChanged(EItem InType);
+	void OnWeaponTypeChanged(EWeapon InType);
 	void OnActiveItemChanged(const FStoredItem& Old, const FStoredItem& New, EItem InType, int32 SlotIndex, int32 ActiveIndex);
 
-	void BindDelegate();
-	void UnBindDelegate();
+	void PreBeginPlay();
+	void PostEndPlay();
 
 	void UpdateLookAtValues();
 	void UpdateLeanAmount();
@@ -64,8 +68,9 @@ private:
 
 	void StoreCharacterInfo();
 
+
 private:
-	TWeakObjectPtr<UEquipmentComponent> WP_EquipmentComponent;
+	TWeakObjectPtr<UEquipmentComponent> WP_CEquip;
 	TWeakObjectPtr<ACombatCharacter> WP_Character;
 
 	EWeapon WeaponType;
