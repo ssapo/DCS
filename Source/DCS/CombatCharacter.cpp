@@ -114,6 +114,9 @@ void ACombatCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	PreBeginPlayEvent.Broadcast();
+	PreBeginPlayEvent.Clear();
+
 	InitializeComponents();
 
 	CreateHUD();
@@ -137,9 +140,6 @@ void ACombatCharacter::BeginPlay()
 		TimelineFinishedCallback.BindDynamic(this, &ACombatCharacter::OnFinishedBlockAlpha);
 		TL_Block.SetTimelineFinishedFunc(TimelineFinishedCallback);
 	}
-
-	PostBeginPlayEvent.Broadcast();
-	PostBeginPlayEvent.Clear();
 }
 
 void ACombatCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)

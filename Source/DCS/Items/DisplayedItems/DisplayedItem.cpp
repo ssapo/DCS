@@ -61,7 +61,7 @@ bool ADisplayedItem::Attach()
 
 	if (auto Character = Cast<ACharacter>(GetOwner()))
 	{
-		CPrimary->AttachToComponent(Character->GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, AttachmentSocket);
+		CPrimary->AttachToComponent(Character->GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, GetAttachmentSocket());
 	}
 
 	return true;

@@ -177,6 +177,9 @@ void UEquipmentComponent::SetCombat(bool InValue)
 
 	bIsInCombat = InValue;
 
+	AttachDisplayedItem(SelectedMainHandType, 0);
+	AttachDisplayedItem(EItem::Shield, 0);
+
 	CombatStatusChangedEnvet.Broadcast(bIsInCombat);
 }
 
@@ -251,17 +254,17 @@ void UEquipmentComponent::UpdateItemInSlot(EItem Type, int32 SlotIndex, int32 It
 		return;
 	}
 
+	const FStoredItem* InSlotItem = GetItemInSlot(Type, SlotIndex, ItemIndex);
+	if (InSlotItem == nullptr)
+	{
+		return;
+	}
+
 	if (IsValidItem(InItem))
 	{
 		EItem ItemType = GetItemType(InItem);
 
 		if (ItemType != Type)
-		{
-			return;
-		}
-
-		const FStoredItem* InSlotItem = GetItemInSlot(Type, SlotIndex, ItemIndex);
-		if (InSlotItem == nullptr)
 		{
 			return;
 		}
@@ -294,48 +297,30 @@ void UEquipmentComponent::UpdateItemInSlot(EItem Type, int32 SlotIndex, int32 It
 				}
 			}
 		}
-
-		// Equip new item.
-		FStoredItem NewItem;
-		FStoredItem OldItem = *InSlotItem;
-		if (Method != EHandleSameItemMethod::UnEquip)
-		{
-			NewItem = InItem;
-		}
-
-		SetItemInSlot(Type, SlotIndex, ItemIndex, InItem);
-
-		EquippedItems.Remove(OldItem.Id);
-		if (Method != EHandleSameItemMethod::UnEquip)
-		{
-			EquippedItems.Add(InItem.Id);
-		}
-
-		ItemInSlotChangedEvent.Broadcast(OldItem, InItem, Type, SlotIndex, ItemIndex);
-
-		if (IsActiveItemIndex(Type, SlotIndex, ItemIndex))
-		{
-			ActiveItemChanged(OldItem, InItem, Type, SlotIndex, ItemIndex);
-		}
 	}
-	else
+
+	// Equip new item.
+	// And 
+	// If item was not valid, clear item slot.
+	FStoredItem OldItem = *InSlotItem;
+	FStoredItem NewItem;
+	if (Method != EHandleSameItemMethod::UnEquip)
 	{
-		// If item was not valid, clear item slot.
-		const FStoredItem* OldItem = GetItemInSlot(Type, SlotIndex, ItemIndex);
-		if (IsValidItem(OldItem))
-		{
-			FStoredItem NewItem;
-			SetItemInSlot(Type, SlotIndex, ItemIndex, NewItem);
+		NewItem = InItem;
+	}
 
-			EquippedItems.Remove(OldItem->Id);
+	SetItemInSlot(Type, SlotIndex, ItemIndex, NewItem);
+	EquippedItems.Remove(OldItem.Id);
+	if (Method != EHandleSameItemMethod::UnEquip)
+	{
+		EquippedItems.Add(InItem.Id);
+	}
 
-			ItemInSlotChangedEvent.Broadcast(*OldItem, NewItem, Type, SlotIndex, ItemIndex);
+	ItemInSlotChangedEvent.Broadcast(OldItem, NewItem, Type, SlotIndex, ItemIndex);
 
-			if (IsActiveItemIndex(Type, SlotIndex, ItemIndex))
-			{
-				ActiveItemChanged(*OldItem, NewItem, Type, SlotIndex, ItemIndex);
-			}
-		}
+	if (IsActiveItemIndex(Type, SlotIndex, ItemIndex))
+	{
+		ActiveItemChanged(OldItem, NewItem, Type, SlotIndex, ItemIndex);
 	}
 }
 

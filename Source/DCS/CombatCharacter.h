@@ -178,14 +178,14 @@ private:
 
 	// start Declare Events.
 public:
-	DECLARE_EVENT(UEquipmentComponent, FOnPostBeginPlay);
-	FOnPostBeginPlay& OnPostBeginPlay() { return PostBeginPlayEvent; }
+	DECLARE_EVENT(UEquipmentComponent, FOnPreBeginPlay);
+	FOnPreBeginPlay& OnPreBeginPlay() { return PreBeginPlayEvent; }
 
 	DECLARE_EVENT(UEquipmentComponent, FOnPostEndPlay);
 	FOnPostEndPlay& OnPostEndPlay() { return PostEndPlayEvent; }
 
 private:
-	FOnPostBeginPlay PostBeginPlayEvent;
+	FOnPreBeginPlay PreBeginPlayEvent;
 	FOnPostEndPlay PostEndPlayEvent;
 	// end Declare Events.
 
