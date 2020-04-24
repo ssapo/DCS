@@ -27,6 +27,11 @@ void UStatsManagerComponent::Initialize()
 	// TODO: fill function
 }
 
+void UStatsManagerComponent::Finalize()
+{
+	// TODO: fill function
+}
+
 float UStatsManagerComponent::GetStatValue(EStat InType, bool IncludeModifiers) const
 {
 	float RetVal = 0.0f;

@@ -137,13 +137,13 @@ struct FEquipmentSlot
 public:
 	FEquipmentSlot();
 
-	UPROPERTY(Transient)
+	UPROPERTY(EditAnywhere)
 		TArray<FStoredItem> Items;
 
-	UPROPERTY(Transient)
+	UPROPERTY(EditAnywhere)
 		int32 ActiveItemIndex;
 
-	UPROPERTY(Transient)
+	UPROPERTY(EditAnywhere)
 		bool IsHidden;
 };
 
@@ -155,10 +155,10 @@ struct FEquipmentSlots
 public:
 	FEquipmentSlots();
 
-	UPROPERTY(Transient)
+	UPROPERTY(EditAnywhere)
 		EItem Type;
 
-	UPROPERTY(Transient)
+	UPROPERTY(EditAnywhere)
 		TArray<FEquipmentSlot> Slots;
 };
 
@@ -197,25 +197,25 @@ struct FItem
 public:
 	FItem();
 
-	UPROPERTY(Transient)
+	UPROPERTY(EditAnywhere)
 		FName Name;
 
-	UPROPERTY(Transient)
+	UPROPERTY(EditAnywhere)
 		FText Description;
 
-	UPROPERTY(Transient)
-
+	UPROPERTY(EditAnywhere)
 		EItem Type;
-	UPROPERTY(Transient)
+
+	UPROPERTY(EditAnywhere)
 		bool IsStackable;
 
-	UPROPERTY(Transient)
+	UPROPERTY(EditAnywhere)
 		bool IsDroppable;
 
-	UPROPERTY(Transient)
+	UPROPERTY(EditAnywhere)
 		bool IsConsumable;
 
-	UPROPERTY(Transient)
+	UPROPERTY(EditAnywhere)
 		UTexture2D* Image;
 };
 

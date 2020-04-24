@@ -14,6 +14,7 @@ public:
 	UStatsManagerComponent();
 	
 	void Initialize();
+	void Finalize();
 
 	float GetStatValue(EStat InType, bool IncludeModifiers) const;
 	int32 GetStatIndex(EStat InType) const;

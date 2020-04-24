@@ -1,13 +1,14 @@
 #include "DisplayedItem.h"
 
-#include "DCSLib.h"
-
 #include "Components/PrimitiveComponent.h"
 #include "Components/EquipmentComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "GameFramework/Character.h"
+#include "Items/ObjectItems/ItemBase.h"
+
+#include "DCSLib.h"
 
 void ADisplayedItem::BeginPlay()
 {
@@ -41,8 +42,13 @@ UPrimitiveComponent* ADisplayedItem::GetPrimaryComponent() const
 	{
 		return Ret;
 	}
-
+	
 	return nullptr;
+}
+
+FName ADisplayedItem::GetAttachmentSocket() const
+{
+	return AttachmentSocket;
 }
 
 bool ADisplayedItem::Attach()
@@ -55,7 +61,7 @@ bool ADisplayedItem::Attach()
 
 	if (auto Character = Cast<ACharacter>(GetOwner()))
 	{
-		CPrimary->AttachToComponent(Character->GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, AttachmentSocket);
+		CPrimary->AttachToComponent(Character->GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, GetAttachmentSocket());
 	}
 
 	return true;

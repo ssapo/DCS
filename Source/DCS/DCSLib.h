@@ -15,6 +15,7 @@
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/Pawn.h"
 #include "Structs.h"
+#include "Kismet/KismetArrayLibrary.h"
 #include "DCSLib.generated.h"
 
 class APawn;
@@ -53,6 +54,9 @@ public:
 
 	template <typename T = AGameMode>
 	static T * GetGameMode(const UObject * WCO);
+
+	template <typename T>
+	static void SetArrayElem(const T& item, TArray<T>& item_array, int32 index);
 
 	static FString GetStringAsEnum(const FString& TypeName, int32 EnumValue);
 
@@ -186,6 +190,18 @@ template <typename T>
 FORCEINLINE T* UDCSLib::GetGameMode(const UObject* WCO)
 {
 	return Cast<T>(UGameplayStatics::GetGameMode(WCO));
+}
+
+template <typename T>
+FORCEINLINE void UDCSLib::SetArrayElem(const T& Item, TArray<T>& TargetAray, int32 Index)
+{
+	if (TargetAray.Num() <= Index)
+	{
+		int32 Size = Index + 1;
+		TargetAray.SetNumZeroed(Size);
+	}
+	
+	TargetAray[Index] = Item;
 }
 
 FORCEINLINE FString UDCSLib::GetStringAsEnum(const FString& TypeName, int32 EnumValue)

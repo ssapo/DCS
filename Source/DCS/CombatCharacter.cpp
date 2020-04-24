@@ -114,6 +114,9 @@ void ACombatCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	PreBeginPlayEvent.Broadcast();
+	PreBeginPlayEvent.Clear();
+
 	InitializeComponents();
 
 	CreateHUD();
@@ -137,15 +140,13 @@ void ACombatCharacter::BeginPlay()
 		TimelineFinishedCallback.BindDynamic(this, &ACombatCharacter::OnFinishedBlockAlpha);
 		TL_Block.SetTimelineFinishedFunc(TimelineFinishedCallback);
 	}
-
-	PostBeginPlayEvent.Broadcast();
-	PostBeginPlayEvent.Clear();
-
 }
 
 void ACombatCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
+
+	FinalizeComponents();
 
 	CInputBuffer->OnInputBufferConsumed().RemoveAll(this);
 	CRotating->OnRotatingStart().RemoveAll(this);
@@ -255,6 +256,12 @@ void ACombatCharacter::InitializeComponents()
 	CDynamicTargeting->Initialize(*CTargetingArrow);
 	CStatsManager->Initialize();
 	CEquipment->Initialize();
+}
+
+void ACombatCharacter::FinalizeComponents()
+{
+	CStatsManager->Finalize();
+	CEquipment->Finalize();
 }
 
 void ACombatCharacter::CreateHUD()
