@@ -1,7 +1,12 @@
 #include "ItemShield.h"
 #include "GameFramework/Actor.h"
 
-void UItemShield::UseItem(AActor* Caller)
+float UItemShield::GetBlockValue() const
 {
-	// TODO: fill function.
+	return BlockValue;
+}
+
+const TSubclassOf<ADisplayedItem>& UItemShield::GetDisplayedItem() const
+{
+	return DisplayedItemClass;
 }
