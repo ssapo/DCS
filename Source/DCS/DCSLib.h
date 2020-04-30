@@ -16,9 +16,11 @@
 #include "GameFramework/Pawn.h"
 #include "Structs.h"
 #include "Kismet/KismetArrayLibrary.h"
+#include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "DCSLib.generated.h"
 
 class APawn;
+class AActor;
 class UActorComponent;
 class UCanvasPanelSlot;
 class UWidget;
@@ -26,6 +28,7 @@ class UImage;
 class UUserWidget;
 class APlayerController;
 class ADCSGameModeBase;
+class AAIController;
 namespace EDrawDebugTrace { enum Type; }
 
 UCLASS()
@@ -107,6 +110,8 @@ public:
 	static bool OwnerIsPlayer(AActor* Actor);
 
 	static bool EqualClass(UClass* A, UClass* B);
+
+	static AAIController* GetAIController(AActor* ControllerdActor);
 
 public:
 	static FString INV_STRING;
@@ -347,4 +352,9 @@ FORCEINLINE bool UDCSLib::OwnerIsPlayer(AActor* Owner)
 FORCEINLINE bool UDCSLib::EqualClass(UClass* A, UClass* B)
 {
 	return UKismetMathLibrary::EqualEqual_ClassClass(A, B);
+}
+
+FORCEINLINE AAIController* UDCSLib::GetAIController(AActor* ControlledActor)
+{
+	return UAIBlueprintHelperLibrary::GetAIController(ControlledActor);
 }

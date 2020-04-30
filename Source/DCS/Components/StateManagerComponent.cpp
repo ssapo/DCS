@@ -9,6 +9,16 @@ UStateManagerComponent::UStateManagerComponent()
 	CurrentState = EState::Idle;
 }
 
+void UStateManagerComponent::Initialize()
+{
+	// TODO: fill function
+}
+
+void UStateManagerComponent::Finalize()
+{
+	// TODO: fill function
+}
+
 bool UStateManagerComponent::GetActivityValue(EActivity InType) const
 {
 	if (Activities.Contains(InType))

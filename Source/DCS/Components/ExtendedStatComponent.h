@@ -22,6 +22,7 @@ public:
 
 	void ModifyStat(float InValue, bool InterruptRegeneration);
 	void ChangeRegenPercent(float InPercent);
+	void SetCurrentValue(float InValue, bool InterruptRegeneration);
 
 protected:
 	void BeginPlay() override;
@@ -38,7 +39,6 @@ private:
 
 	void ClearRegenTimer();
 	void RefreshRegenTimer();
-	void SetCurrentValue(float InValue, bool InterruptRegeneration);
 	void AddModifier(float Value);
 	void RemoveModifier(float Value);
 

@@ -17,6 +17,9 @@ class DCS_API UStateManagerComponent : public UActorComponent
 public:	
 	UStateManagerComponent();
 
+	void Initialize();
+	void Finalize();
+
 	bool GetActivityValue(EActivity InType) const;
 	void SetState(EState InState);
 	EState GetState() const;

@@ -256,15 +256,22 @@ private:
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = true))
 		UCurveFloat* CF_BlockAlpha;
 
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = true))
+		TArray<FName> LeftHandCollisionSockets;
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = true))
+		TArray<FName> RightHandCollisionSockets;
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = true))
+		TArray<FName> RightFootCollisionSockets;
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = true))
+		TArray<FName> LeftFootCollisionSockets;
+
 	TWeakObjectPtr<UInGameWidget> WP_InGameWidget;
 	TWeakObjectPtr<UKeybindingsWidget> WP_KeyBindingsWidget;
 	TWeakObjectPtr<AActor> WP_BackstabbedActor;
 	TWeakObjectPtr<AActor> WP_InteractionActor;
-
-	TArray<FName> LeftHandCollisionSockets;
-	TArray<FName> RightHandCollisionSockets;
-	TArray<FName> RightFootCollisionSockets;
-	TArray<FName> LeftFootCollisionSockets;
 
 	EMeleeAttack MeleeAttackType;
 	EDirection ReceivedHitDirection;
