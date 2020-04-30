@@ -19,39 +19,8 @@ public:
 	UCombatAnimInstance();
 	virtual void NativeBeginPlay() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
-	
+
 protected:
-	UFUNCTION(BlueprintPure, meta = (BlueprintThreadSafe))
-		ECombat GetCombatType_BC() const { return CombatType; }
-
-	UFUNCTION(BlueprintPure, meta = (BlueprintThreadSafe))
-		EWeapon GetWeaponType_BC() const { return WeaponType; }
-
-	UFUNCTION(BlueprintPure, meta = (BlueprintThreadSafe))
-		float GetLeanAmount_BC() const { return LeanAmount; }
-
-	UFUNCTION(BlueprintPure, meta = (BlueprintThreadSafe))
-		float GetLeanOffset_BC() const { return LeanOffset; }
-
-	UFUNCTION(BlueprintPure, meta = (BlueprintThreadSafe))
-		float GetDirection_BC() const { return Direction; }
-
-	UFUNCTION(BlueprintPure, meta = (BlueprintThreadSafe))
-		float GetSpeed_BC() const { return Speed; }
-
-	UFUNCTION(BlueprintPure, meta = (BlueprintThreadSafe))
-		float GetLocomotionRateScale_BC() const { return LocomotionRateScale; }
-
-	UFUNCTION(BlueprintPure, meta = (BlueprintThreadSafe))
-		float GetBlockAlpha_BC() const { return BlockAlpha; }
-
-	UFUNCTION(BlueprintPure, meta = (BlueprintThreadSafe))
-		bool IsInCombat_BC() const { return IsInCombat; }
-
-	UFUNCTION(BlueprintPure, meta = (BlueprintThreadSafe))
-		bool IsShieldEquipped_BC() const { return IsShieldEquipped; }
-
-private:
 	void OnCombatChanged(bool bInCombat);
 	void OnCombatTypeChanged(ECombat InType);
 	void OnMainHandTypeChanged(EItem InType);
@@ -68,34 +37,79 @@ private:
 
 	void StoreCharacterInfo();
 
+protected:
+	UPROPERTY(Transient)
+		TWeakObjectPtr<UEquipmentComponent> WP_CEquip;
 
-private:
-	TWeakObjectPtr<UEquipmentComponent> WP_CEquip;
-	TWeakObjectPtr<ACombatCharacter> WP_Character;
+	UPROPERTY(Transient)
+		TWeakObjectPtr<ACombatCharacter> WP_Character;
 
-	EWeapon WeaponType;
-	ECombat CombatType;
+	UPROPERTY(Transient, BlueprintReadOnly)
+		EWeapon WeaponType;
 
-	float Speed;
-	float Direction;
-	float LocomotionRateScale;
-	float LookAtPitch;
-	float LookAtYaw;
-	float TurnThreshold;
-	float MinTurnLength;
-	float AimOffsetAlpha;
-	float AxisTurnValue;
-	float MouseDeltaX;
-	float MouseDeltaY;
-	float BlockAlpha;
-	float AimAlpha;
-	float LeanAmount;
-	float LeanOffset;
+	UPROPERTY(Transient, BlueprintReadOnly)
+		ECombat CombatType;
 
-	bool bIsInAir;
-	bool bIsInSlowMotion;
-	bool IsTwoHandedWeaponEquipped;
-	bool IsInCombat;
-	bool IsLookingForward;
-	bool IsShieldEquipped;
+	UPROPERTY(Transient, BlueprintReadOnly)
+		float Speed;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+		float Direction;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+		float LocomotionRateScale;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+		float LookAtPitch;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+		float LookAtYaw;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+		float TurnThreshold;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+		float MinTurnLength;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+		float AimOffsetAlpha;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+		float AxisTurnValue;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+		float MouseDeltaX;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+		float MouseDeltaY;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+		float BlockAlpha;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+		float AimAlpha;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+		float LeanAmount;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+		float LeanOffset;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+		bool bIsInAir;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+		bool bIsInSlowMotion;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+		bool IsTwoHandedWeaponEquipped;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+		bool IsInCombat;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+		bool IsLookingForward;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+		bool IsShieldEquipped;
 };
