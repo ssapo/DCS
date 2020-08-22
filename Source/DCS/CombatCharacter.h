@@ -86,7 +86,6 @@ protected:
 	bool DoesHoldBowString() override;
 	// end interfaces
 
-private:
 	UFUNCTION()
 		void OnTickBlockAlpha(float InAlpha);
 

@@ -3,6 +3,12 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "NameTypes.h"
+#include "Interfaces/IsTargetable.h"
+#include "Interfaces/CanBeAttacked.h"
+#include "Interfaces/CanGetEffects.h"
+#include "Interfaces/IsMontageManager.h"
+#include "Interfaces/CanDesiredRotating.h"
+#include "Enumerations.h"
 #include "BaseAICharacter.generated.h"
 
 class UCollisionHandlerComponent;
@@ -19,87 +25,125 @@ class UPatrolComponent;
 class UMovementSpeedComponent;
 class UBehaviorTree;
 class ABaseAICharacter;
-
-enum class EMeleeAttack : uint8;
-enum class EDirection : uint8;
+class ADCSAIController;
+class UDataTable;
+class UWidgetComponent;
 
 UCLASS()
-class DCS_API ABaseAICharacter : public ACharacter
+class DCS_API ABaseAICharacter 
+	: public ACharacter
+	, public IIsTargetable
+	, public ICanBeAttacked
+	, public ICanGetEffects
+	, public IIsMontageManager
+	, public ICanDesiredRotating
 {
 	GENERATED_BODY()
 
 public:
 	ABaseAICharacter();
 
+	bool IsStateEqual(EState InType) const;
+	bool IsCombatEqual(ECombat InType) const;
+
 	UBehaviorTree* GetBehaviorTree() const;
 	UEquipmentComponent* GetEquipment() const;
 
 protected:
 	virtual void BeginPlay() override;
-	virtual void Tick(float DeltaSeconds) override;
 
 	void CtorComponents();
 	void CtorInitialize();
 	void InitializeComponents();
 
-private:
-	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
+	// Start interfaces
+	virtual bool OnSelected() override;
+	virtual bool OnDeselected() override;
+	virtual bool IsTargetable() const override;
+	virtual EAttackResult TakeDamage(const FHitData& HitData) override;
+	virtual bool IsAlive() const override;
+	virtual FName GetHeadSocket() const override;
+	virtual bool CanEffectBeApplied(EEffect InType, AActor* Actor) const override;
+	virtual UDataTable* GetMontages(EMontage InType) override;
+	virtual FRotator GetDesiredRotation() const override;
+	// End interfaces
+
+protected:
+	UPROPERTY(VisibleAnywhere)
+		UWidgetComponent* CStatBarsWidget;
+
+	UPROPERTY(VisibleAnywhere)
+		UWidgetComponent* CTargetWidget;
+
+	UPROPERTY(VisibleAnywhere)
 		UCollisionHandlerComponent* CMeleeCollisionHandler;
 
-	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere)
 		UExtendedStatComponent* CExtendedHealth;
 
-	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere)
 		UExtendedStatComponent* CExtendedStamina;
 
-	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere)
 		UMontageManagerComponent* CMontagesManager;
 
-	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere)
 		UBehaviorComponent* CBehavior;
 
-	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere)
 		UEffectsComponent* CEffects;
 
-	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere)
 		UDissolveComponent* CDissolveEffect;
 
-	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere)
 		UEquipmentComponent* CEquipment;
 
-	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere)
 		URotatingComponent* CRotating;
 
-	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere)
 		UStateManagerComponent* CStateManager;
 
-	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere)
 		UStatsManagerComponent* CStatsManager;
 
-	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere)
 		UPatrolComponent* CPatrol;
 
-	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere)
 		UMovementSpeedComponent* CMovementSpeed;
 
-	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditAnywhere)
 		UBehaviorTree* BehaviorTree;
-
-	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = true))
+	
+	UPROPERTY(EditAnywhere)
 		TArray<FName> LeftFootCollisionSockets;
 
-	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditAnywhere)
 		TArray<FName> RightFootCollisionSockets;
 
-	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditAnywhere)
 		TArray<FName> LeftHandCollisionSockets;
 
-	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditAnywhere)
 		TArray<FName> RightHandCollisionSockets;
 
-	EDirection ReceivedHitDirection;
-	EMeleeAttack MeleeAttackType;
-	mutable int32 MeleeCounterAttack;
-	float RecentlyReceivedDamageStunLimit;
-	int32 RecentlyReceivedHitsCountStunLimit;
+	UPROPERTY(Transient)
+		ADCSAIController* BaseAIController;
+
+	UPROPERTY(Transient)
+		EDirection ReceivedHitDirection;
+
+	UPROPERTY(Transient)
+		EMeleeAttack MeleeAttackType;
+
+	UPROPERTY(Transient)
+		mutable int32 MeleeCounterAttack;
+
+	UPROPERTY(Transient)
+		float RecentlyReceivedDamageStunLimit;
+
+	UPROPERTY(Transient)
+		int32 RecentlyReceivedHitsCountStunLimit;
 };

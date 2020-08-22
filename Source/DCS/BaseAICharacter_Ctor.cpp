@@ -7,6 +7,7 @@
 #include "Components/DissolveComponent.h"
 #include "Components/MovementSpeedComponent.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "UMG/Public/Components/WidgetComponent.h"
 
 ABaseAICharacter::ABaseAICharacter()
 {
@@ -22,7 +23,7 @@ void ABaseAICharacter::CtorComponents()
 	
 	CMeleeCollisionHandler = CreateDefaultSubobject<UCollisionHandlerComponent>(TEXT("MeleeCollisionHandler"));
 	ensure(CMeleeCollisionHandler != nullptr);
-
+	
 	CExtendedHealth = CreateDefaultSubobject<UExtendedStatComponent>(TEXT("ExtendedHealth"));
 	ensure(CExtendedHealth != nullptr);
 
@@ -52,13 +53,17 @@ void ABaseAICharacter::CtorComponents()
 
 	CMovementSpeed = CreateDefaultSubobject<UMovementSpeedComponent>(TEXT("MovementSpeed"));
 	ensure(CMovementSpeed != nullptr);
+
+	CStatBarsWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("StatBarsWidget"));
+	ensure(CStatBarsWidget != nullptr);
+
+	CTargetWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("TargetWidget"));
+	ensure(CTargetWidget != nullptr);
 }
 
 void ABaseAICharacter::CtorInitialize()
 {
 	MeleeAttackType = EMeleeAttack::None;
 	ReceivedHitDirection = EDirection::None;
-
-	PrimaryActorTick.bCanEverTick = true;
 }
 
